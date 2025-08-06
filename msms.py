@@ -27,6 +27,7 @@ student_db = []
 teacher_db = []
 next_student_id = 1
 next_teacher_id = 1
+name_found = False
 
 #To Register
 def register_new():
@@ -84,23 +85,63 @@ def list_teachers():
         print(f"  ID: {str(teacher.id).ljust(10)}, Name: {str(teacher.name).ljust(15)}, Speciality: {str(teacher.speciality).ljust(10)}")
 
 def find_students(term):
+    global name_found
+    current_name = []
+    matched_student = None
     """Finds students by name."""
+
     print(f"\n--- Finding Students matching '{term}' ---")
+
+    for student in student_db:
+        if term == student.name:
+            matched_student = student
+        elif term in student.name.split():
+            current_name.append(student.name)
+    
+    if matched_student:
+        print(f"ID: {matched_student.id}\nName: {matched_student.name}\nEnrolled in: {matched_student.enrolled_in}")
+        name_found = True
+
+    elif len(current_name) > 0:
+        print(f"Possible Names: {current_name}")
+        print(f"No exact match found.\n")
+
+    else:
+        print("No match found.\n")
+
     # TODO: Create an empty list to store results.
     # Loop through student_db. If the search 'term' (case-insensitive) is in the student's name,
     # add them to your results list.
     # After the loop, if the results list is empty, print "No match found."
     # Otherwise, print the details for each student in the results list.
-    pass
 
 def find_teachers(term):
+    global name_found
+    current_name = []
+    matched_teacher = None
+
+    print(f"\n--- Finding Teachers matching '{term}' ---")
+
+    for teacher in teacher_db:
+        if term == teacher.name:
+            matched_student = teacher
+        elif term in teacher.name.split():
+            current_name.append(teacher.name)
+    
+    if matched_student:
+        print(f"ID: {matched_teacher.id}\nName: {matched_teacher.name}\nEnrolled in: {matched_teacher.speciality}")
+        name_found = True
+
+    elif len(current_name) > 0:
+        print(f"Possible Names: {current_name}")
+        print(f"No exact match found.\n")
+
+    else:
+        print("No match found.\n")
+
     """Finds teachers by name or speciality."""
     # TODO: Implement this function similar to find_students, but check
     # for the term in BOTH the teacher's name AND their speciality.
-    pass
-
-
-
 
 #Fragment 3
 # --- Front Desk Functions ---
@@ -153,6 +194,8 @@ def main():
     add_teacher("Ms. Fret", "Guitar")
     front_desk_register("Juan","Guitar")
     front_desk_register("John","Bass")
+    front_desk_register("Aidan Chiang","Guitar")
+    front_desk_register("Aidan Lim","Bass")
 
     while True:
         print("\n===== Music School Front Desk =====")
@@ -182,8 +225,13 @@ def main():
 
         elif choice == '3':
             # TODO: Prompt for a search term, then call front_desk_lookup.
-            term = input("Enter search term: ")
-            front_desk_lookup(term)
+            while name_found == False:
+                term = input("Enter search term (To exit, '999'): ").title()
+                if term == "999":
+                    print(f"Exit successfully")
+                    break
+                else:
+                    front_desk_lookup(term) 
 
         elif choice == '4':
             list_students()
