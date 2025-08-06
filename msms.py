@@ -29,8 +29,11 @@ next_student_id = 1
 next_teacher_id = 1
 name_found = False
 
-#To Register
-def register_new():
+
+
+#Fragment 2
+# --- Core Helper Functions ---
+def add_student():
     while True:
         try:
             name = input("Enter student name: ")
@@ -53,9 +56,6 @@ def register_new():
 
     return name.title(), instrument.title()
 
-
-#Fragment 2
-# --- Core Helper Functions ---
 def add_teacher(name, speciality):
     """Creates a Teacher object and adds it to the database."""
     global next_teacher_id
@@ -189,7 +189,7 @@ def front_desk_lookup(term, speciality_check) :
     if len(speciality_check.split()) == 0:
         find_students(term)
     else:
-        find_teachers(term, speciality_check)
+        find_teachers(term.title(), speciality_check)
 
 
 #Fragment 4
@@ -218,7 +218,7 @@ def main():
 
         if choice == '1':
             # TODO: Prompt for student name and instrument, then call front_desk_register.
-            name, instrument = register_new()
+            name, instrument = add_student()
             front_desk_register(name, instrument)
 
         elif choice == '2':
@@ -233,9 +233,9 @@ def main():
         elif choice == '3':
             # TODO: Prompt for a search term, then call front_desk_lookup.
             while name_found == False:
-                term = input("Enter search term (To exit, '999'): ").title()
+                term = input("Enter search term (To exit, '999'): ")
                 speciality_check = input("Enter speciality (if teacher): ").title()
-                
+
                 if term == "999":
                     print(f"Exit successfully")
                     break
