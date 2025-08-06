@@ -74,14 +74,14 @@ def list_students():
         return
     # TODO: Loop through student_db. For each student, print their ID, name, and their enrolled_in list.
     for student in student_db:
-        print(f"  ID: {student.id}, Name: {student.name}, Enrolled in: {student.enrolled_in}")
+        print(f"  ID: {str(student.id).ljust(10)}, Name: {str(student.name).ljust(15)}, Enrolled in: {str(student.enrolled_in).ljust(10)}")
 
 def list_teachers():
     """Prints all teachers in the database."""
     # TODO: Implement the logic to list all teachers, similar to list_students().
     print("\n--- Teacher List ---")
     for teacher in teacher_db:
-        print(f"  ID: {teacher.id}, Name: {teacher.name}, Speciality: {teacher.speciality}")
+        print(f"  ID: {str(teacher.id).ljust(10)}, Name: {str(teacher.name).ljust(15)}, Speciality: {str(teacher.speciality).ljust(10)}")
 
 def find_students(term):
     """Finds students by name."""
@@ -144,8 +144,6 @@ def front_desk_lookup(term):
     find_teachers(term)
 
 
-
-
 #Fragment 4
 # --- Main Application ---
 def main():
@@ -153,6 +151,8 @@ def main():
     # Pre-populate some data for easy testing
     add_teacher("Dr. Keys", "Piano")
     add_teacher("Ms. Fret", "Guitar")
+    front_desk_register("Juan","Guitar")
+    front_desk_register("John","Bass")
 
     while True:
         print("\n===== Music School Front Desk =====")
