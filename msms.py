@@ -115,22 +115,27 @@ def find_students(term):
     # After the loop, if the results list is empty, print "No match found."
     # Otherwise, print the details for each student in the results list.
 
-def find_teachers(term):
+def find_teachers(term, speciality_check):
     global name_found
     current_name = []
     matched_teacher = None
+    matched_speciality = None
 
     print(f"\n--- Finding Teachers matching '{term}' ---")
 
     for teacher in teacher_db:
-        if term == teacher.name:
-            matched_student = teacher
+        if term == teacher.name and speciality_check == teacher.speciality:
+            matched_teacher = teacher
+            matched_speciality = speciality_check
         elif term in teacher.name.split():
             current_name.append(teacher.name)
     
-    if matched_student:
-        print(f"ID: {matched_teacher.id}\nName: {matched_teacher.name}\nEnrolled in: {matched_teacher.speciality}")
+    if matched_teacher and matched_speciality:
+        print(f"ID: {matched_teacher.id}\nName: {matched_teacher.name}\nSpeciality: {matched_teacher.speciality}")
         name_found = True
+
+    elif matched_teacher and speciality_check != matched_teacher.speciality:
+        print(f"Incorrect speciality")
 
     elif len(current_name) > 0:
         print(f"Possible Names: {current_name}")
@@ -178,11 +183,13 @@ def front_desk_enrol(student_id, instrument):
         # TODO: If the student is not found, print an error message like "Error: Student ID not found."
         print(f"Error: Student ID {student_id} not found.")
 
-def front_desk_lookup(term):
+def front_desk_lookup(term, speciality_check) :
     """High-level function to search everything."""
     print(f"\n--- Performing lookup for '{term}' ---")
-    find_students(term)
-    find_teachers(term)
+    if len(speciality_check.split()) == 0:
+        find_students(term)
+    else:
+        find_teachers(term, speciality_check)
 
 
 #Fragment 4
@@ -227,11 +234,13 @@ def main():
             # TODO: Prompt for a search term, then call front_desk_lookup.
             while name_found == False:
                 term = input("Enter search term (To exit, '999'): ").title()
+                speciality_check = input("Enter speciality (if teacher): ").title()
+                
                 if term == "999":
                     print(f"Exit successfully")
                     break
                 else:
-                    front_desk_lookup(term) 
+                    front_desk_lookup(term, speciality_check) 
 
         elif choice == '4':
             list_students()
