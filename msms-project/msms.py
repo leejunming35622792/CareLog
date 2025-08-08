@@ -23,6 +23,7 @@ teacher_db = []
 next_student_id = 1
 next_teacher_id = 1
 
+admin_pw = "admin1234" #password to unlock system
 staff_pw = "staff1234" #password access to view all students/teachers
 name_found = False #used in find_students/find_teachers
 
@@ -233,21 +234,14 @@ def front_desk_lookup(term, speciality_check) :
 
 # --- Main Application ---
 def main():
-    # Pre-populate some data for easy testing
-    add_teacher("Dr. Keys", "Piano")
-    add_teacher("Ms. Fret", "Guitar")
-    front_desk_register("Juan","Guitar")
-    front_desk_register("John","Bass")
-    front_desk_register("Aidan Chiang","Guitar")
-    front_desk_register("Aidan Lim","Bass")
-
     while True:
         print("\n===== Music School Front Desk =====")
         print("1. Register New Student")
         print("2. Enrol Existing Student")
-        print("3. Lookup Student or Teacher")
-        print("4. (Admin) List all Students")
-        print("5. (Admin) List all Teachers")
+        print("3. Add New Teacher ")
+        print("4. Lookup Student or Teacher")
+        print("5. (Admin) List all Students")
+        print("6. (Admin) List all Teachers")
         print("q. Quit")
         
         #user input to choose operation
@@ -270,8 +264,26 @@ def main():
             except ValueError:
                 print("Invalid ID. Please enter a number.")
 
+        #add new teacher
+        elif choice == "3":
+            try:
+                name = input("Enter teacher name: ")
+                speciality = input("Enter speciality: ")
+                current_teacher_name = name.replace(" ","")
+
+                if current_teacher_name.alpha() == False:
+                    raise ValueError
+                
+                if len(current_teacher_name) == 0:
+                    raise ValueError
+                
+                add_teacher(name, speciality)
+
+            except ValueError:
+                print("Please enter a valid name and speciality!")
+
         #find student
-        elif choice == '3':
+        elif choice == '4':
             # TODO: Prompt for a search term, then call front_desk_lookup.
             while name_found == False:
                 term = input("Enter search term (To exit, '999'): ")
@@ -284,17 +296,53 @@ def main():
                     front_desk_lookup(term, speciality_check) 
 
         #view all students
-        elif choice == '4':
-            pw_trial = input("Please enter staff password: ")
-            if pw_trial == staff_pw:
-                list_students()
-            else:
-                print("Wrong password!")
-                break
+        elif choice == '5':
+            trial = 1
+            while True:
+                pw_trial = input("Please enter staff password: ")
+
+                if pw_trial == staff_pw:
+                    list_students()
+                    break
+
+                if trial == 3:
+                    print("System locked!")
+
+                    while True:
+                        unlock_pw = input("Please enter admin password: ")
+
+                        if unlock_pw == admin_pw:
+                            return main()
+
+                else:
+                    print("Wrong password!")
+                    print(f"{3-trial} trials left")
+                    trial+=1
 
         #view all teachers
-        elif choice == '5':
-            list_teachers()
+        elif choice == '6':
+            trial = 1
+            
+            while True:
+                pw_trial = input("Please enter staff password: ")
+
+                if pw_trial == staff_pw:
+                    list_teachers()
+                    break
+
+                if trial == 3:
+                    print("System locked!")
+
+                    while True:
+                        unlock_pw = input("Please enter admin password: ")
+
+                        if unlock_pw == admin_pw:
+                            return main()
+
+                else:
+                    print("Wrong password!")
+                    print(f"{3-trial} trials left")
+                    trial+=1
 
         #exit
         elif choice.lower() == 'q':
@@ -307,4 +355,12 @@ def main():
 
 # --- Program Start ---
 if __name__ == "__main__":
+    # Pre-populate some data for easy testing
+    add_teacher("Dr. Keys", "Piano")
+    add_teacher("Ms. Fret", "Guitar")
+    front_desk_register("Juan","Guitar")
+    front_desk_register("John","Bass")
+    front_desk_register("Aidan Chiang","Guitar")
+    front_desk_register("Aidan Lim","Bass")
+
     main()
