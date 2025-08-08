@@ -16,12 +16,10 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 + Preloaded Test Data – Includes a few teachers and students for quick testing.
 
 # Data Models - How It Works
-##
-
   *Student class*: Stores student ID, name, and enrolled instruments.
   *Teacher class*: Stores teacher ID, name, and speciality instrument.
 
-<br>
+
 # In-Memory Database
 ##
 
@@ -29,7 +27,7 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
   *teacher_db* – List holding all teacher objects.
 
-<br>
+
 # Core Functions
 ##
 
@@ -41,7 +39,7 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
   *list_students()* / *list_teachers()* – Display all records in a formatted way.
 
-<br>
+
 # Front Desk Functions
 ##
 
@@ -51,7 +49,7 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
   *front_desk_lookup()* – Handles student or teacher lookups based on input.
 
-<br>
+
 # Main Application Loop
 ##
 
