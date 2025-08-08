@@ -7,13 +7,12 @@ It allows staff to register students, enrol them in instruments, add teachers, a
 The system uses object-oriented programming (OOP) to create and manage Student and Teacher objects, and stores them in in-memory databases (lists).
 
 # Features <br>
-*Register New Students* – Capture student details and automatically assign a unique ID.
-*Enrol Existing Students* – Add instruments to a student’s enrolment list.
-*Add Teachers* – Register teachers with their speciality instrument.
-*Lookup Students & Teachers* – Search by name, with partial matching support.
-*Admin View* – List all students or teachers (_with password protection for students_).
-
-+ Preloaded Test Data – Includes a few teachers and students for quick testing.
+*Register New Students* – Capture student details and automatically assign a unique ID. <br>
+*Enrol Existing Students* – Add instruments to a student’s enrolment list.<br>
+*Add Teachers* – Register teachers with their speciality instrument.<br>
+*Lookup Students & Teachers* – Search by name, with partial matching support.<br>
+*Admin View* – List all students or teachers (_with password protection for students_).<br>
+*Preloaded Test Data* – Includes a few teachers and students for quick testing.
 
 ## 
 # Data Models - How It Works <br>
