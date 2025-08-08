@@ -2,11 +2,11 @@
 ## 
 
 ```Overview```
-This Python program is a simple Music School Front Desk Management System.
+This Python program is a simple *Music School Front Desk Management System*.
 It allows staff to register students, enrol them in instruments, add teachers, and search for both students and teachers.
 The system uses object-oriented programming (OOP) to create and manage Student and Teacher objects, and stores them in in-memory databases (lists).
 
-🎯 Features
+🎯 Features <br>
 Register New Students – Capture student details and automatically assign a unique ID.
 
 Enrol Existing Students – Add instruments to a student’s enrolment list.
