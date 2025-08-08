@@ -1,12 +1,12 @@
 # Music School Management System (PST1)
 ## 
 
-```Overview``` <br>
+# Overview <br>
 This Python program is a simple *Music School Front Desk Management System*.
 It allows staff to register students, enrol them in instruments, add teachers, and search for both students and teachers.
 The system uses object-oriented programming (OOP) to create and manage Student and Teacher objects, and stores them in in-memory databases (lists).
 
-```Features``` <br>
+# Features <br>
 *Register New Students* – Capture student details and automatically assign a unique ID.
 *Enrol Existing Students* – Add instruments to a student’s enrolment list.
 *Add Teachers* – Register teachers with their speciality instrument.
@@ -15,22 +15,19 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
 + Preloaded Test Data – Includes a few teachers and students for quick testing.
 
-# Data Models - How It Works
+## 
+# Data Models - How It Works <br>
   *Student class*: Stores student ID, name, and enrolled instruments.
   *Teacher class*: Stores teacher ID, name, and speciality instrument.
 
 
-# In-Memory Database
-##
-
+# In-Memory Database <br>
   *student_db* – List holding all student objects.
 
   *teacher_db* – List holding all teacher objects.
 
 
-# Core Functions
-##
-
+# Core Functions <br>
   *add_student()* – Input validation for new student names and instruments.
 
   *add_teacher()* – Adds a teacher to the database.
@@ -40,9 +37,7 @@ The system uses object-oriented programming (OOP) to create and manage Student a
   *list_students()* / *list_teachers()* – Display all records in a formatted way.
 
 
-# Front Desk Functions
-##
-
+# Front Desk Functions <br>
   *front_desk_register()* – Registers and enrols a student.
 
   *front_desk_enrol()* – Adds an instrument to a student’s record.
@@ -50,9 +45,7 @@ The system uses object-oriented programming (OOP) to create and manage Student a
   *front_desk_lookup()* – Handles student or teacher lookups based on input.
 
 
-# Main Application Loop
-##
-
+# Main Application Loop <br>
   Menu-driven interface for staff to interact with the system.
 
   Password protection for viewing all student data (staff_pw = "staff1234").
