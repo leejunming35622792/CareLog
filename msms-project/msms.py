@@ -36,6 +36,7 @@ def add_student():
         try:
             name = input("Enter student name: ")
 
+            #remove all whitespaces
             checkName = name.replace(" ","")
 
             #check if input is all letters
@@ -50,7 +51,8 @@ def add_student():
         #case handling
         try:
             instrument = input("Enter instrument to enrol in: ")
-
+            
+            #remove all whitespaces
             checkInstrument = instrument.replace(" ","")
 
             #check if input is all letters
@@ -180,16 +182,6 @@ def find_teachers(term, speciality_check):
 
 
 # --- Front Desk Functions ---
-def find_student_by_id(student_id):
-    #loop student_db
-    #if ID matches student_id, return the student object.
-    for student in student_db:
-        if student.id == student_id:
-            return student
-
-    #return nothing if no record is found
-    return None
-
 #related to registration
 def front_desk_register(name, instrument):
     #variables
@@ -203,6 +195,16 @@ def front_desk_register(name, instrument):
     #call front_desk_enrol() using the new student's ID and the provided instrument.
     front_desk_enrol(new_student.id, instrument)
     print(f"Front Desk: Successfully registered '{name}' and enrolled them in '{instrument}'.")
+
+def find_student_by_id(student_id):
+    #loop student_db
+    #if ID matches student_id, return the student object.
+    for student in student_db:
+        if student.id == student_id:
+            return student
+
+    #return nothing if no record is found
+    return None
 
 def front_desk_enrol(student_id, instrument):
     #Use find_student_by_id()
@@ -259,7 +261,7 @@ def main():
             # TODO: Prompt for student ID (as an int) and instrument, then call front_desk_enrol.
             try:
                 student_id = int(input("Enter student ID: "))
-                instrument = input("Enter instrument to enrol in: ")
+                instrument = input("Enter instrument to enrol in: ").title()
                 front_desk_enrol(student_id, instrument)
             except ValueError:
                 print("Invalid ID. Please enter a number.")
@@ -286,6 +288,7 @@ def main():
         elif choice == '4':
             # TODO: Prompt for a search term, then call front_desk_lookup.
             while name_found == False:
+                print("Alert - Case Sensitive!")
                 term = input("Enter search term (To exit, '999'): ")
                 speciality_check = input("Enter speciality (if teacher): ").title()
 
@@ -322,7 +325,7 @@ def main():
         #view all teachers
         elif choice == '6':
             trial = 1
-            
+
             while True:
                 pw_trial = input("Please enter staff password: ")
 
