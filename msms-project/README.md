@@ -1,59 +1,62 @@
 # Music School Management System (PST1)
 ## 
 
-```Overview```
+```Overview``` <br>
 This Python program is a simple *Music School Front Desk Management System*.
 It allows staff to register students, enrol them in instruments, add teachers, and search for both students and teachers.
 The system uses object-oriented programming (OOP) to create and manage Student and Teacher objects, and stores them in in-memory databases (lists).
 
-🎯 Features <br>
-Register New Students – Capture student details and automatically assign a unique ID.
+```Features``` <br>
+*Register New Students* – Capture student details and automatically assign a unique ID.
+*Enrol Existing Students* – Add instruments to a student’s enrolment list.
+*Add Teachers* – Register teachers with their speciality instrument.
+*Lookup Students & Teachers* – Search by name, with partial matching support.
+*Admin View* – List all students or teachers (_with password protection for students_).
 
-Enrol Existing Students – Add instruments to a student’s enrolment list.
++ Preloaded Test Data – Includes a few teachers and students for quick testing.
 
-Add Teachers – Register teachers with their speciality instrument.
+# Data Models - How It Works
+##
 
-Lookup Students & Teachers – Search by name, with partial matching support.
+  *Student class*: Stores student ID, name, and enrolled instruments.
+  *Teacher class*: Stores teacher ID, name, and speciality instrument.
 
-Admin View – List all students or teachers (with password protection for students).
+<br>
+# In-Memory Database
+##
 
-Preloaded Test Data – Includes a few teachers and students for quick testing.
+  *student_db* – List holding all student objects.
 
-🛠 How It Works
-Data Models
+  *teacher_db* – List holding all teacher objects.
 
-Student class: Stores student ID, name, and enrolled instruments.
+<br>
+# Core Functions
+##
 
-Teacher class: Stores teacher ID, name, and speciality instrument.
+  *add_student()* – Input validation for new student names and instruments.
 
-In-Memory Database
+  *add_teacher()* – Adds a teacher to the database.
 
-student_db – List holding all student objects.
+  *find_students()* / *find_teachers()* – Search functions with exact and partial match handling.
 
-teacher_db – List holding all teacher objects.
+  *list_students()* / *list_teachers()* – Display all records in a formatted way.
 
-Core Functions
+<br>
+# Front Desk Functions
+##
 
-add_student() – Input validation for new student names and instruments.
+  *front_desk_register()* – Registers and enrols a student.
 
-add_teacher() – Adds a teacher to the database.
+  *front_desk_enrol()* – Adds an instrument to a student’s record.
 
-find_students() / find_teachers() – Search functions with exact and partial match handling.
+  *front_desk_lookup()* – Handles student or teacher lookups based on input.
 
-list_students() / list_teachers() – Display all records in a formatted way.
+<br>
+# Main Application Loop
+##
 
-Front Desk Functions
+  Menu-driven interface for staff to interact with the system.
 
-front_desk_register() – Registers and enrols a student.
+  Password protection for viewing all student data (staff_pw = "staff1234").
 
-front_desk_enrol() – Adds an instrument to a student’s record.
-
-front_desk_lookup() – Handles student or teacher lookups based on input.
-
-Main Application Loop
-
-Menu-driven interface for staff to interact with the system.
-
-Password protection for viewing all student data (staff_pw = "staff1234").
-
-Option to quit the program.
+  Option to quit the program.
