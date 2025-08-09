@@ -159,68 +159,58 @@ def list_teachers():
         print(f"  ID: {str(teacher.id).ljust(10)}, Name: {str(teacher.name).ljust(15)}, Speciality: {str(teacher.speciality).ljust(10)}")
 
 #to find student by name
+#case sensitive
 def find_students(term):
     #variables
     global name_found
 
     # generate a list of names that contain 'term'
-    current_name = [s.name for s in student_db if term.lower() in s.name.lower()]
+    current_name = [s.name for s in student_db if term in s.name]
 
     print(f"\n--- Finding Students matching '{term}' ---")
 
     if not current_name:
         print("No match found.\n")
         return 
-
-    if len(current_name) > 1:
-        print(f"Possible Names: {current_name}")
-        print("\nAlert - Case Sensitive!")
-        return
     
-    print(current_name)
     
-
+    print("---- Possible Names ---")
+    print("Alert - Case Sensitive!\n")
+        
+    for student in student_db:
+        for name in current_name:
+            if student.name == name:
+                print(f"ID: {student.id}\nName: {student.name}\nInstructions: {student.enrolled_in}\n")
+                break
+    
 #to find teacher by name and instrument
+#case insensitive
 def find_teachers(term, speciality_check):
-    #variables
-    global name_found
-    current_name = []
-    matched_teacher = None
-    matched_speciality = None
+    #generate a list of names that 
+    matches = [t for t in teacher_db if term.lower() in t.name.lower()]
 
     print(f"\n--- Finding Teachers matching '{term}' ---")
 
-    #loop teacher_db
-    for teacher in teacher_db:
-        #if name and speciality is exactly found
-        if term == teacher.name and speciality_check == teacher.speciality:
-            matched_teacher = teacher
-            matched_speciality = speciality_check
-
-        #if partially found
-        elif term in teacher.name.split():
-            current_name.append(teacher.name)
-    
-    #print if exatly found
-    if matched_teacher and matched_speciality:
-        #print
-        print(f"ID: {matched_teacher.id}\nName: {matched_teacher.name}\nSpeciality: {matched_teacher.speciality}")
-
-        #stop and exit this function
-        name_found = True
-
-    #name matches but speciality is wrong
-    elif matched_teacher and speciality_check != matched_teacher.speciality:
-        print(f"Incorrect speciality")
-
-    #similar names are found
-    elif len(current_name) > 0:
-        print(f"Possible Names: {current_name}")
-        print(f"No exact match found.\n")
-
-    else:
+    #teacher is not found
+    if not matches:
         print("No match found.\n")
+        return
 
+    found_exact = False
+
+    for teacher in matches:
+        if teacher.speciality.lower() == speciality_check.lower():
+            #match teacher name and speciality
+            print(f"ID: {teacher.id}\nName: {teacher.name}\nInstrument: {teacher.speciality}\n")
+            
+            found_exact = True
+
+        else:
+            # Name matched, but speciality different
+            print(f"Do you mean...\nName: {teacher.name}\nInstrument: {teacher.speciality}\n")
+
+    if not found_exact:
+        print("No exact speciality match found.\n")
 
 # --- Front Desk Functions ---
 #related to registration
