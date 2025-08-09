@@ -25,16 +25,17 @@ next_teacher_id = 1
 
 admin_pw = "admin1234" #password to unlock system
 staff_pw = "staff1234" #password access to view all students/teachers
-name_found = False #used in find_students/find_teachers
 
 
 # --- Core Helper Functions ---
 #to add new students
 def add_student():
+    all_name = []
+
     while True:
         #case handling
         try:
-            name = input("Enter student name: ")
+            name = input("Enter student name: ").rstrip().title()
 
             #remove all whitespaces
             checkName = name.replace(" ","")
@@ -50,7 +51,7 @@ def add_student():
     while True:
         #case handling
         try:
-            instrument = input("Enter instrument to enrol in: ")
+            instrument = input("Enter instrument to enrol in: ").title()
             
             #remove all whitespaces
             checkInstrument = instrument.replace(" ","")
@@ -63,24 +64,74 @@ def add_student():
         except ValueError:
             print(f"Please enter a valid instrument!\n")
 
-    return name.title(), instrument.title() 
-    #return name and instrument with first letter of every word in capital
+    for student in student_db:
+        all_name.append(student.name)
 
+    if name in all_name:
+        print(f"\nAlert - '{student.name}' with '{student.enrolled_in} is recorded under ID '{student.id}' before.'") 
+
+        print(f"1 - Add new student\n2 - Exit and Enroll existing student")
+
+        while True:
+            proceed = input("Choose (1/2): ")
+
+            if proceed == "1":
+                #return name and instrument with first letter of every word in capital
+                return name, instrument
+        
+            elif proceed == "2":
+                return main()
+
+            else:
+                print(f"Please enter 1 or 2 only.\n")
+
+    else:
+        return name, instrument
+    
 #to add new teachers
 def add_teacher(name, speciality):
-    #global variable
+    # variables
     global next_teacher_id
 
+    # generate a list of all teacher's name
+    # to check whether a teacher has registered before
+    all_name = [t.name for t in teacher_db]
+
     new_teacher = Teacher(next_teacher_id, name, speciality)
-    
-    #add new_teacher into teacher_db
+
+    # to check whether a teacher has registered before
+    if name in all_name:
+        print(f"Teacher '{name}' is already recorded under '{speciality}' speciality.")
+        while True:
+            print("1 - Add new teacher")
+            print("2 - Change existing data")
+            print("3 - Exit")
+            proceed = input("Choose (1/2/3): ")
+
+            if proceed == "1":
+                teacher_db.append(new_teacher)
+                next_teacher_id += 1
+                print(f"Core: Teacher '{name}' with speciality '{speciality}' added successfully.")
+                return 
+
+            elif proceed == "2":
+                for teacher in teacher_db:
+                    if teacher.name == name:
+                        teacher.speciality = speciality
+                        print(f"Update '{teacher.name}' to speciality '{teacher.speciality}'.")
+                return
+            
+            elif proceed == "3":
+                return  # Exit function
+
+            else:
+                print("Please enter 1, 2, or 3 only.")
+
+    # If teacher does not exist, add them
     teacher_db.append(new_teacher)
-
-    #ensure every id is distinct with increment of 1
     next_teacher_id += 1
-
-    print(f"Core: Teacher '{name}' added successfully.")
-
+    print(f"Core: Teacher '{name}' with speciality '{speciality}' added successfully.")
+    
 #to list all students
 def list_students():
     print("\n--- Student List ---")
@@ -111,33 +162,23 @@ def list_teachers():
 def find_students(term):
     #variables
     global name_found
-    current_name = []
-    matched_student = None
+
+    # generate a list of names that contain 'term'
+    current_name = [s.name for s in student_db if term.lower() in s.name.lower()]
 
     print(f"\n--- Finding Students matching '{term}' ---")
 
-    #loop student_db
-    for student in student_db:
-        if term == student.name:               #if name is exactly found
-            matched_student = student
-        elif term in student.name.split():
-            current_name.append(student.name)  #if similar name is found
-    
-    #for name that's exactly found
-    if matched_student:
-        #print
-        print(f"ID: {matched_student.id}\nName: {matched_student.name}\nEnrolled in: {matched_student.enrolled_in}")
-
-        #stop and exit this function
-        name_found = True
-
-    #similar names are found
-    elif len(current_name) > 0:
-        print(f"Possible Names: {current_name}")
-        print(f"No exact match found.\n")
-
-    else:
+    if not current_name:
         print("No match found.\n")
+        return 
+
+    if len(current_name) > 1:
+        print(f"Possible Names: {current_name}")
+        print("\nAlert - Case Sensitive!")
+        return
+    
+    print(current_name)
+    
 
 #to find teacher by name and instrument
 def find_teachers(term, speciality_check):
@@ -213,7 +254,10 @@ def front_desk_enrol(student_id, instrument):
     #add the instrument to 'enrolled_in' list if found
     if student:
         student.enrolled_in.append(instrument)
-        print(f"Front Desk: Enrolled student {student_id} in '{instrument}'.")
+
+        for student in student_db:
+            if student.id == student_id:
+                print(f"Front Desk: Enrolled student '{student.name}' in {student.enrolled_in}.")
 
     else:
         #not found
@@ -235,7 +279,10 @@ def front_desk_lookup(term, speciality_check) :
 
 
 # --- Main Application ---
-def main():
+def main(): 
+    #used in find_students/find_teachers
+    name_found = False
+
     while True:
         print("\n===== Music School Front Desk =====")
         print("1. Register New Student")
@@ -245,7 +292,7 @@ def main():
         print("5. (Admin) List all Students")
         print("6. (Admin) List all Teachers")
         print("q. Quit")
-        
+
         #user input to choose operation
         choice = input("Enter your choice: ")
         print()
@@ -269,12 +316,14 @@ def main():
         #add new teacher
         elif choice == "3":
             try:
-                name = input("Enter teacher name: ")
-                speciality = input("Enter speciality: ")
+                name = input("Enter teacher name: ").rstrip().title()
+                speciality = input("Enter speciality: ").rstrip().title()
                 current_teacher_name = name.replace(" ","")
 
-                if current_teacher_name.alpha() == False:
-                    raise ValueError
+                #check if name includes number
+                for letter in list(current_teacher_name):
+                    if letter in [1,2,3,4,5,6,7,8,9,0,"!","@","#","$","%","^","*","?","<",">"]:
+                        raise ValueError
                 
                 if len(current_teacher_name) == 0:
                     raise ValueError
@@ -288,7 +337,6 @@ def main():
         elif choice == '4':
             # TODO: Prompt for a search term, then call front_desk_lookup.
             while name_found == False:
-                print("Alert - Case Sensitive!")
                 term = input("Enter search term (To exit, '999'): ")
                 speciality_check = input("Enter speciality (if teacher): ").title()
 
@@ -296,7 +344,7 @@ def main():
                     print(f"Exit successfully")
                     break
                 else:
-                    front_desk_lookup(term, speciality_check) 
+                    front_desk_lookup(term, speciality_check)
 
         #view all students
         elif choice == '5':
