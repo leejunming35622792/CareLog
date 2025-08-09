@@ -53,9 +53,9 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
 # Important Info <br>
 *Admin Password* 
-  - To unlock the system when user keys in three incorrect password
-  - Password: admin1234
+- To unlock the system when user keys in three incorrect password
+**- Password: admin1234**
 
 *Staff Password*
-  - To view all students or teachers
-  - Password: staff1234
+- To view all students or teachers
+**- Password: staff1234**
