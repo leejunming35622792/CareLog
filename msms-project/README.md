@@ -43,6 +43,14 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
   *front_desk_lookup()* – Handles student or teacher lookups based on input.
 
+
+# Main Application Loop <br>
+  Menu-driven interface for staff to interact with the system.
+
+  Password protection for viewing all student data (staff_pw = "staff1234").
+
+  Option to quit the program.
+
 # Important Info <br>
 *Admin Password* 
   - To unlock the system when user keys in three incorrect password
@@ -51,11 +59,3 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 *Staff Password*
   - To view all students or teachers
   - Password: staff1234
-
-
-# Main Application Loop <br>
-  Menu-driven interface for staff to interact with the system.
-
-  Password protection for viewing all student data (staff_pw = "staff1234").
-
-  Option to quit the program.
