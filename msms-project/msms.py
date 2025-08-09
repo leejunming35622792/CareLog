@@ -68,7 +68,7 @@ def add_student():
         all_name.append(student.name)
 
     if name in all_name:
-        print(f"\nAlert - '{student.name}' with '{student.enrolled_in} is recorded under ID '{student.id}' before.'") 
+        print(f"\nAlert - '{student.name}' with '{student.enrolled_in} has been recorded under ID '{student.id}' before.'") 
 
         print(f"1 - Add new student\n2 - Exit and Enroll existing student")
 
@@ -201,13 +201,13 @@ def find_teachers(term, speciality_check):
     for teacher in matches:
         if teacher.speciality.lower() == speciality_check.lower():
             #match teacher name and speciality
-            print(f"ID: {teacher.id}\nName: {teacher.name}\nInstrument: {teacher.speciality}\n")
-            
+            print(f"ID: {teacher.id}\nName: {teacher.name}\nSpeciality: {teacher.speciality}\n")
+
             found_exact = True
 
         else:
             # Name matched, but speciality different
-            print(f"Do you mean...\nName: {teacher.name}\nInstrument: {teacher.speciality}\n")
+            print(f"Do you mean...\nName: {teacher.name}\nSpeciality: {teacher.speciality}\n")
 
     if not found_exact:
         print("No exact speciality match found.\n")
@@ -276,7 +276,7 @@ def main():
     while True:
         print("\n===== Music School Front Desk =====")
         print("1. Register New Student")
-        print("2. Enrol Existing Student")
+        print("2. Enroll Existing Student")
         print("3. Add New Teacher ")
         print("4. Lookup Student or Teacher")
         print("5. (Admin) List all Students")
@@ -323,18 +323,22 @@ def main():
             except ValueError:
                 print("Please enter a valid name and speciality!")
 
-        #find student
+        #find student/teacher
         elif choice == '4':
             # TODO: Prompt for a search term, then call front_desk_lookup.
             while name_found == False:
                 term = input("Enter search term (To exit, '999'): ")
                 speciality_check = input("Enter speciality (if teacher): ").title()
 
+                if not term:
+                    print("Please enter a valid name (and speciality)\n")
+                    continue
+
                 if term == "999":
                     print(f"Exit successfully")
                     break
-                else:
-                    front_desk_lookup(term, speciality_check)
+
+                front_desk_lookup(term, speciality_check)
 
         #view all students
         elif choice == '5':
