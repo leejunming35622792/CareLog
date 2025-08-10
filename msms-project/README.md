@@ -16,7 +16,7 @@ The system uses object-oriented programming (OOP) to create and manage Student a
 
 ## 
 # Data Models - How It Works <br>
-  *Student class*: Stores student ID, name, and enrolled instruments.
+  *Student class*: Stores student ID, name, and enrolled instruments. <br>
   *Teacher class*: Stores teacher ID, name, and speciality instrument.
 
 
