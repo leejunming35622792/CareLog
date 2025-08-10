@@ -71,7 +71,7 @@ def add_student():
         all_name.append(student.name)
 
     if name in all_name:
-        print(f"\nAlert - '{student.name}' with '{student.enrolled_in} has been recorded under ID '{student.id}' before.'") 
+        print(f"\nAlert - '{student.name}' with '{student.enrolled_in}' has been recorded under ID '{student.id}' before.'") 
 
         print("1 - Add new student")
         print("2 - Exit and Enroll existing student")
@@ -177,7 +177,6 @@ def find_students(term):
     current_name = [s.name for s in student_db if term in s.name]
 
     print("\n--- Finding Students matching '{term}' ---")
-    print("Alert - Case Sensitive!\n")
 
     # if the list doesnt contain the seach term
     if not current_name:
@@ -190,7 +189,7 @@ def find_students(term):
     for student in student_db:
         for name in current_name:
             if student.name == name:
-                print(f"ID: {student.id}\nName: {student.name}\nInstructions: {student.enrolled_in}\n")
+                print(f"ID: {student.id}\nName: {student.name}\nEnrolled In: {student.enrolled_in}\n")
                 break
     
 # to find teacher by name and instrument
@@ -200,7 +199,6 @@ def find_teachers(term, speciality_check):
     matches = [t for t in teacher_db if term.lower() in t.name.lower()]
 
     print(f"\n--- Finding Teachers matching '{term}' ---")
-    print(f"Alert - Case Insensitive!\n")
 
     # teacher is not found
     if not matches:
@@ -218,10 +216,7 @@ def find_teachers(term, speciality_check):
 
         else:
             # name matched, but speciality different
-            print(f"Do you mean...\nName: {teacher.name}\nSpeciality: {teacher.speciality}\n")
-
-    if not found_exact:
-        print("No exact speciality match found.\n")
+            print(f"Or do you mean...\nName: {teacher.name}\nSpeciality: {teacher.speciality}\n")
 
 # --- Front Desk Functions ---
 # related to registration
@@ -271,11 +266,13 @@ def front_desk_lookup(term, speciality_check) :
 
     # to add new student
     if len(speciality_check.split()) == 0:
+        print("Alert - Case Sensitive!\n")
         find_students(term)
 
     # user does enter speciality
     # to find teachers
-    else:
+    else:   
+        print("Alert - Case Insensitive!\n")
         find_teachers(term.title(), speciality_check.title())
 
 
