@@ -196,8 +196,8 @@ def find_students(term):
 # to find teacher by name and instrument
 # case insensitive
 def find_teachers(term, speciality_check):
-    # generate a list of names that 
-    matches = [t for t in teacher_db if term in t.name.lower()]
+    # generate a list of names that contain search term
+    matches = [t for t in teacher_db if term.lower() in t.name.lower()]
 
     print(f"\n--- Finding Teachers matching '{term}' ---")
     print(f"Alert - Case Insensitive!\n")
@@ -339,15 +339,16 @@ def main():
         elif choice == '4':
             while name_found == False:
                 term = input("Enter search term (To exit, '999'): ")
+
+                if term == "999":
+                    print(f"Exit successfully")
+                    break
+
                 speciality_check = input("Enter speciality (if teacher): ").title()
 
                 if not term:
                     print("Please enter a valid name (and speciality)\n")
                     continue
-
-                if term == "999":
-                    print(f"Exit successfully")
-                    break
 
                 front_desk_lookup(term, speciality_check)
 
