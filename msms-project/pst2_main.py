@@ -190,6 +190,96 @@ def remove_student(student_id):
         print("Deleted successfully!\n")
 
 
+# --- New Receptionist Features ---
+def check_in(student_id, course_id, timestamp=None):
+    """Records a student's attendance for a course."""
+    if timestamp is None:
+        # TODO: Get the current time as a string using datetime.datetime.now().isoformat()
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # TODO: Create a check-in record dictionary.
+    # It should contain 'student_id', 'course_id', and 'timestamp'.
+
+    check_in_record = {
+        "student_id": student_id,
+        "course_id": course_id,
+        "timestamp": timestamp
+    }
+    # TODO: Append this new record to the app_data['attendance'] list.
+
+    app_data['attendance'].append(check_in_record)
+
+    print(f"Receptionist: Student {student_id} checked into {course_id}.")
+
+def print_student_card(student_id):
+    """Creates a text file badge for a student."""
+    # TODO: Find the student dictionary in app_data['students'].
+    student_to_print = None
+
+    for student in app_data['students']:
+        if int(student["ID"]) == student_id:
+            student_to_print = student
+            break
+    
+    if student_to_print:
+        # TODO: Create a filename, e.g., f"{student_id}_card.txt".
+        filename = f"{student_id}_card.txt"
+        
+        # TODO: Open the file in write mode ('w').
+        with open(filename, 'w') as f:
+            # Write the student's details to the file in a nice format.
+            f.write("========================\n")
+            f.write(f"  MUSIC SCHOOL ID BADGE\n")
+            f.write("========================\n")
+            f.write(f"ID: {student_to_print['ID']}\n")
+            f.write(f"Name: {student_to_print['Name']}\n")
+            f.write(f"Enrolled In: {', '.join(student_to_print.get('enrolled_in', []))}\n")
+        print(f"Printed student card to {filename}.")
+
+    else:
+        print(f"Error: Could not print card, student ID '{student_id}' not found.")
+
+
+# --- In-function features
+def enrol_student(student_name, student_id, student_course):
+    new_student = {
+        "ID": app_data["next_student_id"],
+        "Name": student_name,
+        "Course": student_course
+    }
+
+    all_name = [student["Name"] for student in app_data["students"]]
+    
+    name_exist = student_name in all_name
+
+    if name_exist == True and student_id < app_data["next_student_id"]:
+        print("Failed - This student name and ID have been enrolled before.\n")
+        return False
+    else:
+        app_data["students"].append(new_student)
+        print(f"\n'{student_name}' with ID '{app_data["next_student_id"]}' was successfully added!")
+        app_data["next_student_id"] += 1
+        return True
+        
+def enrol_teacher(teacher_name, teacher_id):
+    new_teacher = {
+        "ID": app_data["next_teacher_id"],
+        "Name": teacher_name,
+    }
+
+    all_name = [teacher["Name"] for teacher in app_data["teachers"]]
+    
+    name_exist = teacher_name in all_name
+
+    if name_exist == True and teacher_id < app_data["next_teacher_id"]:
+        print("Failed - This teacher name and ID have been enrolled before.\n")
+        return False
+    else:
+        app_data["teachers"].append(new_teacher)
+        print(f"\n'{teacher_name}' with ID '{app_data["next_teacher_id"]}' was successfully added!")
+        app_data["next_teacher_id"] += 1
+        return True
+
 
 # --- Core Persistence Engine ---
 def load_data(path=DATA_FILE):
