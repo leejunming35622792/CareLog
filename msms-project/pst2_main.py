@@ -128,7 +128,69 @@ def get_teacherYear():
         except ValueError:
             print("Please enter a valid year!\n")
  
- 
+
+      
+# --- Full CRUD for Core Data ---
+# Teachers
+def add_teacher(name, speciality):
+    """Adds a teacher dictionary to the data store."""
+    # TODO: Get the next teacher ID from app_data['next_teacher_id'].
+    teacher_id = app_data['next_teacher_id']
+
+    # TODO: Create a new teacher dictionary with 'id', 'name', and 'speciality' keys.
+    new_teacher = {"ID": teacher_id, "Name": name, "Speciality": speciality}
+
+    # TODO: Append the new dictionary to the app_data['teachers'] list.
+    app_data['teachers'].append(new_teacher)
+
+    # TODO: Increment the 'next_teacher_id' in app_data.
+    app_data['next_teacher_id'] += 1
+
+    print(f"Core: Teacher '{name}' added.")
+
+def update_teacher(teacher_id, **fields):
+    """Finds a teacher by ID and updates their data with provided fields."""
+
+    # loop app_data['teachers'] list.
+    for teacher in app_data['teachers']:
+        # if teacher's 'id' matches teacher_id:
+        if teacher['ID'] == teacher_id:
+
+            # Use the .update() method on the teacher dictionary to apply the 'fields'.
+            teacher.update(fields)
+            print(f"Teacher {teacher_id} updated.")
+            return
+        
+    print(f"Error: Teacher with ID {teacher_id} not found.")
+
+def remove_teacher(teacher_id):
+    """Removes a teacher from the data store."""
+    app_data['teachers'] = [teacher for teacher in app_data['teachers'] if teacher['ID'] != teacher_id]
+
+#Students
+def update_student(student_id, student_course):
+    # loop app_data['student'] list
+    for student in app_data['students']:
+        if student['ID'] == student_id:
+            student["Course"] = student_course
+            print(f"Student with ID '{student_id}' updated")
+            return 
+    print("Error: Student with ID {student_id} not found.")
+
+def remove_student(student_id):
+    """Removes a student from the data store."""
+    all_id = [student["ID"] for student in app_data["students"]]
+
+    if int(student_id) not in all_id:
+        print("Failed!")
+        print(f"Alert - ID '{student_id}' has not been registered.")
+
+    else:
+        app_data["students"] = [student for student in app_data["students"] if student["ID"] != student_id]
+        print("Deleted successfully!\n")
+
+
+
 # --- Core Persistence Engine ---
 def load_data(path=DATA_FILE):
     global app_data
