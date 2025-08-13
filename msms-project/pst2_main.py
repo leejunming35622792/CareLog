@@ -305,3 +305,181 @@ def save_data(path=DATA_FILE):
     with open(path, "w") as f:
         json.dump(app_data, f, indent=4)
     print("Data saved successfully.")
+
+
+# --- Main Application Loop ---
+def main():
+    """Main function to run the MSMS application."""
+
+    load_data() # Load all data from file at startup.
+
+    while True:
+        print("\n===== MSMS v2 (Persistent) =====")
+        print("1. Add New Student")
+        print("2. Check-in Student")
+        print("3. Print Student Card")
+        print("4. Update Student Info")
+        print("5. Remove Student")
+        print("6. Add New Teacher")
+        print("7. Update Teacher Info")
+        print("8. Remove Teacher")
+        print("q. Quit and Save")
+
+        choice = input("Enter your choice: ")
+        print()
+
+        made_change = False # A flag to track if we need to save
+        
+        if choice == '1':
+            # variable
+            next_id = app_data["next_student_id"]
+            all_names = [student["Name"] for student in app_data["students"]]
+            result = False
+
+            while result != True:
+                student_name = get_studentName()
+
+                if student_name not in all_names:
+                    student_course = get_studentCourse()
+                    result = enrol_student(student_name, next_id, student_course)
+                else:
+                    print("Alert - Name exists!\n")
+                    print(("1 - Rename\n2 - Exit"))
+                    opr = input("Enter (1/2): ")
+                    
+                    try:
+                        if opr == "2":
+                            print("\nNo changes made")
+                            result == False
+                            break
+                        if opr != "1":
+                            raise ValueError
+                        print()
+                        
+                    except ValueError:
+                            print("Alert - Enter 1 or 2 only!\n")
+
+            if result == True:
+                made_change = True
+
+        elif choice == '2':
+            # TODO: Get student_id and course_id from user, then call check_in().
+            student_id = int(get_studentID())
+
+            all_id = [student["ID"] for student in app_data["students"]]
+
+            if int(student_id) not in all_id:
+                print("Failed!")
+                print(f"Alert - Student ID '{student_id}' has not been registered.")
+
+            else:            
+                course_id = get_courseID()
+                check_in(student_id, course_id)
+                made_change = True
+
+        elif choice == '3':
+            # TODO: Get student_id, then call print_student_card().
+            student_id = int(get_studentID())
+
+            print_student_card(student_id)
+            pass # No change made, so no save needed
+
+        elif choice == '4':
+            student_id = int(get_studentID())
+            all_id = [student["ID"] for student in app_data["students"]]
+            
+            if student_id not in all_id:
+                print("Failed!")
+                print("Alert - Student ID not found.")
+            else:
+                student_course = get_studentCourse()
+                update_student(student_id, student_course)
+                made_change = True
+
+        elif choice == '5':
+            # TODO: Get student_id, then call remove_student().
+            all_id = [student["ID"] for student in app_data["students"]]
+            student_id = int(get_studentID())
+            
+            if student_id not in all_id:
+                print("Failed!")
+                print("Alert - Student ID not found.")
+            else:
+                remove_student(student_id)
+                made_change = True
+
+        elif choice == '6':
+            # variable
+            next_id = app_data["next_teacher_id"]
+            all_names = [teacher["Name"] for teacher in app_data["teachers"]]
+            result = False
+
+            while result != True:
+                teacher_name = get_teacherName()
+
+                if teacher_name not in all_names:
+                    result = enrol_teacher(teacher_name, next_id)
+                else:
+                    print("Alert - Name exists!\n")
+                    print(("1 - Rename\n2 - Exit"))
+                    opr = input("Enter (1/2): ")
+                    
+                    try:
+                        if opr == "2":
+                            print("\nNo changes made")
+                            result == False
+                            break
+
+                        if opr != "1":
+                            raise ValueError
+                        print()
+                        
+                    except ValueError:
+                            print("Alert - Enter 1 or 2 only!")
+
+            if result == True:
+                made_change = True
+
+        elif choice == '7':
+            all_id = [teacher["ID"] for teacher in app_data["teachers"]]
+
+            teacher_id = int(get_teacherID())
+        
+            if int(teacher_id) not in all_id:
+                print("Failed!")
+                print(f"Alert - ID '{teacher_id}' has not been registered.")
+            
+            else:
+                teacher_speciality = get_teacherSpeciality().title()
+                teacher_year = int(get_teacherYear())
+
+                update_teacher(teacher_id, Speciality=teacher_speciality, Year=teacher_year)
+                made_change = True
+            
+        elif choice == '8':
+            all_id = [teacher["ID"] for teacher in app_data["teachers"]]
+            teacher_id = int(get_teacherID())
+            
+            if teacher_id not in all_id:
+                print("Failed!")
+                print("Alert - Teacher ID not found.")
+            else:
+                remove_teacher(teacher_id)
+                made_change = True
+
+        elif choice.lower() == 'q':
+            print("Saving final changes and exiting.")
+            break
+
+        else:
+            print("Invalid choice.")
+            
+        if made_change:
+            save_data() # Save the data immediately after any change.
+
+    save_data() # One final save on exit.
+
+
+# --- Program Start ---
+if __name__ == "__main__":
+    main()
