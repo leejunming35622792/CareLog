@@ -1,0 +1,61 @@
+# Music School Management System (PST1)
+## 
+
+# Overview <br>
+This Python program is a simple *Music School Front Desk Management System*.
+It allows staff to register students, enrol them in instruments, add teachers, and search for both students and teachers.
+The system uses object-oriented programming (OOP) to create and manage Student and Teacher objects, and stores them in in-memory databases (lists).
+
+# Features <br>
+**Register New Students** – Capture student details and automatically assign a unique ID. <br><br>
+**Enrol Existing Students** – Add instruments to a student’s enrolment list.<br><br>
+**Add Teachers** – Register teachers with their speciality instrument.<br><br>
+**Lookup Students & Teachers** – Search by name, with partial matching support.<br><br>
+**Admin View** – List all students or teachers (_with password protection for students_).<br><br>
+**Preloaded Test Data** – Includes a few teachers and students for quick testing.
+
+## 
+# Data Models - How It Works <br>
+  *Student class*: Stores student ID, name, and enrolled instruments. <br>
+  *Teacher class*: Stores teacher ID, name, and speciality instrument.
+
+
+# In-Memory Database <br>
+  *student_db* – List holding all student objects.
+
+  *teacher_db* – List holding all teacher objects.
+
+
+# Core Functions <br>
+  *add_student()* – Input validation for new student names and instruments.
+
+  *add_teacher()* – Adds a teacher to the database.
+
+  *find_students()* / *find_teachers()* – Search functions with exact and partial match handling.
+
+  *list_students()* / *list_teachers()* – Display all records in a formatted way.
+
+
+# Front Desk Functions <br>
+  *front_desk_register()* – Registers and enrols a student.
+
+  *front_desk_enrol()* – Adds an instrument to a student’s record.
+
+  *front_desk_lookup()* – Handles student or teacher lookups based on input.
+
+
+# Main Application Loop <br>
+  Menu-driven interface for staff to interact with the system.
+
+  Password protection for viewing all student data (staff_pw = "staff1234").
+
+  Option to quit the program.
+
+# Important Info <br>
+*Admin Password* 
+- To unlock the system when user keys in three incorrect password <br>
+**- Password: admin1234**
+
+*Staff Password*
+- To view all students or teachers <br>
+**- Password: staff1234**
