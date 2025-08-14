@@ -30,7 +30,7 @@ def get_studentID():
         try:
             student_id = input("Enter Student ID: ")
             
-            if len(student_id) == 0:
+            if len(student_id) == 0 or student_id.isdigit() == False:
                 raise ValueError
             break
         except ValueError:
@@ -212,7 +212,7 @@ def print_student_card(student_id):
             f.write("========================\n")
             f.write(f"ID: {student_to_print['ID']}\n")
             f.write(f"Name: {student_to_print['Name']}\n")
-            f.write(f"Enrolled In: {', '.join(student_to_print.get('enrolled_in', []))}\n")
+            f.write(f"Course Joined: {', '.join(student_to_print.get('Course', []))}\n")
         print(f"Printed student card to {filename}.")
 
     else:
@@ -361,7 +361,6 @@ def main():
             student_id = int(get_studentID())
 
             print_student_card(student_id)
-            pass # No change made, so no save needed
 
         elif choice == '4':
             student_id = int(get_studentID())
