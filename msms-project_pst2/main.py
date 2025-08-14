@@ -10,7 +10,7 @@ import datetime
 DATA_FILE = "msms.json"
 app_data = {}
 
-
+ 
 # --- Data Input ---
 def get_studentName():
     while True:
