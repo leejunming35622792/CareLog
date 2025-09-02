@@ -22,6 +22,7 @@ def check_course():
 
 def confirm_action():
     while True:
+        print("\n--- Confirm Action ---")
         print("1 - Proceed with Changes\n2 - Exit")
         action = input("Choice: ")
         if action == "1":
@@ -33,7 +34,7 @@ def confirm_action():
         else:
             print("Please enter 1 or 2 only.\n")
 
-# Feature 1 - Register
+# Feature 1 - Register New Student/ Teacher
 def get_student_name():
         while True:
             student_name = input("Enter Student Name: ")
@@ -114,7 +115,7 @@ def add_teacher():
     speciality = get_teacher_speciality()
     return name, speciality
 
-# Feature 2 - Update
+# Feature 2 - Update Student/ Teacher
 def get_student_id():
     while True:
         student_id = input("Enter Student ID: ")
@@ -140,10 +141,10 @@ def get_teacher_id():
             if teacher_id == "q":
                 print("Changes not made.")
                 return main()
-            if teacher_id.isdigit() == False:
-                raise TypeError
             if int(teacher_id) > manager.next_teacher_id - 1:
                 raise ValueError
+            if teacher_id.isdigit() == False:
+                raise TypeError
             break
         except ValueError:
             print(f"Teacher ID '{teacher_id}' not found.\n")
@@ -180,7 +181,7 @@ def update_teacher(teacher_id, to_speciality):
             action = confirm_action()
             return action
 
-# Feature 3 - Delete
+# Feature 3 - Delete Student/ Teacher
 def delete_student(student_id):
     # To load all students
     all_students = [s for s in manager.students if s.id != int(student_id)]
@@ -194,7 +195,7 @@ def delete_teacher(teacher_id):
     action = confirm_action()
     return action
 
-# Feature 4 - Check-in 
+# Feature 4 - Check-in Student
 def check_in(student_id, course_id, timestamp=None):
     if timestamp is None:
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -252,16 +253,25 @@ def get_course_id(remark):
 def view_all_data(choice):
     match (choice):
         case "1":
-            all_students = [f"Student ID: {s.id}, Student Name: {s.name},Enrolled Courses: {s.enrolled_course_ids}" for s in manager.students]
+            print("\n--- Students ---")
+            all_students = [s for s in manager.students]
+            for student in all_students:
+                print(f"ID: {student.id}".ljust(10), f"Name: {student.name}".ljust(20), f"Courses: {student.enrolled_course_ids}".ljust(10))
         case "2":
-            all_teacher_name = [t.name for t in manager.teachers]
-            print(f"Teacher Names: {all_teacher_name}")
+            print("\n--- Teachers ---")
+            all_teachers = [t for t in manager.teachers]
+            for teacher in all_teachers:
+                print(f"ID: {teacher.id}".ljust(10), f"Name: {teacher.name}".ljust(25), f"Speciality: {teacher.speciality}".ljust(10))
         case "3":
+            print("\n--- Courses ---")
             all_courses = [c for c in manager.courses]
-            print(all_courses)
+            for course in all_courses:
+                print(f"ID: {course.id}".ljust(10), f"Name: {course.name}".ljust(20), f"Instrument: {course.instrument}".ljust(15), f"Teacher: {course.teacher_id}".ljust(10))
         case "4":
+            print("\n--- Attendance ---")
             all_attendance = [a for a in manager.attendance_log]
-            print(all_attendance)
+            for attendance in all_attendance:
+                print(attendance)
         case "5":
             pass
 
@@ -281,13 +291,15 @@ def front_desk_daily_roster(manager, day):
     print(f"\n--- Daily Roster for {day} ---")
     # To find the courses that its lesson is on that day
     day_courses = [[c.id,c.lessons] for c in manager.courses]
-    print("Day".ljust(10), "|  Course".ljust(15), "|  Venue".ljust(10))
+    print("-----------------------------------------")
+    print("|   DAY".ljust(10), "  |    COURSE".ljust(15), "|   VENUE    |".ljust(10))
+    print("-----------------------------------------")
     for day_course in day_courses:
         current_course = day_course[0]
         for lesson_info in day_course[1]:
             if lesson_info.get("Day") == day:
-                print(day.ljust(10), f"|  {current_course}".ljust(15),f"|  {lesson_info.get("Venue")}".ljust(10))
-
+                print(f"|   {day}".ljust(10), f"  |    {current_course}".ljust(15),f"|   {lesson_info.get("Venue")}   |".ljust(10))
+    print("-----------------------------------------")  
     # Notice: This code does not need to change. It doesn't care where the Course class lives.
     # It only talks to the manager.
     # TODO: Call a method on the manager to get the day's lessons and print them.
@@ -365,10 +377,11 @@ def main():
         print("q - Quit (Exit Key)")
         # To get user input
         choice = input("Enter choice: ")
+        # As default, no changes are made
         made_change = False
         # To match user input to different features
         match (choice):
-            case "1":
+            case "1":   # Register New Student/ Teacher
                 while True:
                     print("\n 1 - Student\n 2 - Teacher")
                     user = input("Enter [1/2]: ")
@@ -388,7 +401,7 @@ def main():
                     else:
                         print("Invalid Input!\nEnter q to exit")
             
-            case "2":
+            case "2":   # Update Student/ Teacher
                 status = check_course()
                 while status:
                     print("\n 1 - Student\n 2 - Teacher")
@@ -429,7 +442,7 @@ def main():
                     else:
                         print("Invalid Input!\nEnter q to exit")
             
-            case "3":
+            case "3":   # Delete Student/ Teacher
                 while True:
                     print("\n 1 - Student\n 2 - Teacher")
                     user = input("Enter [1/2]: ")
@@ -439,19 +452,21 @@ def main():
                         action = delete_student(student_id)
                         if action:
                             made_change = True
+                            break
                     elif user == "2":
                         print("\n--- Delete Teacher ---")
                         teacher_id = get_teacher_id()
                         action = delete_teacher(teacher_id)
                         if action:
                             made_change = True
+                            break
                     elif user == "q":
                         print("Changes not made.")
                         return main()
                     else:
                         print("Invalid Input!\nEnter q to exit")
             
-            case "4":
+            case "4":   # Check In Student
                 status = check_course()
                 if status:
                     print("\n--- Check In Student ---")
@@ -476,32 +491,32 @@ def main():
                         print("Please try again.")
                         return main()
 
-            case "5":
+            case "5":   # View Daily Roaster
                 print("\n--- View Daily Roaster ---")
                 day = get_day("Enter day (e.g., Monday): ")
                 print(f"Searching for lessons on {day}")
                 front_desk_daily_roster(manager, day)
 
-            case "6":
+            case "6":   #View All
                 while True:
-                    print("\n 1 - Students\n 2 - Teachers\n 3 - Courses\n 4 - Attendance\n 5 - View All")
+                    print("\n 1 - Students\n 2 - Teachers\n 3 - Courses\n 4 - Attendance")
                     choice = input("Enter a number: ")
-                    if choice not in ["1","2","3","4","5"]:
+                    if choice not in ["1","2","3","4"]:
                         continue
                     if choice.isdigit() == True:
                         view_all_data(choice)
                         break
 
-            case "7":
+            case "7":   # Add New Course
                 print("\n--- Add New Course ---")
                 course_id = get_course_id("new")
                 course_name = get_course_name()
                 course_instrument = get_course_instrument()
                 course_teacher_id = get_teacher_id()
-                manager.add_course(course_id, course_name, course_instrument, course_teacher_id)
+                manager.add_course(course_id, course_name, course_instrument, course_teacher_id, "", [])
                 made_change = True
 
-            case "8":
+            case "8":   # Update Lesson Info
                 print("\n--- Update Lesson Info ---")
                 course_id = get_course_id("view")
                 action = edit_lesson(course_id)
@@ -510,11 +525,14 @@ def main():
 
             case "q":
                 break
-            case _:
+            
+            case _:     # Default
                 print("Invalid Input!")
 
         if made_change:
             manager.save()
         
 if __name__ == "__main__":
+    print("\n----- Guide: (for first time use) -----")
+    print("1. Add Teacher\n2. Add Course\n3. Add Students")
     main()
