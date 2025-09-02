@@ -188,16 +188,18 @@ Date/Time: 2025-08-26 18:22:30
 ---
 
 ## 7. Project Structure
+```
 project/
-│── main.py # Main program (menu and user interaction)
-│── app/
-│ ├── student.py # StudentUser class
-│ ├── teacher.py # TeacherUser class
-│ ├── course.py # Course class
-│ ├── lesson.py # Lesson class
-│ ├── schedule.py # ScheduleManager (loads/saves data)
-│── data.json # Data storage file (auto-generated if missing)
+├── main.py              # Main program (menu and user interaction)
+├── app/
+│   ├── student.py       # StudentUser class
+│   ├── teacher.py       # TeacherUser class
+│   ├── course.py        # Course class
+│   ├── lesson.py        # Lesson class
+│   └── schedule.py      # ScheduleManager (loads/saves data)
+└── data.json            # Data storage file (auto-generated if missing)
 
+```
 ---
 
 ## 8. Notes for Users
