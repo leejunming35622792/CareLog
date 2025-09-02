@@ -4,13 +4,8 @@ from app.teacher import TeacherUser
 from app.schedule import ScheduleManager
 import datetime
 
-# Declaration
+# Set ScheduleManager() as manager
 manager = ScheduleManager()
-all_students = [f"Student ID: {s.id}, Student Name: {s.name},Enrolled Courses: {s.enrolled_course_ids}" for s in manager.students]
-all_students_id = [s.id for s in manager.students]
-all_teacher_name = [[t.id, t.name, t.speciality] for t in manager.teachers]
-all_courses = [c for c in manager.courses]
-all_attendance = [a for a in manager.attendance_log]
 
 # Additional Feature
 def check_course():
@@ -39,6 +34,9 @@ def get_student_name():
         while True:
             student_name = input("Enter Student Name: ")
             try:
+                if student_name == "q":
+                        print("Changes not made.")
+                        return main()
                 if student_name.replace(" ","").isalpha() != True:
                     raise ValueError
                 if student_name in [s.name for s in manager.students]:
@@ -91,6 +89,9 @@ def get_teacher_name():
         while True:
             teacher_name = input("Enter Teacher Name: ")
             try:
+                if teacher_name == "q":
+                        print("Changes not made.")
+                        return main()
                 if teacher_name.replace(" ","").isalpha() != True:
                     raise ValueError
                 break
@@ -102,6 +103,9 @@ def get_teacher_speciality():
     while True:
         teacher_speciality = input("Enter Speciality: ")
         try:
+            if teacher_speciality == "q":
+                        print("Changes not made.")
+                        return main()
             if teacher_speciality.replace(" ","").isalpha() != True:
                 raise ValueError
             break
