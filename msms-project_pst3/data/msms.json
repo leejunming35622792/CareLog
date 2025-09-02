@@ -2,94 +2,89 @@
     "students": [
         {
             "id": 1,
-            "name": "Alice Johnson",
+            "name": "Ming",
             "enrolled_course_ids": [
-                101,
-                103
+                "MS001"
             ]
         },
         {
             "id": 2,
-            "name": "Bob Williams",
+            "name": "Q",
             "enrolled_course_ids": [
-                102
+                "MS001"
             ]
         }
     ],
     "teachers": [
         {
             "id": 1,
-            "name": "Dr. Evelyn Keys",
-            "speciality": "Piano"
+            "name": "Jessie",
+            "speciality": "Guitar"
         },
         {
             "id": 2,
-            "name": "Mr. David Fret",
-            "speciality": "Guitar"
+            "name": "Jonathan",
+            "speciality": "Bass"
+        },
+        {
+            "id": 3,
+            "name": "Keng",
+            "speciality": "Piano"
+        },
+        {
+            "id": 4,
+            "name": "John",
+            "speciality": "Vocal"
         }
     ],
     "courses": [
         {
-            "id": 101,
-            "name": "Beginner Piano",
-            "instrument": "Piano",
-            "teacher_id": 1,
+            "id": "MS001",
+            "name": "Music Basic",
+            "instrument": "None",
+            "teacher_id": "1",
             "enrolled_student_ids": [
-                1
-            ],
-            "lessons": [
-                {
-                    "lesson_id": 1,
-                    "day": "Monday",
-                    "start_time": "16:00",
-                    "room": "Room A"
-                },
-                {
-                    "lesson_id": 2,
-                    "day": "Wednesday",
-                    "start_time": "16:00",
-                    "room": "Room A"
-                }
-            ]
-        },
-        {
-            "id": 102,
-            "name": "Acoustic Guitar Fundamentals",
-            "instrument": "Guitar",
-            "teacher_id": 2,
-            "enrolled_student_ids": [
+                1,
                 2
             ],
             "lessons": [
                 {
-                    "lesson_id": 3,
-                    "day": "Tuesday",
-                    "start_time": "17:00",
-                    "room": "Room C"
+                    "Day": "Sunday",
+                    "Venue": "CLASS1",
+                    "Notes": ""
                 }
             ]
         },
         {
-            "id": 103,
-            "name": "Intermediate Piano",
+            "id": "MS005",
+            "name": "Piano Class",
             "instrument": "Piano",
-            "teacher_id": 1,
-            "enrolled_student_ids": [
-                1
-            ],
-            "lessons": []
-        }
-    ],
-    "attendance": [
-        {
-            "student_id": 1,
-            "course_id": 101,
-            "timestamp": "2025-07-14T15:58:30.123456"
+            "teacher_id": "3",
+            "enrolled_student_ids": [],
+            "lessons": [
+                {
+                    "Day": "Monday",
+                    "Venue": "CLASS2",
+                    "Notes": ""
+                }
+            ]
         },
         {
-            "student_id": 2,
-            "course_id": 102,
-            "timestamp": "2025-07-14T16:02:45.654321"
+            "id": "MS007",
+            "name": "How To Sing",
+            "instrument": "None",
+            "teacher_id": "4",
+            "enrolled_student_ids": [],
+            "lessons": [
+                {
+                    "Day": "Monday",
+                    "Venue": "CLASS2",
+                    "Notes": "vocal class"
+                }
+            ]
         }
-    ]
+    ],
+    "attendance": [],
+    "next_student_id": 3,
+    "next_teacher_id": 5
 }

@@ -65,8 +65,10 @@ class ScheduleManager:
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
 
+    # Calling from main.py
     def enroll_student(self, name, courses):
         new_student = StudentUser(self.next_student_id, name, courses)
+        # Save the new student into Student list
         self.students.append(new_student)
         print("--------------------")
         print(f"Student '{name}' with ID '{self.next_student_id}' is successfully registered for courses '{courses}'")
@@ -74,18 +76,24 @@ class ScheduleManager:
         for student_course in courses:
             [c.enrolled_student_ids for c in self.courses if c.id == student_course][0].append(self.next_student_id)
             self.save()
+        # Increase the next student ID by 1
         self.next_student_id += 1
     
+    # Calling from main.py
     def enroll_teacher(self, name, speciality):
         new_teacher = TeacherUser(self.next_teacher_id, name, speciality)
+        # Save the new student into Teacher list
         self.teachers.append(new_teacher)
         print("--------------------")
         print(f"Teacher '{name}' with ID '{self.next_teacher_id}' is successfully registered with speciality '{speciality}'")
         print("--------------------")
+        # Increase the next teacher ID by 1
         self.next_teacher_id += 1
 
-    def add_course(self, course_id, course_name, course_instrument, teacher_id):
-        new_course = Course(course_id, course_name, course_instrument, teacher_id)
+    # Calling from main.py
+    # Save the new course into Courses list
+    def add_course(self, course_id, course_name, course_instrument, teacher_id, enrolled_student_ids, lessons):
+        new_course = Course(course_id, course_name, course_instrument, teacher_id, enrolled_student_ids, lessons)
         self.courses.append(new_course)
         print("--------------------")
         print(f"Course '{course_name}' with ID '{course_id}' is linked with Teacher ID '{teacher_id}' and instrument '{course_instrument}'")
