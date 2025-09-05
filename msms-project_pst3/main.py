@@ -35,8 +35,10 @@ def get_student_name():
             student_name = input("Enter Student Name: ")
             try:
                 if student_name == "q":
-                        print("Changes not made.")
-                        return main()
+                    print("Changes not made.")
+                    return main()
+                if student_name in [""," "]:
+                    raise ValueError
                 if student_name.replace(" ","").isalpha() != True:
                     raise ValueError
                 if student_name in [s.name for s in manager.students]:
@@ -49,16 +51,18 @@ def get_student_name():
 
 def get_enrolled_course():
         student_courses = []
+        courses_count = len([c.id for c in manager.courses])
+
         # To get number of courses
         while True:
             course_num = input("Number of course enrolled: ")
             try:
                 course_num = int(course_num)  
-                if course_num <= 0:
+                if course_num <= 0 or course_num > courses_count:
                     raise ValueError
                 break
             except ValueError:
-                print("Please enter a valid number!\n")
+                print("Invalid course number!\n")
         # To get input of courses
         for i in range(int(course_num)):
             while True:
@@ -92,6 +96,8 @@ def get_teacher_name():
                 if teacher_name == "q":
                         print("Changes not made.")
                         return main()
+                if teacher_name in [""," "]:
+                    raise ValueError
                 if teacher_name.replace(" ","").isalpha() != True:
                     raise ValueError
                 break
@@ -104,8 +110,10 @@ def get_teacher_speciality():
         teacher_speciality = input("Enter Speciality: ")
         try:
             if teacher_speciality == "q":
-                        print("Changes not made.")
-                        return main()
+                print("Changes not made.")
+                return main()
+            if teacher_speciality in [""," "]:
+                raise ValueError
             if teacher_speciality.replace(" ","").isalpha() != True:
                 raise ValueError
             break
@@ -216,19 +224,25 @@ def get_course_id(remark):
         if remark == "new":
             course_id = input(f"Enter Course ID: ").upper()
             try:
+                if len(course_id) == 0:
+                    print("Please enter something.")
+                    raise ValueError
                 if course_id == "Q":
                     print("----------\nChanges not made.\n----------")
                     return main()
                 if course_id.upper() in [c.id for c in manager.courses]:
                     print(f"Course '{course_id}' has been added.")
                 return course_id.upper()
-            except:
+            except ValueError:
                 print("Please try again.\n")
         elif remark == "view":
             all_courses_id = [c.id for c in manager.courses]
             print(f"Courses Available: {all_courses_id}")
             course_id = input(f"Enter Course ID: ").upper()
             try:
+                if len(course_id) == 0:
+                    print("Please enter something.")
+                    raise ValueError
                 if course_id == "Q":
                     print("----------\nChanges not made.\n----------")
                     return main()
@@ -236,7 +250,7 @@ def get_course_id(remark):
                     print(f"Course ID '{course_id}' not found.")
                     raise ValueError
                 return course_id.upper()
-            except:
+            except ValueError:
                 print("Please try again.\n")
         else:
             all_courses_id = [c.id for c in manager.courses]
@@ -244,6 +258,9 @@ def get_course_id(remark):
                 print(f"Courses Available: {all_courses_id}" + "\n")
             course_id = input(f"Enter Course ID{remark}: ").upper()
             try:
+                if len(course_id) == 0:
+                    print("Please enter something.")
+                    raise ValueError
                 if course_id == "Q":
                     print("----------\nChanges not made.\n----------")
                     return main()
@@ -251,7 +268,7 @@ def get_course_id(remark):
                     print(f"Course ID '{course_id}' not found.")
                     raise ValueError
                 return course_id.upper()
-            except:
+            except ValueError:
                 print("Please try again.\n")
     
 def view_all_data(choice):
