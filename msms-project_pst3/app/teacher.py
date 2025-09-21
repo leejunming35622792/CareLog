@@ -16,4 +16,3 @@ class Course:
         self.teacher_id = teacher_id
         self.enrolled_student_ids = enrolled_student_ids or [] # To store multiple student IDs
         self.lessons = lessons or [] # To hold lesson dictionaries
-

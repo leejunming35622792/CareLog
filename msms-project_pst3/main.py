@@ -217,9 +217,11 @@ def check_in(student_id, course_id, timestamp=None):
         "Timestamp": timestamp
     }
     manager.attendance_log.append(check_in_record)
+    return True
 
 # Feature 6 - View All
 def get_course_id(remark):
+    
     while True:
         if remark == "new":
             course_id = input(f"Enter Course ID: ").upper()
@@ -312,15 +314,15 @@ def front_desk_daily_roster(manager, day):
     print(f"\n--- Daily Roster for {day} ---")
     # To find the courses that its lesson is on that day
     day_courses = [[c.id,c.lessons] for c in manager.courses]
-    print("-----------------------------------------")
-    print("|   DAY".ljust(10), "  |    COURSE".ljust(15), "|   VENUE    |".ljust(10))
-    print("-----------------------------------------")
+    print("-----------------------------------------------")
+    print("|      DAY".ljust(18), "  |    COURSE".ljust(15), "|   VENUE  |".ljust(10))
+    print("-----------------------------------------------")
     for day_course in day_courses:
         current_course = day_course[0]
         for lesson_info in day_course[1]:
             if lesson_info.get("Day") == day:
-                print(f"|   {day}".ljust(10), f"  |    {current_course}".ljust(15),f"|   {lesson_info.get("Venue")}   |".ljust(10))
-    print("-----------------------------------------")  
+                print(f"|      {day}".ljust(18), f"  |    {current_course}".ljust(15),f"|   {lesson_info.get("Venue")}   |".ljust(10))
+    print("-----------------------------------------------")
     # Notice: This code does not need to change. It doesn't care where the Course class lives.
     # It only talks to the manager.
     # TODO: Call a method on the manager to get the day's lessons and print them.

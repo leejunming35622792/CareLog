@@ -2,7 +2,11 @@
 import streamlit as st
 from app.schedule import ScheduleManager
 from gui.student_pages import show_student_management_page
+from gui.teacher_pages import show_teacher_management_page
+from gui.course_pages import show_course_management_page
 from gui.roster_pages import show_roster_page
+from gui.printcard_pages import show_print_student_card_page
+from gui.display_pages import display_all_page
 
 def launch():
     """Sets up the main Streamlit application window and navigation."""
@@ -15,13 +19,21 @@ def launch():
 
     st.sidebar.title("MSMS Navigation")
     # Create a radio button menu in the sidebar for page navigation.
-    page = st.sidebar.radio("Go to", ["Student Management", "Daily Roster", "Payments (stub)"])
+    page = st.sidebar.radio("Go to", ["Student Management", "Teacher Management", "Course Management","Print Daily Roster", "Print Student Card","Payments (stub)", "View All"])
 
     # Use an if/elif block to call the correct function to render the selected page.
     if page == "Student Management":
         show_student_management_page(st.session_state.manager)
-    elif page == "Daily Roster":
+    elif page == "Teacher Management":
+        show_teacher_management_page(st.session_state.manager)
+    elif page == "Course Management":
+        show_course_management_page(st.session_state.manager)
+    elif page == "Print Daily Roster":
         show_roster_page(st.session_state.manager)
+    elif page == "Print Student Card":
+        show_print_student_card_page(st.session_state.manager)
     elif page == "Payments (stub)":
         st.header("Payments")
         st.warning("This feature will be implemented in PST5.")
+    elif page == "View All":
+        display_all_page(st.session_state.manager)

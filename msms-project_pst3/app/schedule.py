@@ -19,13 +19,16 @@ class ScheduleManager:
         # id counters
         self.next_student_id = 1
         self.next_teacher_id = 1
+        self.next_lesson_id = 1
 
         # load existing data from msms.json
         self._load_data()
 
     # To load data from msms.json
     def _load_data(self):
+        # try-except statement is used to prevent FileNotExist error
         try:
+            # open 'data_path'
             with open(self.data_path, 'r') as f:
                 data = json.load(f)
 
@@ -43,6 +46,7 @@ class ScheduleManager:
 
                 self.next_student_id = data.get("next_student_id", "1")
                 self.next_teacher_id = data.get("next_teacher_id", "1")
+                self.next_lesson_id = data.get("next_lesson_id", "1")
                 
         except FileNotFoundError:
             print("Data file not found. Starting with a clean state.")
@@ -66,10 +70,7 @@ class ScheduleManager:
             json.dump(data_to_save, f, indent=4)
 
     # Calling from main.py
-    def enroll_student(self, name, courses):
-        new_student = StudentUser(self.next_student_id, name, courses)
-        # Save the new student into Student list
-        self.students.append(new_student)
+
         print("--------------------")
         print(f"Student '{name}' with ID '{self.next_student_id}' is successfully registered for courses '{courses}'")
         print("--------------------")
