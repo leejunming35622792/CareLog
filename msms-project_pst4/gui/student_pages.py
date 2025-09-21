@@ -47,8 +47,10 @@ def show_student_management_page(manager):
                         st.success(f"Successfully registered '{reg_name}' under ID '{manager.next_student_id-1}'!")
                         manager.save()
                         # You can use st.balloons() for extra flair.
+                    else:
+                        st.warning("Failed, no changes detected")
                 else:
-                    st.warning("Please enter both a name and an instrument.")
+                    st.error("Please enter both a name and an instrument.")
 
     with update:
         # --- Update Student Info Section ---
@@ -98,10 +100,10 @@ def show_student_management_page(manager):
                                 """)
                         manager.save()
                     else:
-                        st.warning("Failed")  
+                        st.warning("Failed, no changes detected")  
 
                 else:
-                    st.warning(f"ID '{update_id}' is not found!")
+                    st.error(f"ID '{update_id}' is not found!")
         
     with remove:
         # --- Delete Section ---
@@ -134,5 +136,5 @@ def show_student_management_page(manager):
                         manager.save()
                         st.session_state.show_confirm = False
                     else:
-                        st.error("Failed.")
+                        st.error("Failed, no changes detected")
         
