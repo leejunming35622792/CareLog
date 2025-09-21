@@ -9,7 +9,7 @@ def display_all_page(manager):
     students_cleaned = []
     for student in manager.students:
         students_cleaned.append({
-            "Student Id": student.id,
+            "Student ID": student.id,
             "Student Name": student.name,
             "Courses": student.enrolled_course_ids
         })

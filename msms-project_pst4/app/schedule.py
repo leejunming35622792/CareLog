@@ -105,11 +105,15 @@ class ScheduleManager:
         return False
         
     def update_student(self, update_id, update_name, update_course):
+        # Prevent null
+        if update_course is None:
+            update_course = []
+
         # Update the particular student info
         for s in self.students:
             if str(s.id) == str(update_id):
                 s.name = update_name
-                s.enrolled_course_ids = update_course.sort()
+                s.enrolled_course_ids = sorted(update_course)
                 
         # Update enrolled student ids
         for c in self.courses:
@@ -204,3 +208,36 @@ class ScheduleManager:
         # Add into attendance log
         self.attendance_log.append(check_in_record)
         return True
+    
+    def remove_student(self, s_id):
+        student = next((s for s in self.students if str(s.id) == str(s_id)), None)
+
+        if student:
+            self.students.remove(student)
+            return True
+        else:
+            return False
+
+    def search_function(self, staff, search_keyword):
+        if staff == "S":
+            # Create empty list to store data
+            match_student = []
+
+    def search_function(self, staff, search_keyword):
+        if staff == "S":
+            # Create empty list to store data
+            match_student = []
+            
+            for s in self.students:
+                if search_keyword.lower() in s.name.lower():   # 🔑 full name substring match
+                    match_student.append({
+                        "Student ID": s.id,
+                        "Student Name": s.name,
+                        "Courses Enrolled": s.enrolled_course_ids
+                    })
+
+            return match_student
+
+
+
+
