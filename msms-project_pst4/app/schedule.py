@@ -74,8 +74,11 @@ class ScheduleManager:
             return False
         return True
 
-    def enrolment(self, reg_name, reg_instrument, reg_course):
-        if reg_course != None:
+    def enrolment(self, staff, reg_name, reg_instrument, reg_course):
+        if staff == "s":
+            # Sort course ID
+            reg_course.sort()
+
             # Create new object
             new_student = StudentUser(self.next_student_id, reg_name, reg_course)
 
@@ -91,7 +94,7 @@ class ScheduleManager:
             self.next_student_id += 1
 
             return True
-        else:
+        elif staff == "t":
             # Create new object
             new_teacher = TeacherUser(self.next_teacher_id, reg_name, reg_instrument)
 
@@ -102,7 +105,8 @@ class ScheduleManager:
             self.next_teacher_id += 1
 
             return True
-        return False
+        else:
+            return False
         
     def update_student(self, update_id, update_name, update_course):
         # Prevent null
@@ -112,8 +116,10 @@ class ScheduleManager:
         # Update the particular student info
         for s in self.students:
             if str(s.id) == str(update_id):
-                s.name = update_name
-                s.enrolled_course_ids = sorted(update_course)
+                if s.name:
+                    s.name = update_name
+                if s.enrolled_course_ids:
+                    s.enrolled_course_ids = sorted(update_course)
                 
         # Update enrolled student ids
         for c in self.courses:
@@ -121,6 +127,7 @@ class ScheduleManager:
                 c.enrolled_student_ids.append(int(update_id))
             if int(update_id) in c.enrolled_student_ids and c.id not in update_course:
                 c.enrolled_student_ids.remove(int(update_id))
+                
         return True
 
     def update_teacher(self, update_id, update_name, update_speciality):
@@ -219,17 +226,13 @@ class ScheduleManager:
             return False
 
     def search_function(self, staff, search_keyword):
-        if staff == "S":
-            # Create empty list to store data
-            match_student = []
-
-    def search_function(self, staff, search_keyword):
+        # Search Student
         if staff == "S":
             # Create empty list to store data
             match_student = []
             
             for s in self.students:
-                if search_keyword.lower() in s.name.lower():   # 🔑 full name substring match
+                if search_keyword.lower() in s.name.lower():
                     match_student.append({
                         "Student ID": s.id,
                         "Student Name": s.name,
@@ -237,7 +240,57 @@ class ScheduleManager:
                     })
 
             return match_student
+        
+        # Search Teacher
+        if staff == "T":
+            # Create empty list to store data
+            match_teacher = []
+            
+            # Search by 
+            for t in self.teachers:
+                if search_keyword.lower() in t.name.lower():
+                    match_teacher.append({
+                        "Teacher ID": t.id,
+                        "Teacher Name": t.name,
+                        "Speciality": t.speciality
+                    })
 
+            return match_teacher
 
+    def update_course(self, update_course_id, update_name, update_instrument, update_teacher):
+        for c in self.courses:
+            if str(c.id) == str(update_course_id):
+                if update_name:
+                    c.name = update_name
+                if update_instrument:
+                    c.instrument = update_instrument
+                if update_teacher:
+                    c.teacher_id = update_teacher
+                return True 
+        return False
 
+    def update_lesson(self, update_lessonID, update_day, update_starttime, update_room, update_remark):
+        for c in self.courses:
+                for l in c.lessons:
+                    if str(l["lesson-id"]) == str(update_lessonID):
+                        if update_day:
+                            l["day"] = update_day
+                        if update_starttime:
+                            l["start_time"] = str(update_starttime)
+                        if update_room:
+                            l["room"] = update_room
+                        if update_remark:
+                            l["remark"] = update_remark
+                        return True
+        return False
 
+    def delete_course(self, delete_course_id):
+        self.courses = [c for c in self.courses if str(c.id) != str(delete_course_id)]
+        return True
+    
+    def delete_lesson(self, delete_lessonID):
+        new_lessons = []
+        for c in self.courses:
+            c.lessons = [l for l in c.lessons if l["lesson-id"] != delete_lessonID]
+            return True
+        

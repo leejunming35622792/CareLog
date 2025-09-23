@@ -24,7 +24,7 @@ class Lesson:
 
     def to_dict(self):
         return {
-            "id": self.lesson_id,
+            "lesson-id": self.lesson_id,
             "day": self.lesson_day,
             "start_time": self.lesson_start_time,
             "room": self.lesson_room,

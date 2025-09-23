@@ -31,38 +31,46 @@ def show_roster_page(manager):
     # --- Student Check-in Section ---
     st.subheader("Student Check-in")
     with st.container():
+        # Variable
+        course_list = {}
+
         # Get dict of student {name: ID}, display name, store ID
         student_list = {s.name: s.id for s in manager.students}
         selected_student_name = st.selectbox("Select Student", student_list.keys())
-        student_id = student_list[selected_student_name]
 
-        student_obj = next((s for s in manager.students if str(s.id) == str(student_id)), None)
+        if selected_student_name:
+            # Get student_id
+            student_id = student_list[selected_student_name]
 
-        if student_obj:
-            enrolled_course_ids = student_obj.enrolled_course_ids
-            course_list = {c.name: c.id for c in manager.courses if c.id in enrolled_course_ids}
+            # Get student info in dict 
+            student_obj = next((s for s in manager.students if str(s.id) == str(student_id)), None)
+
+            # 
+            if student_obj:
+                enrolled_course_ids = student_obj.enrolled_course_ids
+                course_list = {c.name: c.id for c in manager.courses if c.id in enrolled_course_ids}
+
         else:
-            course_list = {}
+                st.error("Database is empty, no students found")
 
-        with st.form("check_in_form"):
-            # Check if the student enrols in any courses
-            if course_list:
-                selected_course_name = st.selectbox("Select Course", course_list.keys())
+        # Check if the student enrols in any courses
+        if course_list:
+            selected_course_name = st.selectbox("Select Course", course_list.keys())
 
-                # Create submit button
-                submitted = st.form_submit_button("Check-in Student")
+        # Create submit button
+        submitted = st.form_submit_button("Check-in Student")
 
-                if submitted:
-                    # Convert the selected names back to IDs
-                    course_id = course_list[selected_course_name]
+        if submitted:
+            # Convert the selected names back to IDs
+            course_id = course_list[selected_course_name]
 
-                    # Call check in function in ScheduleManager()
-                    success = manager.check_in(student_id, course_id)
+            # Call check in function in ScheduleManager()
+            success = manager.check_in(student_id, course_id)
 
-                    if success:
-                        st.success(f"Checked in '{selected_student_name}' for '{selected_course_name}'!")
-                        manager.save()
-                    else:
-                        st.error("Check-in failed. See console for details. (Is the student enrolled in that course?)")
+            if success:
+                st.success(f"Checked in '{selected_student_name}' for '{selected_course_name}'!")
+                manager.save()
             else:
-                st.warning(f"The student does not enroll in any course.")
+                st.error("Check-in failed. See console for details. (Is the student enrolled in that course?)")
+        else:
+            st.warning(f"The student does not enroll in any course.")

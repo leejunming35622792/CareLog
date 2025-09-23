@@ -6,6 +6,7 @@ def show_student_management_page(manager):
     # Renders all components for the student management page.
     st.header("Student Management")
 
+    # Create different tabs
     tab_display = ["Find Student", "Register Student", "Update Student", "Remove Student"]
     read, create, update, remove = st.tabs(tab_display)
 
@@ -41,16 +42,28 @@ def show_student_management_page(manager):
 
             # If button is clicked
             if submitted:
-                if reg_name and reg_instrument:
-                    new_student = manager.enrolment(reg_name, reg_instrument, reg_course)
+                errors = []
+
+                if not reg_name:
+                    errors.append("Name cannot be empty.")
+                if not reg_name.replace(" ","").isalpha():
+                    errors.append("Name cannot contain numbers or symbols.")
+                if not reg_instrument.isalpha():
+                    errors.append("Instrument cannot contain numbers or symbols.")
+                if not reg_course:
+                    errors.append("Please select at least one course.")
+
+                if errors:
+                    for e in errors:
+                        st.error(e)
+                else:
+                    new_student = manager.enrolment("s",reg_name, reg_instrument, reg_course)
                     if new_student:
                         st.success(f"Successfully registered '{reg_name}' under ID '{manager.next_student_id-1}'!")
                         manager.save()
-                        # You can use st.balloons() for extra flair.
+                        st.balloons()
                     else:
                         st.warning("Failed, no changes detected")
-                else:
-                    st.error("Please enter both a name and an instrument.")
 
     with update:
         # --- Update Student Info Section ---
@@ -61,49 +74,57 @@ def show_student_management_page(manager):
 
             st.info("To update, enter the new value for that particular field while leaving the others blank")
 
-            # Create input box
-            update_id = st.text_input("Enter Student ID: ")
-            update_name = st.text_input("Enter New Name: ").title()
+            # Get updated ID
+            id_disp = {f"{s.id} - {s.name}": s.id for s in manager.students}
+            update_id_list = st.selectbox("Enter Student ID: ", id_disp.keys())
+            if update_id_list:
+                update_id = id_disp[update_id_list]
 
-            # Create a dict to display
-            course_option = {f"{c.id} - {c.name}": c.id for c in manager.courses}
-            update_course_labels = st.multiselect("Select All Courses: ", options=list(course_option.keys()))
-            update_course = [course_option[label] for label in update_course_labels]
-            
+                # Get updated name
+                update_name = st.text_input("Enter New Name: ").title()
+
+                # Get updated course
+                course_option = {f"{c.id} - {c.name}": c.id for c in manager.courses}
+                update_course_labels = st.multiselect("Select All Courses: ", options=list(course_option.keys()))
+
+            else:
+                st.error("Database is empty.")
+
             # Create submit button
             submitted = st.form_submit_button("Save Update")
 
             if submitted:
-                # Make copy of original info
-                ori_name = next((s.name for s in manager.students if str(s.id) == str(update_id)), None)
-                ori_course = next((s.enrolled_course_ids for s in manager.students if str(s.id) == str(update_id)), None)
+                if update_id_list:
+                    errors = []
 
-                # Check if the ID exists
-                if update_id in map(str, all_student_ids):
-                    # Find the dict of the particular student
-                    find_student_name = next((s.name for s in manager.students if str(s.id) == str(update_id)), None)
-                    find_student_course = next((s.enrolled_course_ids for s in manager.students if str(s.id) == str(update_id)), None)
+                    if not reg_name.isalpha():
+                        errors.append("Name can't contain numbers or symbols.")
 
-                    # Fill the default values of name and course
-                    if not update_name:
-                        update_name = find_student_name
-                    if not update_course:
-                        update_course = find_student_course
-
-                    # Call update_student in ManagerSchedule
-                    update_student = manager.update_student(update_id, update_name, update_course)
-
-                    if update_student:
-                        st.success(f"""Successfully updated!\n
-                                    Name: {ori_name} -> {update_name}\n
-                                    Course: {ori_course} -> {update_course}
-                                """)
-                        manager.save()
+                    if errors:
+                        for e in errors:
+                            st.error(e)
                     else:
-                        st.warning("Failed, no changes detected")  
+                        update_course = course_option[update_course_labels]
 
+                        # Call update_student in ManagerSchedule
+                        update_student = manager.update_student(update_id, update_name, update_course)
+
+                        # Get updated details
+                        updated_student = next((s for s in manager.students if str(s.id) == str(update_id)), None)
+
+                        if update_student:
+                            st.success(f"""Successfully updated!\n
+                                ID: {updated_student.id}\n
+                                Name: {updated_student.name}\n
+                                Course: {updated_student.enrolled_course_ids}
+                                    """)
+                            manager.save()
+                        else:
+                            st.warning("Failed, no changes detected")  
+                            
                 else:
-                    st.error(f"ID '{update_id}' is not found!")
+                    st.error("Failed")
+
         
     with remove:
         # --- Delete Section ---
@@ -112,7 +133,11 @@ def show_student_management_page(manager):
             # Create input box
             student_list = {f"{s.id} - {s.name}": s.id for s in manager.students}
             student_id_list = st.selectbox("Select Student", student_list.keys())
-            student_id = student_list[student_id_list]
+
+            if student_id_list:
+                student_id = student_list[student_id_list]
+            else:
+                st.error("Database is empty.")
 
             # Create button
             check_delete = st.form_submit_button("Delete Student")
@@ -129,12 +154,15 @@ def show_student_management_page(manager):
             if st.session_state.show_confirm:
                 confirm_delete = st.form_submit_button("Confirm Delete")
                 if confirm_delete:
-                    delete = manager.remove_student(student_id)
+                    if student_id_list:
+                        delete = manager.remove_student(student_id)
 
-                    if delete:
-                        st.success("Student deleted successfully.")
-                        manager.save()
-                        st.session_state.show_confirm = False
+                        if delete:
+                            st.success("Student deleted successfully.")
+                            manager.save()
+                            st.session_state.show_confirm = False
+                        else:
+                            st.error("Failed, no changes detected")
                     else:
-                        st.error("Failed, no changes detected")
+                        st.error("Failed")
         

@@ -57,19 +57,22 @@ def display_all_page(manager):
         # Create button
         open_json = st.form_submit_button("Show / Hide Json File")
 
-        # Load Json file
-        with open("data/msms.json", "r") as f:
-            data = json.load(f)
+        try:
+            # Load Json file
+            with open("data/msms.json", "r") as f:
+                data = json.load(f)
 
-        # Initialize toggle state if not exists
-        if "show_json" not in st.session_state:
-            st.session_state.show_json = False
+            # Initialize toggle state if not exists
+            if "show_json" not in st.session_state:
+                st.session_state.show_json = False
 
-        # Toggle on button click
-        if open_json:
-            st.session_state.show_json = not st.session_state.show_json
+            # Toggle on button click
+            if open_json:
+                st.session_state.show_json = not st.session_state.show_json
 
-        # Display JSON only if toggle is True
-        if st.session_state.show_json:
-            st.json(data, expanded=True)
-
+            # Display JSON only if toggle is True
+            if st.session_state.show_json:
+                st.json(data, expanded=True)
+            
+        except FileExistsError:
+            st.warning("JSON file is empty")
