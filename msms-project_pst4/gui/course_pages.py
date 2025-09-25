@@ -1,14 +1,44 @@
 # gui/course_pages.py
 import streamlit as st
-import datetime
+import time
+import pandas as pd
 
 def show_course_management_page(manager):
     # Renders all components for the student management page.
     st.header("Course Management")
 
     # Create different tabs
-    tab_display = ["Add Course", "Add Lesson", "Update Course", "Update Lesson", "Remove Course/Lesson"]
-    add_course, add_lesson, update_course, update_lesson, remove = st.tabs(tab_display)
+    tab_display = ["Find Course/Lessons", "Add Course", "Add Lesson", "Update Course", "Update Lesson", "Remove Course/Lesson"]
+    find_course, add_course, add_lesson, update_course, update_lesson, remove = st.tabs(tab_display)
+
+    # --- Find Course Section ---
+    with find_course:
+        
+        st.subheader("Find Course/Lesson")
+        with st.container():
+            st.info("View Course")
+            all_courses = [c.__dict__ for c in manager.courses]
+            course_df = pd.DataFrame(all_courses)
+            course_df = course_df.drop(columns=["lessons"])
+            course_df.columns = course_df.columns.str.title()
+            course_df_st = st.dataframe(course_df, hide_index=True)
+
+        with st.container():
+            st.info("View Lesson")
+            course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses}
+            lesson_list = st.selectbox("Select Course: ", course_disp.keys())
+            if lesson_list:
+                choose_course = course_disp[lesson_list]
+            else:
+                st.error("⚠️ Database is empty, no courses found")
+
+            all_lessons = []
+            for c in manager.courses:
+                if c.id == choose_course:
+                    for l in c.lessons:
+                        all_lessons.append(l)
+            lesson_df = pd.DataFrame(all_lessons)
+            lesson_pd_st = st.dataframe(lesson_df, hide_index=True)
 
     # --- Add Course Section ---
     with add_course:
@@ -20,7 +50,10 @@ def show_course_management_page(manager):
 
             teacher_option = {f"{t.id} - {t.name}": t.id for t in manager.teachers}
             new_course_teacher_id_list = st.selectbox("Choose Teacher ID: ", options=list(teacher_option.keys()))
-            new_course_teacher_id = int(teacher_option[new_course_teacher_id_list])
+            if new_course_teacher_id_list:
+                new_course_teacher_id = int(teacher_option[new_course_teacher_id_list])
+            else:
+                st.error("⚠️ Database is empty, no courses found")
 
             # Create submit button
             submitted = st.form_submit_button("Add Course")
@@ -43,10 +76,12 @@ def show_course_management_page(manager):
                     result = manager.add_course(new_course_name, new_course_instrument, new_course_teacher_id)
 
                     if result:
+                        with st.spinner("Saving...", show_time=True):
+                            time.sleep(3)
                         st.success(f"Course '{new_course_name}' is successfully added under Course ID '{manager.next_course_id-1}'")
                         manager.save()
                     else:
-                        st.warning("Failed")
+                        st.warning("‼️ Failed, no changes detected.")
     
     # --- Add Lesson Section ---
     with add_lesson:
@@ -61,7 +96,7 @@ def show_course_management_page(manager):
             if course_lesson_list:
                 course_lesson = int(course_option[course_lesson_list])
             else:
-                st.error("Database is empty")
+                st.error("⚠️ Database is empty, no course found")
 
             # Create input box
             lesson_day = st.selectbox("Select Day: ", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
@@ -85,7 +120,7 @@ def show_course_management_page(manager):
                     """)
                     manager.save()
                 else:
-                    st.error("Failed, as no courses found")
+                    st.error("‼️ Failed, no changes found")
     
     # --- Update Course Section ---
     with update_course:
@@ -102,7 +137,7 @@ def show_course_management_page(manager):
             if course_chosen:
                 update_course_id = courses_disp[course_chosen]
             else:
-                st.error("Database is empty")
+                st.error("⚠️ Database is empty, no courses found")
 
             # Get New Course Name
             update_name = st.text_input("Enter New Course Name: ").title()
@@ -146,7 +181,7 @@ def show_course_management_page(manager):
                             Teacher ID: {updated_course.teacher_id}
                         """)
                     else:
-                        st.warning("Failed, no changes detected")
+                        st.warning("‼️ Failed, no changes detected")
 
     # --- Update Lesson Section ---
     with update_lesson:
@@ -168,7 +203,7 @@ def show_course_management_page(manager):
             if lesson_chosen:
                 update_lessonID = lesson_map[lesson_chosen]
             else:
-                st.error("Database is empty")
+                st.error("⚠️ Database is empty, no lessons found")
 
             # Create input box
             update_day = st.selectbox("Enter New Day: ",["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
@@ -192,7 +227,7 @@ def show_course_management_page(manager):
                     """)
                     manager.save()
                 else:
-                    st.warning("Failed, no changed detected")
+                    st.warning("‼️ Failed, no changed detected")
 
 
     with remove:
@@ -224,9 +259,9 @@ def show_course_management_page(manager):
                             if result:
                                 st.success("Successfully deleted")
                             else:
-                                st.error("Failed, no changes detected")
+                                st.error("‼️ Failed, no changes detected")
                         else:
-                            st.error("Database is empty, no courses found")
+                            st.error("⚠️ Database is empty, no courses found")
                     else:
                         st.warning("Please tick the checkbox to continue!")
 
@@ -238,7 +273,7 @@ def show_course_management_page(manager):
                         lesson_map[key] = l["lesson-id"]
                 
                 if lesson_map == {}:
-                    st.error("Database is empty, no lessons found")
+                    st.error("⚠️ Database is empty, no lessons found")
                 else:
                     lesson_chosen = st.selectbox("Select Lesson", list(lesson_map.keys()))
                     if lesson_chosen:
@@ -257,8 +292,8 @@ def show_course_management_page(manager):
                             if result:
                                 st.success("Successfully delete")
                             else:
-                                st.error("Failed, no changes detected")
+                                st.error("‼️ Failed, no changes detected")
                         else:
-                            st.error("Database is empty, no lessons found")
+                            st.error("⚠️ Database is empty, no lessons found")
                     else:
                         st.warning("Please tick the checkbox to continue!")

@@ -1,4 +1,5 @@
 import json
+import os
 import datetime
 from app.student import StudentUser
 from app.teacher import TeacherUser, Course, Lesson
@@ -38,13 +39,14 @@ class ScheduleManager:
                 # Attendance object
                 self.attendance_log = data.get("attendance", [])
 
+                # IDs
                 self.next_student_id = data.get("next_student_id", 1)
                 self.next_teacher_id = data.get("next_teacher_id", 1)
                 self.next_course_id = data.get("next_course_id", 1)
                 self.next_lesson_id = data.get("next_lesson_id", 1)
                 
         except FileNotFoundError:
-            print("Data file not found. Starting with a clean state.")
+            print("Data file not found. Starting with a clean state.")         
     
     def _save_data(self):
         # To create a 'data_to_save' dictionary.
@@ -63,6 +65,24 @@ class ScheduleManager:
 
     def save(self):
         self._save_data()
+
+    def load_json(file_path, default_data):
+        if not os.path.exists(file_path):
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        if not os.path.exists(file_path):
+            # Ensure parent folder exists
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+            # Use {} if no default data is provided
+            if default_data is None:
+                default_data = {}
+
+            # Write the default JSON
+            with open(file_path, "w") as f:
+                json.dump(default_data, f, indent=4)
+
+            return default_data
 
     def check_num(input):
         if not input.isalpha:
@@ -116,9 +136,9 @@ class ScheduleManager:
         # Update the particular student info
         for s in self.students:
             if str(s.id) == str(update_id):
-                if s.name:
+                if update_name:
                     s.name = update_name
-                if s.enrolled_course_ids:
+                if update_course:
                     s.enrolled_course_ids = sorted(update_course)
                 
         # Update enrolled student ids
@@ -133,8 +153,10 @@ class ScheduleManager:
     def update_teacher(self, update_id, update_name, update_speciality):
         for t in self.teachers:
             if str(t.id) == update_id:
-                t.name = update_name
-                t.speciality = update_speciality
+                if update_name:
+                    t.name = update_name
+                if update_speciality:
+                    t.speciality = update_speciality
                 return True
             return False
         
@@ -224,6 +246,10 @@ class ScheduleManager:
             return True
         else:
             return False
+
+    def remove_teacher(self, t_id):
+        self.teachers = [t for t in self.teachers if str(t.id) != str(t_id)]
+        return True
 
     def search_function(self, staff, search_keyword):
         # Search Student

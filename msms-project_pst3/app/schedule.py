@@ -69,14 +69,6 @@ class ScheduleManager:
         with open(self.data_path, 'w') as f:
             json.dump(data_to_save, f, indent=4)
 
-    # Calling from main.py
-
-        print("--------------------")
-        print(f"Student '{name}' with ID '{self.next_student_id}' is successfully registered for courses '{courses}'")
-        print("--------------------")
-        for student_course in courses:
-            [c.enrolled_student_ids for c in self.courses if c.id == student_course][0].append(self.next_student_id)
-            self.save()
         # Increase the next student ID by 1
         self.next_student_id += 1
     

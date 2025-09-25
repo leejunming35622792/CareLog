@@ -1,58 +1,14 @@
 {
-    "students": [
-        {
-            "id": 1,
-            "name": "Ming",
-            "enrolled_course_ids": [
-                "1000"
-            ]
-        }
-    ],
+    "students": [],
     "teachers": [
         {
             "id": 1,
             "name": "Jessie",
             "speciality": "Piano"
-        },
-        {
-            "id": 2,
-            "name": "Karen",
-            "speciality": "Guitar"
         }
     ],
-    "courses": [
-        {
-            "id": "1011",
-            "name": "Piano Class",
-            "instrument": "Piano",
-            "teacher_id": "1",
-            "enrolled_student_ids": [
-                1
-            ],
-            "lessons": [
-                {
-                    "Day": "Monday",
-                    "Venue": "NE34",
-                    "Notes": "physical class"
-                }
-            ]
-        },
-        {
-            "id": "1000",
-            "name": "Music Theory",
-            "instrument": "None",
-            "teacher_id": "1",
-            "enrolled_student_ids": [],
-            "lessons": [
-                {
-                    "Day": "Monday",
-                    "Venue": "ONLINE",
-                    "Notes": "online"
-                }
-            ]
-        }
-    ],
+    "courses": [],
     "attendance": [],
-    "next_student_id": 2,
-    "next_teacher_id": 3
+    "next_student_id": 1,
+    "next_teacher_id": 2
 }

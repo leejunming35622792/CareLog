@@ -1,6 +1,7 @@
 # gui/student_pages.py
 import streamlit as st
 import pandas as pd
+import time
 
 def show_teacher_management_page(manager):
     st.header("Teacher Management")
@@ -39,11 +40,9 @@ def show_teacher_management_page(manager):
                 # Check if both are inputted
                 if not reg_name:
                     errors.append("Name cannot be empty")
-                if not reg_name.isalpha():
-                    errors.append("Name cannot contain numbers or symbols")
                 if not reg_speciality:
                     errors.append("Speciality cannot be empty")
-                if not reg_speciality.isalpha():
+                elif not reg_speciality.replace(" ", "").isalpha():
                     errors.append("Speciality cannot contain number or symbols")
 
                 if errors:
@@ -52,8 +51,11 @@ def show_teacher_management_page(manager):
                 else:
                     new_teacher = manager.enrolment("t", reg_name, reg_speciality, None)
                     if new_teacher:
+                        with st.spinner("Saving...", show_time=True):
+                            time.sleep(3)
                         st.success(f"Successfully registered '{reg_name}' under ID '{manager.next_teacher_id - 1}'!")
                         manager.save()
+
                         st.balloons()
                     else:
                         st.error(f"Fail to register teacher {reg_name}!")
@@ -77,29 +79,27 @@ def show_teacher_management_page(manager):
             
             # Case handling
             if submitted:
-
                 # Check if ID exists
                 if update_id in map(str, all_teacher_ids):
-                    # Find the dict of the particular teacher
-                    find_teacher_name = [t.name for t in manager.teachers if str(t.id) == update_id][0][0]
-                    find_teacher_speciality = [t.speciality for t in manager.teachers if str(t.id) == update_id][0][0]
-
-                    # Get default values for name & speciality
-                    if not update_name:
-                        update_name = find_teacher_name
-                    if not update_speciality:
-                        update_speciality = find_teacher_speciality
-
                     # Pass to update function in manager
                     update_teacher = manager.update_teacher(update_id, update_name, update_speciality)
 
+                    # Get updated info
+                    updated_teacher = next((t for t in manager.teachers if str(t.id) == str(update_id)), None)
+
                     if update_teacher:
-                        st.success("Successfully updated!")
+                        # Create delay
+                        with st.spinner("Saving...", show_time=True):
+                            time.sleep(3)
+                        st.success(f"""Successfully updated!\n
+                            Name: {updated_teacher.name}\n
+                            Speciality: {updated_teacher.speciality}\n
+                        """)
                         manager.save()
                     else:
                         st.warning("Failed!")
                 else:
-                    st.warning(f"ID '{update_id}' is not found!")
+                    st.warning(f"‼️ Failed, ID '{update_id}' is not found!")
 
     with remove:
         # --- Delete Section ---5
@@ -114,7 +114,7 @@ def show_teacher_management_page(manager):
             if teacher_id_list:
                 teacher_id = teacher_list[teacher_id_list]
             else:
-                st.error("Database is empty")
+                st.error("⚠️ Database is empty, no teachers found")
 
             # Create checkbox
             confirm_delete_checkbox = st.checkbox("By clicking confirm, I understand that deleting this teacher is permanent and cannot be undone.")
@@ -125,14 +125,17 @@ def show_teacher_management_page(manager):
             # Button is first clicked
             if check_delete:
                 if confirm_delete_checkbox:
-                    delete = manager.remove_student(teacher_id)
+                    delete = manager.remove_teacher(teacher_id)
 
                     if delete:
-                            st.success("Teacher deleted successfully.")
-                            manager.save()
-                            st.session_state.show_confirm = False
+                        # Create delay
+                        with st.spinner("Saving...", show_time=True):
+                            time.sleep(3)
+                        st.success(f"Teacher ID '{teacher_id}' deleted successfully.")
+                        manager.save()
+                        st.session_state.show_confirm = False
                     else:
-                            st.error("Failed, no changes detected")
+                            st.error("‼️ Failed, no changes detected")
 
                 else:
                     st.error("Please tick the checkbox")

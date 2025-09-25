@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
+import os
 
 def display_all_page(manager):
     st.header("Database")
@@ -57,22 +58,22 @@ def display_all_page(manager):
         # Create button
         open_json = st.form_submit_button("Show / Hide Json File")
 
-        try:
-            # Load Json file
-            with open("data/msms.json", "r") as f:
-                data = json.load(f)
+        # Initialize toggle state if not exists
+        if "show_json" not in st.session_state:
+            st.session_state.show_json = False
 
-            # Initialize toggle state if not exists
-            if "show_json" not in st.session_state:
-                st.session_state.show_json = False
+        # Toggle on button click
+        if open_json:
+            st.session_state.show_json = not st.session_state.show_json
 
-            # Toggle on button click
-            if open_json:
-                st.session_state.show_json = not st.session_state.show_json
-
-            # Display JSON only if toggle is True
-            if st.session_state.show_json:
-                st.json(data, expanded=True)
-            
-        except FileExistsError:
-            st.warning("JSON file is empty")
+        # Display JSON only if toggle is True
+        if st.session_state.show_json:
+            try:
+                if not os.path.exists("data/msms.json"):
+                    st.warning("⚠️ JSON file not found.")
+                else:
+                    with open("data/msms.json", "r") as f:
+                        data = json.load(f)
+                    st.json(data, expanded=True)
+            except json.JSONDecodeError:
+                st.warning("⚠️ JSON file is empty or invalid.")

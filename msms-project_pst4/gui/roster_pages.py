@@ -30,7 +30,7 @@ def show_roster_page(manager):
     
     # --- Student Check-in Section ---
     st.subheader("Student Check-in")
-    with st.container():
+    with st.form("check_in-form"):
         # Variable
         course_list = {}
 
@@ -48,10 +48,10 @@ def show_roster_page(manager):
             # 
             if student_obj:
                 enrolled_course_ids = student_obj.enrolled_course_ids
-                course_list = {c.name: c.id for c in manager.courses if c.id in enrolled_course_ids}
+                course_list = {f"{c.id} - {c.name}": c.id for c in manager.courses if c.id in enrolled_course_ids}
 
         else:
-                st.error("Database is empty, no students found")
+            st.error("Database is empty, no students found")
 
         # Check if the student enrols in any courses
         if course_list:
@@ -72,5 +72,3 @@ def show_roster_page(manager):
                 manager.save()
             else:
                 st.error("Check-in failed. See console for details. (Is the student enrolled in that course?)")
-        else:
-            st.warning(f"The student does not enroll in any course.")

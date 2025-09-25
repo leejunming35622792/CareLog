@@ -1,6 +1,7 @@
 # gui/student_pages.py
 import streamlit as st
 import pandas as pd
+import time
 
 def show_student_management_page(manager):
     # Renders all components for the student management page.
@@ -9,6 +10,11 @@ def show_student_management_page(manager):
     # Create different tabs
     tab_display = ["Find Student", "Register Student", "Update Student", "Remove Student"]
     read, create, update, remove = st.tabs(tab_display)
+
+    if "success_msg" in st.session_state:
+        st.balloons()
+        st.toast(st.session_state.success_msg)
+        del st.session_state.success_msg
 
     with read:
         # --- Search Section ---
@@ -48,7 +54,9 @@ def show_student_management_page(manager):
                     errors.append("Name cannot be empty.")
                 if not reg_name.replace(" ","").isalpha():
                     errors.append("Name cannot contain numbers or symbols.")
-                if not reg_instrument.isalpha():
+                if len(reg_instrument) == 0:
+                    errors.append("Enter None if you haven't learnt any instrument")
+                elif not reg_instrument.replace(" ", "").isalpha():
                     errors.append("Instrument cannot contain numbers or symbols.")
                 if not reg_course:
                     errors.append("Please select at least one course.")
@@ -59,11 +67,15 @@ def show_student_management_page(manager):
                 else:
                     new_student = manager.enrolment("s",reg_name, reg_instrument, reg_course)
                     if new_student:
-                        st.success(f"Successfully registered '{reg_name}' under ID '{manager.next_student_id-1}'!")
+                        # Add delay time
+                        with st.spinner("Saving...", show_time=True):
+                            time.sleep(1)
                         manager.save()
-                        st.balloons()
+                        st.session_state.success_msg = f"Successfully registered '{reg_name}' under ID '{manager.next_student_id-1}'!"
+                        st.rerun()
+                        
                     else:
-                        st.warning("Failed, no changes detected")
+                        st.warning("⚠️ Failed, no changes detected")
 
     with update:
         # --- Update Student Info Section ---
@@ -85,10 +97,10 @@ def show_student_management_page(manager):
 
                 # Get updated course
                 course_option = {f"{c.id} - {c.name}": c.id for c in manager.courses}
-                update_course_labels = st.multiselect("Select All Courses: ", options=list(course_option.keys()))
+                update_course_labels = st.multiselect("Select All Courses: ", options=course_option.keys())
 
             else:
-                st.error("Database is empty.")
+                st.error("⚠️ Database is empty, no students found")
 
             # Create submit button
             submitted = st.form_submit_button("Save Update")
@@ -97,14 +109,11 @@ def show_student_management_page(manager):
                 if update_id_list:
                     errors = []
 
-                    if not reg_name.isalpha():
-                        errors.append("Name can't contain numbers or symbols.")
-
-                    if errors:
+                    if errors:  
                         for e in errors:
                             st.error(e)
                     else:
-                        update_course = course_option[update_course_labels]
+                        update_course = [course_option[c] for c in update_course_labels]
 
                         # Call update_student in ManagerSchedule
                         update_student = manager.update_student(update_id, update_name, update_course)
@@ -113,23 +122,31 @@ def show_student_management_page(manager):
                         updated_student = next((s for s in manager.students if str(s.id) == str(update_id)), None)
 
                         if update_student:
-                            st.success(f"""Successfully updated!\n
+                            # Create delay
+                            with st.spinner("Saving...", show_time=True):
+                                time.sleep(1)
+                            st.session_state.success_msg = True
+                            manager.save()
+                            st.session_state.success_msg = f"""Successfully updated!\n
                                 ID: {updated_student.id}\n
                                 Name: {updated_student.name}\n
                                 Course: {updated_student.enrolled_course_ids}
-                                    """)
-                            manager.save()
+                                    """
+                            st.rerun()
                         else:
-                            st.warning("Failed, no changes detected")  
+                            st.error("‼️ Failed, no changes detected")  
                             
                 else:
-                    st.error("Failed")
+                    st.error("‼️ Failed, no changes detected")
 
         
     with remove:
         # --- Delete Section ---
         st.subheader("Delete Student")
         with st.form("delete_student"):
+            # Variable
+            student_id = 0
+
             # Create input box
             student_list = {f"{s.id} - {s.name}": s.id for s in manager.students}
             student_id_list = st.selectbox("Select Student", student_list.keys())
@@ -137,7 +154,7 @@ def show_student_management_page(manager):
             if student_id_list:
                 student_id = student_list[student_id_list]
             else:
-                st.error("Database is empty.")
+                st.error("⚠️ Database is empty, no students found.")
 
             # Create button
             check_delete = st.form_submit_button("Delete Student")
@@ -147,22 +164,25 @@ def show_student_management_page(manager):
 
             # Button is first clicked
             if check_delete:
-                st.warning("Are you sure you want to delete this student?")
-                # Store state
-                st.session_state.show_confirm = True
+                if student_id_list:
+                    st.warning("Are you sure you want to delete this student?")
+                    # Store state
+                    st.session_state.show_confirm = True
+                else:
+                    st.error("‼️ Failed, no students found")
 
             if st.session_state.show_confirm:
                 confirm_delete = st.form_submit_button("Confirm Delete")
                 if confirm_delete:
-                    if student_id_list:
-                        delete = manager.remove_student(student_id)
+                    delete = manager.remove_student(student_id)
 
-                        if delete:
-                            st.success("Student deleted successfully.")
-                            manager.save()
-                            st.session_state.show_confirm = False
-                        else:
-                            st.error("Failed, no changes detected")
+                    if delete:
+                        # Create delay
+                        with st.spinner("Saving...", show_time=True):
+                            time.sleep(3)
+                        manager.save()
+                        st.session_state.success_msg = f"Student ID {student_id} deleted successfully."
+                        st.rerun()
+                        
                     else:
-                        st.error("Failed")
-        
+                        st.error("‼️ Failed, no changes detected")
