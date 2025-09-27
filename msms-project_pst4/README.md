@@ -78,12 +78,14 @@ User → Base class for students and teachers
 
 StaffUser → Dedicated class for staff login and management
 
+---
+
 ## Student Page
 
 Handles CRUD operations for student users.
 
 # Functions:
-
+```python
 register_student() → Register new student
 
 update_student() → Update details of an existing student
@@ -91,6 +93,8 @@ update_student() → Update details of an existing student
 delete_student() → Remove a student record
 
 student_launch() → Launch student-specific dashboard and functions
+```
+
 ---
 
 ## Teacher Page
@@ -98,7 +102,7 @@ student_launch() → Launch student-specific dashboard and functions
 Handles CRUD operations for teacher users.
 
 # Functions:
-
+```python
 register_teacher() → Register a new teacher
 
 update_teacher() → Update teacher details (username, password, name, speciality)
@@ -106,8 +110,11 @@ update_teacher() → Update teacher details (username, password, name, specialit
 delete_teacher() → Remove teacher records
 
 teacher_launch() → Launch teacher-specific dashboard and functions
+```
+
 ---
 ## Course Page
+
 
 Handles CRUD operations for courses.
 
@@ -121,16 +128,18 @@ delete_course() → Remove course
 
 view_courses() → Display list of all available courses
 ```
+
 ---
+
 ## Dashboard
 
 The Dashboard Page displays a high-level overview of the system.
 It uses st.metric() to display statistics such as:
-
+```python
 col1.metric("Total Students", len(manager.students))
 col2.metric("Total Teachers", len(manager.teachers))
 col3.metric("Total Courses", len(manager.courses))
-
+```
 
 # Purpose:
 
@@ -138,21 +147,23 @@ Quick insights into system usage
 
 Helps staff monitor the music school
 
+--- 
+
 ## Display Page
 
 The Display Page shows all data in both tabular and structured formats.
 
 # DataFrame display:
-
+```python
 st.dataframe(manager.students)
 st.dataframe(manager.teachers)
 st.dataframe(manager.courses)
-
+```
 
 # JSON display:
-
+```python
 st.json(manager.to_dict())
-
+```
 
 Purpose:
 
@@ -160,17 +171,19 @@ Transparent view of system records
 
 Useful for debugging and auditing
 
+---
+
 ## Print Card
 
 Exports a student’s detail card into a text file.
 
 Example Output (text file):
-
+```python
 Student ID: 001
 Name: Alice Tan
 Username: alice123
 Courses: Piano, Music Theory
-
+```
 
 # Functions:
 
@@ -181,12 +194,14 @@ export_student_card(student) → Writes details into a .txt file
 The Roaster Module provides daily scheduling and attendance features.
 
 # Functions:
+```python
 
 generate_roaster(day) → Generate timetable for selected day
 
 attendance_check(student_id, subject) → Mark attendance for students
+```
 
-Purpose:
+# Purpose:
 
 Organize daily lessons
 
