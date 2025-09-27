@@ -80,11 +80,11 @@ StaffUser → Dedicated class for staff login and management
 
 ---
 
-## Student Page
+# Student Page
 
 Handles CRUD operations for student users.
 
-# Functions:
+## Functions:
 ```python
 register_student() → Register new student
 
@@ -97,11 +97,11 @@ student_launch() → Launch student-specific dashboard and functions
 
 ---
 
-## Teacher Page
+# Teacher Page
 
 Handles CRUD operations for teacher users.
 
-# Functions:
+## Functions:
 ```python
 register_teacher() → Register a new teacher
 
@@ -113,12 +113,13 @@ teacher_launch() → Launch teacher-specific dashboard and functions
 ```
 
 ---
-## Course Page
+
+# Course Page
 
 
 Handles CRUD operations for courses.
 
-# Functions:
+## Functions:
 ```python
 add_course() → Create new course and assign teacher
 
@@ -131,7 +132,7 @@ view_courses() → Display list of all available courses
 
 ---
 
-## Dashboard
+# Dashboard
 
 The Dashboard Page displays a high-level overview of the system.
 It uses st.metric() to display statistics such as:
@@ -141,7 +142,7 @@ col2.metric("Total Teachers", len(manager.teachers))
 col3.metric("Total Courses", len(manager.courses))
 ```
 
-# Purpose:
+## Purpose:
 
 Quick insights into system usage
 
@@ -149,18 +150,18 @@ Helps staff monitor the music school
 
 --- 
 
-## Display Page
+# Display Page
 
 The Display Page shows all data in both tabular and structured formats.
 
-# DataFrame display:
+## DataFrame display:
 ```python
 st.dataframe(manager.students)
 st.dataframe(manager.teachers)
 st.dataframe(manager.courses)
 ```
 
-# JSON display:
+## JSON display:
 ```python
 st.json(manager.to_dict())
 ```
@@ -173,7 +174,7 @@ Useful for debugging and auditing
 
 ---
 
-## Print Card
+# Print Card
 
 Exports a student’s detail card into a text file.
 
@@ -185,15 +186,15 @@ Username: alice123
 Courses: Piano, Music Theory
 ```
 
-# Functions:
+## Functions:
 
 export_student_card(student) → Writes details into a .txt file
 
-## Roaster
+# Roaster
 
 The Roaster Module provides daily scheduling and attendance features.
 
-# Functions:
+## Functions:
 ```python
 
 generate_roaster(day) → Generate timetable for selected day
@@ -201,7 +202,7 @@ generate_roaster(day) → Generate timetable for selected day
 attendance_check(student_id, subject) → Mark attendance for students
 ```
 
-# Purpose:
+## Purpose:
 
 Organize daily lessons
 
