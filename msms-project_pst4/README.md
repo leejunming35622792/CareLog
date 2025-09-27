@@ -6,7 +6,7 @@ It handles different types of users (students, teachers, staff), supports CRUD o
 ---
 
 ## Features Overview
-
+```python
 - **User Management**
   - Student Page
   - Teacher Page
@@ -25,10 +25,11 @@ It handles different types of users (students, teachers, staff), supports CRUD o
   - Attendance check-in for students by subject
 - **Future Development**
   - Payment system (planned for next phase)
-
+```
 ---
 
 ## Code Structure
+```python
 msms/
 │
 ├── app/
@@ -51,8 +52,7 @@ msms/
 │
 ├── README.md
 └── main.py
-
----
+```
 
 ## User Classes
 
@@ -73,6 +73,7 @@ class StaffUser:
     def __init__(self, username, password):
         self.username = username
         self.password = password
+```
 
 User → Base class for students and teachers
 
