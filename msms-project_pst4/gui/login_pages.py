@@ -6,7 +6,7 @@ from gui.login_gui import teacher_login
 from gui.login_gui import staff_login
 from gui.student_gui import student_launch
 from gui.teacher_gui import teacher_launch
-from gui.main_dashboard import launch
+from gui.staff_gui import staff_launch
 
 # --------------- Login -----------------
 st.set_page_config(layout="wide", page_title="Music School Management System")
@@ -42,12 +42,15 @@ def login_page():
         elif option == "Staff Login":
             staff_login(st.session_state.manager)
 
+    # Direct to user page after logging in
     elif st.session_state.page == "student":
         student_launch(st.session_state.manager, st.session_state.username)
 
+    # Direct to user page after logging in
     elif st.session_state.page == "teacher":
         teacher_launch(st.session_state.manager, st.session_state.username)
 
+    # Direct to user page after logging in
     elif st.session_state.page == "staff":
-        launch()
+        staff_launch()
 # ---------------------------------------

@@ -10,12 +10,14 @@ from gui.staff.printcard_pages import show_print_student_card_page
 from gui.staff.payment_pages import show_payment_page
 from gui.staff.display_pages import display_all_page
 
-def launch():
+def staff_launch():
     st.set_page_config(layout="wide", page_title="Music School Management System")
 
+    # Gets all features from ScheduleManager()
     if 'manager' not in st.session_state:
         st.session_state.manager = ScheduleManager()
 
+    # Logout back to Login Page
     if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
         st.rerun()

@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-from gui.main_dashboard import launch
+from gui.staff_gui import staff_launch
 from gui.student_gui import student_launch
 from app.schedule import ScheduleManager
 

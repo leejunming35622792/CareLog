@@ -3,6 +3,7 @@ import pandas as pd
 import time
 from app.schedule import ScheduleManager
 
+# --- Sub-section: Dashboard ---
 def dashboard():
     # Variable
     current_student = next((s for s in manager.students if s.username == current_username), None)
@@ -41,6 +42,7 @@ def dashboard():
     else:
         st.warning("Seemed like you haven't signed up any course 😥")
 
+# --- Sub-section: Student Data ---
 def student_detail():
     if "success_msg" in st.session_state:
         st.success(st.session_state.success_msg)
@@ -95,6 +97,7 @@ def student_detail():
                 else:
                     st.error("Failed!")
 
+# --- Sub-section: Course Data ---
 def course_detail():
     # --- Find Course Section ---
     with st.container():
@@ -129,6 +132,7 @@ def course_detail():
         st.subheader("Join for More Fun! 🥳")
     st.divider()
 
+# --- Sub-section: Check In Attendance ---
 def attendance():
     # --- Student Check-in Section ---
     st.subheader("Check-In Attendance")
@@ -157,6 +161,7 @@ def attendance():
             else:
                 st.error("Seemed like you haven't signed up any course 😥")
 
+# --- Sub-section: Feedback ---
 def feedback():
     with st.form("feedback-form"):
         course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses if current_student.id in c.enrolled_student_ids}
@@ -175,6 +180,7 @@ def feedback():
         if submit:
             st.write(like)
 
+# --- Main Section---
 def student_launch(Manager, username):
     if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
@@ -211,6 +217,7 @@ def student_launch(Manager, username):
     elif page == "Feedback":
         feedback()
 
+# --- Sub-section: Logout ---
 def logout():
     st.session_state.page = "login"
     st.session_state.username = None

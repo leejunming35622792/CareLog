@@ -3,8 +3,7 @@ import pandas as pd
 import time
 from app.schedule import ScheduleManager
 
-manager = ScheduleManager()
-
+# --- Sub-section: Dashboard ---
 def dashboard():
     # Dashboard Image
     st.image("C:/Users/Owner/FIT1056-Sem2-2025/msms-project_pst4/img/img1.jpg")
@@ -35,6 +34,7 @@ def dashboard():
     else:
         st.warning("Seemed like you aren't assigned to any course 😥")
 
+# --- Sub-section: Teacher Data ---
 def teacher_detail():
     if "success_msg" in st.session_state:
         st.success(st.session_state.success_msg)
@@ -81,8 +81,9 @@ def teacher_detail():
                 else:
                     st.error("Failed!")
 
+# --- Sub-section: Course Data ---
 def course_detail():
-    # --- Find Course Section ---
+    # --- Sub-section: View All Course ---
     with st.container():
         st.subheader("View All Courses")
         all_courses = [c.__dict__ for c in manager.courses]
@@ -94,6 +95,7 @@ def course_detail():
         else:
             st.warning("⚠️ Database is empty, no courses found")
 
+    # --- Sub-section: View Lessons ---
     with st.container():
         st.subheader("Search Lessons by Course")
         course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses}
@@ -110,7 +112,8 @@ def course_detail():
         else:
             st.warning("⚠️ Database is empty, no courses found")
 
-def teacher_launch(manager, username):
+# --- Main section ---
+def teacher_launch(Manager, username):
     if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
         st.rerun()
@@ -120,6 +123,8 @@ def teacher_launch(manager, username):
     st.sidebar.divider()
     st.title("Music School Management System")
 
+    global manager
+    manager = Manager
     global current_username
     current_username = username
     global current_teacher
@@ -138,6 +143,7 @@ def teacher_launch(manager, username):
     elif page == "Courses":
         course_detail()
 
+# --- Sub-section: Logout ---
 def logout():
     st.session_state.page = "login"
     st.session_state.username = None

@@ -2,5 +2,5 @@
 from gui.login_pages import login_page
 
 if __name__ == "__main__":
-    # This file's only job is to start the GUI.
+    # Start program by calling first function
     login_page()
