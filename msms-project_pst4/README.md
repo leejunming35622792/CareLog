@@ -6,7 +6,6 @@ It handles different types of users (students, teachers, staff), supports CRUD o
 ---
 
 ## Features Overview
-```python
 - **User Management**
   - Student Page
   - Teacher Page
@@ -25,7 +24,7 @@ It handles different types of users (students, teachers, staff), supports CRUD o
   - Attendance check-in for students by subject
 - **Future Development**
   - Payment system (planned for next phase)
-```
+
 ---
 
 ## Code Structure
@@ -79,11 +78,11 @@ User → Base class for students and teachers
 
 StaffUser → Dedicated class for staff login and management
 
-##Student Page
+## Student Page
 
 Handles CRUD operations for student users.
 
-#Functions:
+# Functions:
 
 register_student() → Register new student
 
@@ -94,11 +93,11 @@ delete_student() → Remove a student record
 student_launch() → Launch student-specific dashboard and functions
 ---
 
-##Teacher Page
+## Teacher Page
 
 Handles CRUD operations for teacher users.
 
-#Functions:
+# Functions:
 
 register_teacher() → Register a new teacher
 
@@ -108,12 +107,12 @@ delete_teacher() → Remove teacher records
 
 teacher_launch() → Launch teacher-specific dashboard and functions
 ---
-##Course Page
+## Course Page
 
 Handles CRUD operations for courses.
 
-#Functions:
-
+# Functions:
+```python
 add_course() → Create new course and assign teacher
 
 update_course() → Modify course details
@@ -121,8 +120,9 @@ update_course() → Modify course details
 delete_course() → Remove course
 
 view_courses() → Display list of all available courses
+```
 ---
-Dashboard
+## Dashboard
 
 The Dashboard Page displays a high-level overview of the system.
 It uses st.metric() to display statistics such as:
@@ -132,24 +132,24 @@ col2.metric("Total Teachers", len(manager.teachers))
 col3.metric("Total Courses", len(manager.courses))
 
 
-Purpose:
+# Purpose:
 
 Quick insights into system usage
 
 Helps staff monitor the music school
 
-Display Page
+## Display Page
 
 The Display Page shows all data in both tabular and structured formats.
 
-DataFrame display:
+# DataFrame display:
 
 st.dataframe(manager.students)
 st.dataframe(manager.teachers)
 st.dataframe(manager.courses)
 
 
-JSON display:
+# JSON display:
 
 st.json(manager.to_dict())
 
@@ -160,7 +160,7 @@ Transparent view of system records
 
 Useful for debugging and auditing
 
-Print Card
+## Print Card
 
 Exports a student’s detail card into a text file.
 
@@ -172,15 +172,15 @@ Username: alice123
 Courses: Piano, Music Theory
 
 
-Functions:
+# Functions:
 
 export_student_card(student) → Writes details into a .txt file
 
-Roaster
+## Roaster
 
 The Roaster Module provides daily scheduling and attendance features.
 
-Functions:
+# Functions:
 
 generate_roaster(day) → Generate timetable for selected day
 
