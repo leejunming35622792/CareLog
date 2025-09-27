@@ -8,6 +8,11 @@ def show_teacher_management_page(manager):
 
     tab_display = ["Find Teacher", "Register Teacher", "Update Teacher", "Remove Teacher"]
     read, create, update, remove = st.tabs(tab_display)
+
+    if "success_msg" in st.session_state:
+        st.balloons()
+        st.success(st.session_state.success_msg)
+        del st.session_state.success_msg
     
     with read:
         # --- Search Section ---
@@ -20,8 +25,11 @@ def show_teacher_management_page(manager):
             # Call search_student in ManagerSchedule()
             match_teacher = manager.search_function("T", search_keyword)
 
-            teacher_df = pd.DataFrame(match_teacher)
-            st.dataframe(teacher_df, hide_index=True)
+            if match_teacher:
+                teacher_df = pd.DataFrame(match_teacher)
+                st.dataframe(teacher_df, hide_index=True)
+            else:
+                st.error("⚠️ Database is empty, no teachers found")
 
     with create:
         # --- Register Section ---
@@ -53,8 +61,10 @@ def show_teacher_management_page(manager):
                     if new_teacher:
                         with st.spinner("Saving...", show_time=True):
                             time.sleep(3)
-                        st.success(f"Successfully registered '{reg_name}' under ID '{manager.next_teacher_id - 1}'!")
-                        manager.save()
+                            manager.save()
+                        st.session_state.success_msg = f"Successfully registered '{reg_name}' under ID '{manager.next_teacher_id - 1}'!"
+                        st.rerun()
+                        
 
                         st.balloons()
                     else:
@@ -64,25 +74,33 @@ def show_teacher_management_page(manager):
         # --- Update Section ---
         st.subheader("Update Teacher Info")
         with st.form("update_form"):
-            # Variables
+            # Variable
             all_teacher_ids = [teacher.id for teacher in manager.teachers]
 
             st.info("To update, enter the new value for that particular field while leaving the others blank")
 
             # Create input box
-            update_id = st.text_input("Enter Teacher ID: ")
+            teacher_disp = {f"{t.id} - {t.name}": t.id for t in manager.teachers}
+            if teacher_disp:
+                update_id_list = st.selectbox("Enter Teacher ID: ",teacher_disp.keys())
+                update_id = teacher_disp[update_id_list]
+            else:
+                st.error("⚠️ Database is empty, no teachers found")
+
+            username = st.text_input("Enter Username: ")
+            password = st.text_input("Enter Password: ")
             update_name = st.text_input("Enter New Name: ", value = "").title()
             update_speciality = st.text_input("Enter New Speciality: ", value = "").title()
-            
+
             # Create submit button
             submitted = st.form_submit_button("Save Update")
             
             # Case handling
             if submitted:
                 # Check if ID exists
-                if update_id in map(str, all_teacher_ids):
+                if update_id in all_teacher_ids:
                     # Pass to update function in manager
-                    update_teacher = manager.update_teacher(update_id, update_name, update_speciality)
+                    update_teacher = manager.update_teacher(username, password, update_id, update_name, update_speciality)
 
                     # Get updated info
                     updated_teacher = next((t for t in manager.teachers if str(t.id) == str(update_id)), None)
@@ -91,11 +109,9 @@ def show_teacher_management_page(manager):
                         # Create delay
                         with st.spinner("Saving...", show_time=True):
                             time.sleep(3)
-                        st.success(f"""Successfully updated!\n
-                            Name: {updated_teacher.name}\n
-                            Speciality: {updated_teacher.speciality}\n
-                        """)
-                        manager.save()
+                            manager.save()
+                        st.session_state.success_state = f"Successfully updated!"
+                        st.rerun()
                     else:
                         st.warning("Failed!")
                 else:

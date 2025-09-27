@@ -4,8 +4,12 @@ import time
 import pandas as pd
 
 def show_course_management_page(manager):
-    # Renders all components for the student management page.
     st.header("Course Management")
+    
+    if "success_msg" in st.session_state:
+        st.balloons()
+        st.success(st.session_state.success_msg)
+        del st.session_state.success_msg
 
     # Create different tabs
     tab_display = ["Find Course/Lessons", "Add Course", "Add Lesson", "Update Course", "Update Lesson", "Remove Course/Lesson"]
@@ -13,32 +17,34 @@ def show_course_management_page(manager):
 
     # --- Find Course Section ---
     with find_course:
-        
-        st.subheader("Find Course/Lesson")
+        st.subheader("View All Courses")
         with st.container():
-            st.info("View Course")
             all_courses = [c.__dict__ for c in manager.courses]
-            course_df = pd.DataFrame(all_courses)
-            course_df = course_df.drop(columns=["lessons"])
-            course_df.columns = course_df.columns.str.title()
-            course_df_st = st.dataframe(course_df, hide_index=True)
+            if all_courses:
+                course_df = pd.DataFrame(all_courses)
+                course_df = course_df.drop(columns=["lessons"])
+                course_df.columns = course_df.columns.str.title()
+                course_df_st = st.dataframe(course_df, hide_index=True)
+            else:
+                st.warning("⚠️ Database is empty, no courses found")
+
+        st.divider()
 
         with st.container():
-            st.info("View Lesson")
+            st.subheader("Search Lessons by Course")
             course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses}
             lesson_list = st.selectbox("Select Course: ", course_disp.keys())
             if lesson_list:
                 choose_course = course_disp[lesson_list]
+                all_lessons = []
+                for c in manager.courses:
+                    if c.id == choose_course:
+                        for l in c.lessons:
+                            all_lessons.append(l)
+                lesson_df = pd.DataFrame(all_lessons)
+                lesson_pd_st = st.dataframe(lesson_df, hide_index=True)
             else:
-                st.error("⚠️ Database is empty, no courses found")
-
-            all_lessons = []
-            for c in manager.courses:
-                if c.id == choose_course:
-                    for l in c.lessons:
-                        all_lessons.append(l)
-            lesson_df = pd.DataFrame(all_lessons)
-            lesson_pd_st = st.dataframe(lesson_df, hide_index=True)
+                st.warning("⚠️ Database is empty, no courses found")
 
     # --- Add Course Section ---
     with add_course:
@@ -77,9 +83,11 @@ def show_course_management_page(manager):
 
                     if result:
                         with st.spinner("Saving...", show_time=True):
-                            time.sleep(3)
-                        st.success(f"Course '{new_course_name}' is successfully added under Course ID '{manager.next_course_id-1}'")
-                        manager.save()
+                            time.sleep(1)
+                            manager.save()
+                        st.session_state.success_msg = f"Course '{new_course_name}' is successfully added under Course ID '{manager.next_course_id-1}'"
+                        st.rerun()
+                        
                     else:
                         st.warning("‼️ Failed, no changes detected.")
     
@@ -102,7 +110,7 @@ def show_course_management_page(manager):
             lesson_day = st.selectbox("Select Day: ", ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
             lesson_start_time = st.time_input("Enter Start Time: ")
             lesson_room = st.text_input("Enter Room: ").upper()
-            lesson_remark = st.text_input("Enter Remark (optional): ")
+            lesson_remark = st.text_input("Enter Remark (optional): ", value=f"{course_lesson_list}")
 
             # Create submit button
             submitted = st.form_submit_button("Add Lesson")
@@ -110,15 +118,18 @@ def show_course_management_page(manager):
             if submitted:
                 result = manager.add_lesson(course_lesson, lesson_day, lesson_start_time, lesson_room, lesson_remark)
                 if result:
-                    st.success(f"""Successfully added \n   
+                    with st.spinner("Saving...", show_time=True):
+                        time.sleep(1)
+                        manager.save()
+                    st.session_state_success_msg = f"""Successfully added \n   
                         Course: {course_lesson}\n   
                         Lesson ID: {manager.next_lesson_id-1}\n   
                         Lesson Day: {lesson_day}\n   
                         Start Time: {lesson_start_time}\n   
                         Room: {lesson_room}\n   
                         Remark: {lesson_remark}
-                    """)
-                    manager.save()
+                    """
+                    st.rerun()
                 else:
                     st.error("‼️ Failed, no changes found")
     
@@ -229,7 +240,7 @@ def show_course_management_page(manager):
                 else:
                     st.warning("‼️ Failed, no changed detected")
 
-
+    # --- Remove Section ---
     with remove:
         st.subheader("Delete Course Lesson")
         # Check delete course or lesson

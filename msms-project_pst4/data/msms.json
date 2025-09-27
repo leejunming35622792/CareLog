@@ -1,117 +1,106 @@
 {
     "students": [
         {
+            "username": "ming123",
+            "password": "mingPW123",
+            "id": 1,
+            "name": "Jun Ming",
+            "instrument": "",
+            "enrolled_course_ids": [
+                1,
+                2
+            ]
+        },
+        {
+            "username": "kexin123",
+            "password": "kexinPW123",
             "id": 2,
             "name": "Ke Xin",
+            "instrument": "",
             "enrolled_course_ids": [
-                2
-            ]
-        },
-        {
-            "id": 4,
-            "name": "Alisha",
-            "enrolled_course_ids": [
+                1,
                 2,
-                4
-            ]
-        },
-        {
-            "id": 10,
-            "name": "Jm",
-            "enrolled_course_ids": [
-                2
-            ]
-        },
-        {
-            "id": 15,
-            "name": "Xinxin",
-            "enrolled_course_ids": [
-                1
-            ]
-        },
-        {
-            "id": 17,
-            "name": "Bro",
-            "enrolled_course_ids": [
-                2
-            ]
-        },
-        {
-            "id": 18,
-            "name": "Test",
-            "enrolled_course_ids": [
                 3
-            ]
+            ],
+            "intrument": "Violin"
         },
         {
-            "id": 19,
-            "name": "Testing",
+            "username": "tom123",
+            "password": "tomPW123",
+            "id": 3,
+            "name": "Tom Holland",
+            "instrument": "",
             "enrolled_course_ids": [
-                3
-            ]
+                4,
+                5
+            ],
+            "intrument": "Bass"
         },
         {
-            "id": 23,
-            "name": "Chan Ke Xin",
+            "username": "dickson123",
+            "password": "dicksonPW123",
+            "id": 6,
+            "name": "Dickson",
+            "instrument": "",
             "enrolled_course_ids": [
-                1
+                1,
+                2
             ]
         }
     ],
     "teachers": [
         {
+            "username": "jessie123",
+            "password": "jessiePW123",
             "id": 1,
             "name": "Ms. Jessie",
             "speciality": "Piano"
         },
         {
+            "username": "thomas123",
+            "password": "thomasPW123",
             "id": 2,
-            "name": "Dr. Jonathan",
-            "speciality": "Bass"
+            "name": "Thomas Smith",
+            "speciality": "Violin"
         },
         {
+            "username": "karen123",
+            "password": "karenPW123",
             "id": 3,
-            "name": "Prof. Bob Lucas",
-            "speciality": "Violin"
-        },
+            "name": "Karen Wilson",
+            "speciality": "Viol;In"
+        }
+    ],
+    "staff": [
         {
-            "id": 4,
-            "name": "Ms. Karen",
-            "speciality": "Piano"
-        },
-        {
-            "id": 5,
-            "name": "Ms. Hermes",
-            "speciality": "Violin"
+            "username": "staff",
+            "password": "staffPW"
         }
     ],
     "courses": [
         {
             "id": 1,
-            "name": "Basic Violin Class",
-            "instrument": "Violin",
-            "teacher_id": 3,
+            "name": "Basic Piano Class",
+            "instrument": "Piano",
+            "teacher_id": 1,
             "enrolled_student_ids": [
                 6,
-                15,
-                21,
-                20,
-                23
+                2
             ],
             "lessons": [
                 {
                     "lesson-id": 1,
                     "day": "Monday",
-                    "start_time": "13:15:00",
+                    "start_time": "15:17:00",
                     "room": "ROOM-1-2",
-                    "remark": ""
+                    "remark": "1 - Basic Piano Class"
                 },
                 {
                     "lesson-id": 2,
-                    "day": "Friday",
-                    "start_time": "16:45:00",
-                    "room": "ROOM-1-2",
-                    "remark": ""
+                    "day": "Monday",
+                    "start_time": "01:30:00",
+                    "room": "ROOM-1-1",
+                    "remark": "1 - Basic Piano Class"
                 }
             ]
         },
@@ -121,64 +110,108 @@
             "instrument": "Piano",
             "teacher_id": 1,
             "enrolled_student_ids": [
-                2,
-                3,
-                4,
                 6,
-                10,
-                11,
-                13,
-                17,
-                20
+                2
             ],
             "lessons": [
                 {
                     "lesson-id": 3,
-                    "day": "Tuesday",
-                    "start_time": "12:30:00",
-                    "room": "ROOM-0-1",
-                    "remark": ""
+                    "day": "Monday",
+                    "start_time": "02:30:00",
+                    "room": "ROOM-1-2",
+                    "remark": "2 - Intermediate Piano Class"
                 }
             ]
         },
         {
             "id": 3,
-            "name": "Basic Flute Class",
-            "instrument": "Flute",
-            "teacher_id": 1,
+            "name": "Music Theory Class",
+            "instrument": "None",
+            "teacher_id": 3,
             "enrolled_student_ids": [
-                1,
-                5,
-                6,
-                7,
-                8,
-                9,
-                12,
-                16,
-                18,
-                19,
-                20
+                2
             ],
-            "lessons": []
+            "lessons": [
+                {
+                    "lesson-id": 4,
+                    "day": "Thursday",
+                    "start_time": "12:30:00",
+                    "room": "ROOAM-2-A",
+                    "remark": "3 - Music Theory Class"
+                }
+            ]
         },
         {
             "id": 4,
-            "name": "Basic Piano Class",
-            "instrument": "Piano",
-            "teacher_id": 1,
+            "name": "Bass And Guitar",
+            "instrument": "Guitar",
+            "teacher_id": 2,
             "enrolled_student_ids": [
-                4,
-                6,
-                14,
-                22,
-                20
+                3
             ],
-            "lessons": []
+            "lessons": [
+                {
+                    "lesson-id": 5,
+                    "day": "Friday",
+                    "start_time": "14:30:00",
+                    "room": "ROAM-1-F",
+                    "remark": "4 - Bass And Guitar"
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "name": "Advanced Guitar Class",
+            "instrument": "Guitar",
+            "teacher_id": 2,
+            "enrolled_student_ids": [
+                3
+            ],
+            "lessons": [
+                {
+                    "lesson-id": 6,
+                    "day": "Friday",
+                    "start_time": "16:00:00",
+                    "room": "ROAM-1-F",
+                    "remark": "5 - Advanced Guitar Class"
+                }
+            ]
         }
     ],
-    "attendance": [],
-    "next_student_id": 24,
-    "next_teacher_id": 6,
-    "next_course_id": 5,
-    "next_lesson_id": 4
+    "attendance": [
+        {
+            "student_id": 6,
+            "course_id": 2,
+            "timestamp": "2025-09-27 16:01:23"
+        },
+        {
+            "student_id": 1,
+            "course_id": 1,
+            "timestamp": "2025-09-27 16:32:49"
+        },
+        {
+            "student_id": 2,
+            "course_id": 1,
+            "timestamp": "2025-09-27 16:41:50"
+        },
+        {
+            "student_id": 2,
+            "course_id": 1,
+            "timestamp": "2025-09-27 16:41:51"
+        },
+        {
+            "student_id": 2,
+            "course_id": 1,
+            "timestamp": "2025-09-27 16:41:52"
+        },
+        {
+            "student_id": 2,
+            "course_id": 1,
+            "timestamp": "2025-09-27 16:41:52"
+        }
+    ],
+    "next_student_id": 7,
+    "next_teacher_id": 4,
+    "next_course_id": 6,
+    "next_lesson_id": 7
 }

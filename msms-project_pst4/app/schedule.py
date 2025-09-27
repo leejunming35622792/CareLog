@@ -3,6 +3,7 @@ import os
 import datetime
 from app.student import StudentUser
 from app.teacher import TeacherUser, Course, Lesson
+from app.staff import StaffUser
 
 class ScheduleManager:
     """The main controller for all business logic and data handling."""
@@ -11,12 +12,14 @@ class ScheduleManager:
         self.data_path = data_path
         self.students = []
         self.teachers = []
+        self.staff = []
         self.courses = []
         self.attendance_log = []
 
         # Id counters
         self.next_student_id = 1
         self.next_teacher_id = 1
+        self.next_staff_id = 1
         self.next_course_id = 1
         self.next_lesson_id = 1
 
@@ -28,12 +31,15 @@ class ScheduleManager:
             with open(self.data_path, 'r') as f:
                 data = json.load(f)
                 # Student object
-                self.students = [StudentUser(s["id"], s["name"], s["enrolled_course_ids"]) for s in data.get("students",[])]
+                self.students = [StudentUser(s["username"], s["password"], s["id"], s["name"], s["instrument"], s["enrolled_course_ids"]) for s in data.get("students",[])]
 
                 # Teacher object
-                self.teachers = [TeacherUser(t["id"], t["name"], t["speciality"]) for t in data.get("teachers", [])]
+                self.teachers = [TeacherUser(t["username"], t["password"], t["id"], t["name"], t["speciality"]) for t in data.get("teachers", [])]
 
-                # Course object
+                # Staff object
+                self.staff = [StaffUser(u["username"], u["password"]) for u in data.get("staff", [])]
+
+                # Course object 
                 self.courses = [Course(c["id"], c["name"], c["instrument"], c["teacher_id"], c["enrolled_student_ids"], c["lessons"]) for c in data.get("courses", [])]
                 
                 # Attendance object
@@ -42,6 +48,7 @@ class ScheduleManager:
                 # IDs
                 self.next_student_id = data.get("next_student_id", 1)
                 self.next_teacher_id = data.get("next_teacher_id", 1)
+                self.next_staff_id = data.get("next_staff_id", 1)
                 self.next_course_id = data.get("next_course_id", 1)
                 self.next_lesson_id = data.get("next_lesson_id", 1)
                 
@@ -53,6 +60,7 @@ class ScheduleManager:
         data_to_save = {
             "students": [s.__dict__ for s in self.students],
             "teachers": [t.__dict__ for t in self.teachers],
+            "staff": [u.__dict__ for u in self.staff],
             "courses": [c.__dict__ for c in self.courses],
             "attendance": self.attendance_log,
             "next_student_id": self.next_student_id,
@@ -94,18 +102,25 @@ class ScheduleManager:
             return False
         return True
 
-    def enrolment(self, staff, reg_name, reg_instrument, reg_course):
+    def enrolment(self, staff, username, password, reg_name, reg_instrument, reg_course):
+        if reg_name == None:
+            reg_name = ""
+
+        if reg_instrument == None:
+            reg_instrument = ""
+
         if staff == "s":
             # Sort course ID
-            reg_course.sort()
+            if not reg_course:
+                reg_course = []
+            else:
+                reg_course.sort()
+                for c in self.courses:
+                    if c.id in reg_course:
+                        c.enrolled_student_ids.append(self.next_student_id)
 
             # Create new object
-            new_student = StudentUser(self.next_student_id, reg_name, reg_course)
-
-            # Add Student ID to each Course
-            for c in self.courses:
-                if c.id in reg_course:
-                    c.enrolled_student_ids.append(self.next_student_id)
+            new_student = StudentUser(username, password, self.next_student_id, reg_name, reg_instrument, reg_course)
 
             # Add to Students Dataset
             self.students.append(new_student)
@@ -116,7 +131,7 @@ class ScheduleManager:
             return True
         elif staff == "t":
             # Create new object
-            new_teacher = TeacherUser(self.next_teacher_id, reg_name, reg_instrument)
+            new_teacher = TeacherUser(username, password, self.next_teacher_id, reg_name, reg_instrument)
 
             # Add to Teachers Dataset
             self.teachers.append(new_teacher)
@@ -128,16 +143,24 @@ class ScheduleManager:
         else:
             return False
         
-    def update_student(self, update_id, update_name, update_course):
+    def update_student(self, username, password, update_id, update_name, update_instrument, update_course):
         # Prevent null
         if update_course is None:
             update_course = []
 
         # Update the particular student info
         for s in self.students:
-            if str(s.id) == str(update_id):
+            if str(s.id) == str(update_id) or s.username == username:
+                if not update_id:
+                    update_id = s.id
+                if username:
+                    s.username = username
+                if password:
+                    s.password = password
                 if update_name:
                     s.name = update_name
+                if update_instrument:
+                    s.intrument = update_instrument
                 if update_course:
                     s.enrolled_course_ids = sorted(update_course)
                 
@@ -150,15 +173,21 @@ class ScheduleManager:
                 
         return True
 
-    def update_teacher(self, update_id, update_name, update_speciality):
+    def update_teacher(self, username, password, update_id, update_name, update_speciality):
         for t in self.teachers:
-            if str(t.id) == update_id:
+            if str(t.id) == str(update_id) or t.username == username:
+                if not update_id:
+                    update_id = t.id 
+                if username:
+                    t.username = username
+                if password:
+                    t.password = password
                 if update_name:
                     t.name = update_name
                 if update_speciality:
                     t.speciality = update_speciality
                 return True
-            return False
+        return False
         
     def search_student(self, s_id):
         # Find all student IDs
@@ -258,7 +287,8 @@ class ScheduleManager:
             match_student = []
             
             for s in self.students:
-                if search_keyword.lower() in s.name.lower():
+                s_name = s.name
+                if search_keyword.lower() in s_name.lower():
                     match_student.append({
                         "Student ID": s.id,
                         "Student Name": s.name,

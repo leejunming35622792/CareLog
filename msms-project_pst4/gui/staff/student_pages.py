@@ -13,7 +13,7 @@ def show_student_management_page(manager):
 
     if "success_msg" in st.session_state:
         st.balloons()
-        st.toast(st.session_state.success_msg)
+        st.success(st.session_state.success_msg)
         del st.session_state.success_msg
 
     with read:
@@ -35,6 +35,8 @@ def show_student_management_page(manager):
         st.subheader("Register New Student")
         with st.form("registration_form"):
             # Create input boxs
+            username = st.text_input("Enter Username: ", key="input_username")
+            password = st.text_input("Enter Password: ", key="input_password",type="password")
             reg_name = st.text_input("Enter Student Name: ").title()
             reg_instrument = st.text_input("Enter First Instrument: ").title()
 
@@ -49,23 +51,28 @@ def show_student_management_page(manager):
             # If button is clicked
             if submitted:
                 errors = []
-
+                if not username:
+                    errors.append("Username cannot be empty!")
+                if username in [s.username for s in manager.students] or username in [t.username for t in manager.teachers]:
+                        errors.append("Username has been taken!")
+                if not password:
+                    errors.append("Password cannot be empty!")
                 if not reg_name:
-                    errors.append("Name cannot be empty.")
+                    errors.append("Name cannot be empty!")
                 if not reg_name.replace(" ","").isalpha():
-                    errors.append("Name cannot contain numbers or symbols.")
+                    errors.append("Name cannot contain numbers or symbols!")
                 if len(reg_instrument) == 0:
-                    errors.append("Enter None if you haven't learnt any instrument")
+                    errors.append("Enter None if you haven't learnt any instrument!")
                 elif not reg_instrument.replace(" ", "").isalpha():
-                    errors.append("Instrument cannot contain numbers or symbols.")
+                    errors.append("Instrument cannot contain numbers or symbols!")
                 if not reg_course:
-                    errors.append("Please select at least one course.")
+                    errors.append("Please select at least one course!")
 
                 if errors:
                     for e in errors:
                         st.error(e)
                 else:
-                    new_student = manager.enrolment("s",reg_name, reg_instrument, reg_course)
+                    new_student = manager.enrolment("s", username, password, reg_name, reg_instrument, reg_course)
                     if new_student:
                         # Add delay time
                         with st.spinner("Saving...", show_time=True):
@@ -95,6 +102,8 @@ def show_student_management_page(manager):
                 # Get updated name
                 update_name = st.text_input("Enter New Name: ").title()
 
+                update_instrument = st.text_input("Enter New Instrument: ").title()
+
                 # Get updated course
                 course_option = {f"{c.id} - {c.name}": c.id for c in manager.courses}
                 update_course_labels = st.multiselect("Select All Courses: ", options=course_option.keys())
@@ -109,17 +118,18 @@ def show_student_management_page(manager):
                 if update_id_list:
                     errors = []
 
+                    if not update_course_labels:
+                        update_course_labels = []
+
                     if errors:  
                         for e in errors:
                             st.error(e)
+                        
                     else:
                         update_course = [course_option[c] for c in update_course_labels]
 
                         # Call update_student in ManagerSchedule
-                        update_student = manager.update_student(update_id, update_name, update_course)
-
-                        # Get updated details
-                        updated_student = next((s for s in manager.students if str(s.id) == str(update_id)), None)
+                        update_student = manager.update_student(None, None, update_id, update_name, update_instrument, update_course)
 
                         if update_student:
                             # Create delay
@@ -127,6 +137,10 @@ def show_student_management_page(manager):
                                 time.sleep(1)
                             st.session_state.success_msg = True
                             manager.save()
+
+                            # Get updated details
+                            updated_student = next((s for s in manager.students if str(s.id) == str(update_id)), None)
+
                             st.session_state.success_msg = f"""Successfully updated!\n
                                 ID: {updated_student.id}\n
                                 Name: {updated_student.name}\n
@@ -139,7 +153,6 @@ def show_student_management_page(manager):
                 else:
                     st.error("‼️ Failed, no changes detected")
 
-        
     with remove:
         # --- Delete Section ---
         st.subheader("Delete Student")
@@ -181,7 +194,7 @@ def show_student_management_page(manager):
                         with st.spinner("Saving...", show_time=True):
                             time.sleep(3)
                         manager.save()
-                        st.session_state.success_msg = f"Student ID {student_id} deleted successfully."
+                        st.session_state.success_msg = f"Student ID '{student_id}' deleted successfully."
                         st.rerun()
                         
                     else:
