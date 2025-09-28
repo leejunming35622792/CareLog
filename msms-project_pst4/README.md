@@ -14,9 +14,11 @@ It handles different types of users **(students, teachers, staff)**, **supports 
 - view report card
 - give feedback on courses
 
+
 2. ****If you are a **teacher**,...****
 - assume to be staff at this moment
 - kindly see 'staff' section
+
 
 3. ****If you are a **staff**,...****
 - use the following to log in
