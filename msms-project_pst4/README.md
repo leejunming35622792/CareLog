@@ -6,7 +6,7 @@ It handles different types of users **(students, teachers, staff)**, **supports 
 ---
 
 ## How to Run the Program
-1. If you are a **student**,...
+1. ****If you are a student,...****
 - start by registering yourself (username, password)
 - update your personal detail (name, instrument, course enrolled)
 - view courses available
@@ -14,11 +14,11 @@ It handles different types of users **(students, teachers, staff)**, **supports 
 - view report card
 - give feedback on courses
 
-2. If you are a **teacher**,...
+2. ****If you are a **teacher**,...****
 - assume to be staff at this moment
 - kindly see 'staff' section
 
-3. If you are a **staff**,...
+3. ****If you are a **staff**,...****
 - use the following to log in
       username: *staff*
       password: *staffPW*
