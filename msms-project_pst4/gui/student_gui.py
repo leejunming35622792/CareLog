@@ -178,7 +178,37 @@ def feedback():
         submit = st.form_submit_button("Submit Feedback")
         
         if submit:
-            st.write(like)
+            st.success("Thanks for your valuable feedback! 😊")
+
+# --- Sub-section: Feedback ---
+def student_card():
+    st.subheader("Your Student Card: ")
+    current_student = next((s for s in manager.students if s.username == current_username), None)
+    course_info = [c for c in manager.courses if current_student.id in c.enrolled_student_ids]
+    match_teacher = {t.id: t.name for t in manager.teachers}
+
+    card = (
+        "+" + "="*50 + "+\n"
+        + "|{:^50}|\n".format("MUSIC SCHOOL ID BADGE")
+        + "+" + "="*50 + "+\n"
+        + "| {:20} {:<28}|\n".format("ID", current_student.id)
+        + "| {:20} {:<28}|\n".format("Name", current_student.name)
+        + "+" + "="*50 + "+\n"
+    )
+
+    # Add course details dynamically
+    for c in course_info:
+        card += "| {:20} {:<28}|\n".format(f"Course {c.id}", c.name)
+        card += "|      {:15} {:<28}|\n".format(f"Teacher: ", match_teacher[c.teacher_id])
+        card += "|      {:15} {:<28}|\n".format(f"Instrument: ", c.instrument)
+        card += "|" + " "*50 + "|\n"
+
+    # Finish the card
+    card += "+" + "="*50 + "+\n"
+    card += "|{:^50}|\n".format("CONGRATULATIONS!")
+    card += "+" + "="*50 + "+\n"
+
+    st.code(card)
 
 # --- Main Section---
 def student_launch(Manager, username):
@@ -198,9 +228,9 @@ def student_launch(Manager, username):
     global current_student
     current_student = next((s for s in manager.students if s.username == username), None)
     global current_course
-    current_course = next((s.enrolled_course_ids for s in manager.students if s.username == username))
+    current_course = next((s.enrolled_course_ids for s in manager.students if s.username == username), None)
 
-    page = st.sidebar.radio("Go to", ["Dashboard", "Personal", "Courses", "Attendance", "Feedback"])
+    page = st.sidebar.radio("Go to", ["Dashboard", "Personal", "Courses", "Attendance", "Feedback", "Student Card"])
 
     st.sidebar.divider()
 
@@ -216,6 +246,8 @@ def student_launch(Manager, username):
         attendance()
     elif page == "Feedback":
         feedback()
+    elif page == "Student Card":
+        student_card()
 
 # --- Sub-section: Logout ---
 def logout():

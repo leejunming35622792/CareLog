@@ -4,7 +4,7 @@ import json
 import os
 
 def display_all_page(manager):
-    st.header("Database")
+    st.title("MSMS Database")
 
     st.subheader("Students")
     students_cleaned = []
@@ -16,7 +16,9 @@ def display_all_page(manager):
         })
     students_df = pd.DataFrame(students_cleaned)
     st.dataframe(students_df, hide_index=True)
-
+    
+    st.divider()
+    
     st.subheader("Teachers")
     teachers_cleaned = []
     for teacher in manager.teachers:
@@ -27,6 +29,8 @@ def display_all_page(manager):
         })
     teachers_df = pd.DataFrame(teachers_cleaned)
     st.dataframe(teachers_df, hide_index=True)
+
+    st.divider()
 
     st.subheader("Courses")
     courses_cleaned = []
@@ -42,6 +46,8 @@ def display_all_page(manager):
     courses_df = pd.DataFrame(courses_cleaned)
     st.dataframe(courses_df, hide_index=True)
 
+    st.divider()
+
     st.subheader("Attendance")
     attendance_cleaned = []
     for a in manager.attendance_log:
@@ -52,6 +58,8 @@ def display_all_page(manager):
         })
     attendance_df = pd.DataFrame(attendance_cleaned)
     st.dataframe(attendance_df, hide_index=True)
+
+    st.divider()
 
     st.subheader("Show Json File")
     with st.form("show-json"):

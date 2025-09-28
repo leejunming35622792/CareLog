@@ -24,6 +24,8 @@ def login_page():
         st.session_state.manager = ScheduleManager()
 
     if st.session_state.get("page") == "login":
+        st.balloons()
+        
         # Create header
         st.header("Music School Management System")
 

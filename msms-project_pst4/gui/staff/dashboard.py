@@ -33,7 +33,7 @@ def dashboard(manager):
     teachers_cleaned = []
     for teacher in manager.teachers:
         teachers_cleaned.append({
-            "Teacher Id": teacher.id,
+            "Teacher ID": teacher.id,
             "Teacher Name": teacher.name,
             "Speciality": teacher.speciality,
         })
@@ -52,7 +52,7 @@ def dashboard(manager):
             "Instrument": c.instrument,
             "Teacher ID": c.teacher_id,
             "Enrolled Student IDs": c.enrolled_student_ids,
-            "Lessons": [lesson for lesson in c.lessons]
+            "Lessons": [lesson.get("lesson-id") for lesson in c.lessons]
         })
     if courses_cleaned:
         courses_df = pd.DataFrame(courses_cleaned)

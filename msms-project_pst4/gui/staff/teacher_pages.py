@@ -35,7 +35,9 @@ def show_teacher_management_page(manager):
         # --- Register Section ---
         st.subheader("Register New Teacher")
         with st.form("registration_form"):
-            # Create Input Box
+            # Create input boxs
+            username = st.text_input("Enter Username: ", key="input_username")
+            password = st.text_input("Enter Password: ", key="input_password",type="password")
             reg_name = st.text_input("Enter Teacher Name: ").title()
             reg_speciality = st.text_input("Enter Speciality: ").title()
 
@@ -45,7 +47,12 @@ def show_teacher_management_page(manager):
             # When user clicks submit button
             if submitted:
                 errors = []
-                # Check if both are inputted
+                if not username:
+                    errors.append("Username cannot be empty!")
+                if username in [s.username for s in manager.students] or username in [t.username for t in manager.teachers]:
+                        errors.append("Username has been taken!")
+                if not password:
+                    errors.append("Password cannot be empty!")
                 if not reg_name:
                     errors.append("Name cannot be empty")
                 if not reg_speciality:
@@ -57,7 +64,7 @@ def show_teacher_management_page(manager):
                     for e in errors:
                         st.error(e)
                 else:
-                    new_teacher = manager.enrolment("t", reg_name, reg_speciality, None)
+                    new_teacher = manager.enrolment("t", username, password, reg_name, reg_speciality, None)
                     if new_teacher:
                         with st.spinner("Saving...", show_time=True):
                             time.sleep(3)
@@ -147,9 +154,10 @@ def show_teacher_management_page(manager):
                         # Create delay
                         with st.spinner("Saving...", show_time=True):
                             time.sleep(3)
-                        st.success(f"Teacher ID '{teacher_id}' deleted successfully.")
-                        manager.save()
+                            manager.save()
+                        st.session_state.success_msg = f"Teacher ID '{teacher_id}' deleted successfully."
                         st.session_state.show_confirm = False
+                        st.rerun()
                     else:
                             st.error("‼️ Failed, no changes detected")
 

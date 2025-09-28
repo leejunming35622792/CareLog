@@ -91,6 +91,7 @@ def show_student_management_page(manager):
             # Variable
             all_student_ids = [s.id for s in manager.students]
 
+            # Info
             st.info("To update, enter the new value for that particular field while leaving the others blank")
 
             # Get updated ID
@@ -98,10 +99,12 @@ def show_student_management_page(manager):
             update_id_list = st.selectbox("Enter Student ID: ", id_disp.keys())
             if update_id_list:
                 update_id = id_disp[update_id_list]
+                current_student = next((s for s in manager.students if s.id == update_id), None)
 
                 # Get updated name
-                update_name = st.text_input("Enter New Name: ").title()
+                update_name = st.text_input("Enter New Name: ", value=current_student.name).title()
 
+                # Get updated instrument
                 update_instrument = st.text_input("Enter New Instrument: ").title()
 
                 # Get updated course
@@ -193,7 +196,7 @@ def show_student_management_page(manager):
                         # Create delay
                         with st.spinner("Saving...", show_time=True):
                             time.sleep(3)
-                        manager.save()
+                            manager.save()
                         st.session_state.success_msg = f"Student ID '{student_id}' deleted successfully."
                         st.rerun()
                         

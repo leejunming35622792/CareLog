@@ -25,7 +25,7 @@ def staff_launch():
     st.sidebar.title("MSMS Navigation")
 
     # Create a radio button menu in the sidebar for page navigation.
-    page = st.sidebar.radio("Go to", ["Dashboard", "Student Management", "Teacher Management", "Course Management","Print Daily Roster", "Print Student Card","Payments (stub)", "View All"])
+    page = st.sidebar.radio("Go to", ["Dashboard", "Student Management", "Teacher Management", "Course Management","Print Daily Roster", "Print Student Card","Payments (stub)", "Data Management"])
 
     st.sidebar.button("Logout", on_click=logout)
 
@@ -46,7 +46,7 @@ def staff_launch():
         st.header("Payments")
         st.warning("This feature will be implemented in PST5.")
         show_payment_page(st.session_state.manager)
-    elif page == "View All":
+    elif page == "Data Management":
         display_all_page(st.session_state.manager)
 
 def logout():

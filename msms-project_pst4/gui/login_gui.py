@@ -4,8 +4,6 @@ from gui.staff_gui import staff_launch
 from gui.student_gui import student_launch
 from app.schedule import ScheduleManager
 
-st.balloons()
-
 def register(manager):  
     with st.form("register-form"):
         st.subheader("Register Account")

@@ -263,45 +263,45 @@ class ScheduleManager:
 
     # --------- Read/ Other Feature --------- 
     def search_student(self, s_id):
-        # Find all student IDs
-        all_student_ids = [s.id for s in self.students]
-
-        if len(s_id.strip()) != 0:
-            if s_id.strip() in map(str, all_student_ids):
-
-                s_id = str(s_id)
-
-                student = next((s for s in self.students if str(s.id)== s_id), None)
-
-                if not student:
-                    return None
-                
-                student_info_dict = [{
-                    "Student ID": student.id,
-                    "Student Name": student.name,
-                    "Courses": student.enrolled_course_ids
-                }]
-                
-                return student_info_dict
-            return False
-        return False
+        student = next((s for s in self.students if str(s.id)== str(s_id)), None)
+        
+        student_info_dict = {
+            "Student ID": student.id,
+            "Student Name": student.name,
+            "Courses": student.enrolled_course_ids
+        }
+        
+        return student_info_dict
             
     def print_card(self, s_id):
-
         s_id = str(s_id)
-
         find_student = next((s for s in self.students if str(s.id) == s_id), None)
+        student_info = next((s for s in self.students if str(s.id) == str(s_id)), None)
+        course_info = [c for c in self.courses if student_info.id in c.enrolled_student_ids]
+        match_teacher = {t.id: t.name for t in self.teachers}
 
         if find_student:
-            filename = f"{s_id}_card.txt"
+            filename = f"student{s_id}_card.txt"
 
             with open(filename, "w") as f:
-                f.write("========================\n")
-                f.write(f"  MUSIC SCHOOL ID BADGE\n")
-                f.write("========================\n")
-                f.write("ID            : ".ljust(16) + f"{find_student.id}\n")
-                f.write("Name          :".ljust(16) + f"{find_student.name}\n")
-                f.write("Course Joined : ".ljust(16) + f"{find_student.enrolled_course_ids}\n")
+                f.write("Student Card:\n\n")
+                f.write("+" + "="*50 + "+\n")
+                f.write("|{:^50}|\n".format("MUSIC SCHOOL ID BADGE"))
+                f.write("+" + "="*50 + "+\n")
+                f.write("| {:20} {:<28}|\n".format("ID", student_info.id))
+                f.write("| {:20} {:<28}|\n".format("Name", student_info.name))
+                f.write("+" + "="*50 + "+\n")
+
+                # Add course details dynamically
+                for c in course_info:
+                    f.write("| {:20} {:<28}|\n".format(f"Course {c.id}", c.name))
+                    f.write("|      {:15} {:<28}|\n".format(f"Teacher: ", match_teacher[c.teacher_id]))
+                    f.write("|      {:15} {:<28}|\n".format(f"Instrument: ", c.instrument))
+                    f.write("|" + " "*50 + "|\n")
+
+                f.write("+" + "="*50 + "+\n")
+                f.write("|{:^50}|\n".format("CONGRATULATIONS!"))
+                f.write("+" + "="*50 + "+\n")
             return filename
         else:
             return False
