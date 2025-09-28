@@ -1,7 +1,7 @@
-# Music School Management System (MSMS)
+# Music School Management System (MSMS) v4
 
 This is a **Streamlit-based web application** for managing a music school.  
-It handles different types of users (students, teachers, staff), supports CRUD operations, provides dashboards, and allows exporting and displaying structured data.  
+It handles different types of users **(students, teachers, staff)**, **supports CRUD operations**, provides **dashboards**, and allows **exporting** and **displaying structured data**.  
 
 ---
 
@@ -29,25 +29,28 @@ It handles different types of users (students, teachers, staff), supports CRUD o
 
 ## Code Structure
 ```python
-msms/
+PST4/
 │
 ├── app/
 │ ├── schedule.py
 │ ├── user.py
-│ ├── course.py
-│ └── payment.py # (to be continued in phase 5)
+│ └── course.py
 │
 ├── gui/
+│ ├── login_pages.py
 │ ├── login_gui.py
 │ ├── student_gui.py
 │ ├── teacher_gui.py
 │ ├── staff_gui.py
-│ ├── main_dashboard.py
-│ └── display_gui.py
-│
-├── utils/
-│ ├── print_card.py
-│ └── roaster.py
+| └── staff/
+|     ├── dashboard.py
+|     ├── student_pages.py
+|     ├── teacher_pages.py
+|     ├── course_pages.py
+|     ├── display_pages.py
+│     ├── print_card.py
+│     ├── roaster_pages.py
+│     └── payment_pages.py # (to be continued in phase 5)
 │
 ├── README.md
 └── main.py
@@ -189,6 +192,8 @@ Courses: Piano, Music Theory
 ## Functions:
 
 export_student_card(student) → Writes details into a .txt file
+
+---
 
 # Roaster
 
