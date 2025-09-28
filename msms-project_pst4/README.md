@@ -5,6 +5,30 @@ It handles different types of users **(students, teachers, staff)**, **supports 
 
 ---
 
+## How to Run the Program
+1. If you are a **student**,...
+- start by registering yourself (username, password)
+- update your personal detail (name, instrument, course enrolled)
+- view courses available
+- check in attendance
+- view report card
+- give feedback on courses
+
+2. If you are a **teacher**,...
+- assume to be staff at this moment
+- kindly see 'staff' section
+
+3. If you are a **staff**,...
+- use the following to log in
+      username: *staff*
+      password: *staffPW*
+- CRUD operations for students, teachers, courses
+- view daily roaster
+- print report card
+- view the database
+
+4. Continue to explore the rest of the program
+---
 ## Features Overview
 - **User Management**
   - Student Page
@@ -212,3 +236,5 @@ attendance_check(student_id, subject) → Mark attendance for students
 Organize daily lessons
 
 Track student attendance by subject
+
+---
