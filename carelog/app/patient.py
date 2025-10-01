@@ -17,7 +17,8 @@ class PatientRecord():
         self.pr_prediction_result = pr_prediction_result
         self.pr_confidence_score = pr_confidence_score
 
-# class PatientCondition():
+# TODO: appointments
+# TODO: class PatientCondition():
 #     def __init__(self, name, severity, notes):
 #         self.name = name
 #         self.severity = severity
