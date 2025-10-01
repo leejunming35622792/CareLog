@@ -12,7 +12,7 @@ from app.admin import AdminUser
 from app.shift_schedule import Shift
 
 class ScheduleManager():
-    def __init__(self, data_path):
+    def __init__(self, data_path="data/msms.json"):
         self.data_path = data_path
         self.patients = []
         self.doctors = []
@@ -92,3 +92,9 @@ class ScheduleManager():
 
     def save(self):
         self._save_data()
+
+    def add_account_patient(self, username, password):
+        new_patient = PatientUser(self.next_patient_id, username, password, "", "", "", "", "", "")
+        self.patients.append(new_patient)
+        self.next_patient_id += 1
+        return True
