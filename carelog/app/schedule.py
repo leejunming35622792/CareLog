@@ -5,6 +5,7 @@ import os
 from app.user import User
 from app.patient import PatientUser
 from app.patient import PatientRecord
+from app.patient import PatientAppointment
 from app.doctor import DoctorUser
 from app.nurse import NurseUser
 from app.receptionist import ReceptionistUser
@@ -20,6 +21,7 @@ class ScheduleManager():
         self.receptionists = []
         self.admins = []
         self.records = []
+        self.appointments = []
         self.shifts = []
         self.next_patient_id = 1
         self.next_doctor_id = 1
@@ -27,6 +29,7 @@ class ScheduleManager():
         self.next_receptionist_id = 1
         self.next_admin_id = 1
         self.next_record_id = 1
+        self.next_appt_id = 1
         self.next_shift_id = 1
 
         # Load existing data
@@ -39,7 +42,7 @@ class ScheduleManager():
                 data = json.load(f)
 
                 # Patient objects
-                self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"]) for p in data.get("patients", [])]
+                self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"], p["p_remark"]) for p in data.get("patients", [])]
 
                 # Doctor objects
                 self.doctors = [DoctorUser(d["d_id"], d["username"], d["password"], d["name"], d["gender"], d["address"], d["email"], d["contact_num"], d["date_joined"], d["speciality"], d["department"]) for d in data.get("doctors", [])]
@@ -56,6 +59,8 @@ class ScheduleManager():
                 # Patient record objects
                 self.records = [PatientRecord(pr["pr_record_id"], pr["patient"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
 
+                self.appointments = [PatientAppointment(appt["appt_id"], appt["patient"], appt["doctor"], appt["date"], appt["time"], appt["appt_status"], appt["appt_remark"]) for appt in self.appointments]
+
                 # Shift objects
                 self.shifts = [Shift(s["shift_id"], s["staff_id"], s["day"], s["start_time"], s["end_time"], s["remark"]) for s in data.get("shifts", [])]
 
@@ -65,6 +70,7 @@ class ScheduleManager():
                 self.next_receptionist_id = data.get("next_receptionist_id", 1)
                 self.next_admin_id = data.get("next_admin_id", 1)
                 self.next_record_id = data.get("next_record_id", 1)
+                self.next_appt_id = data.get("next_appt_id", 1)
                 self.next_shift_id = data.get("next_shift_id", 1)
         
         except FileNotFoundError:
@@ -85,6 +91,7 @@ class ScheduleManager():
             "next_receptionist_id": self.next_receptionist_id,
             "next_admin_id": self.next_admin_id,
             "next_record_id": self.next_record_id,
+            "next_appt_id": self.next_appt_id,
             "next_shift_id": self.next_shift_id
         }
         with open(self.data_path, "w") as f:
@@ -109,7 +116,7 @@ class ScheduleManager():
         self.next_patient_id += 1
         return True
     
-    def update_patient_detail(self, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num):
+    def update_patient_detail(self, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
         patient = next((p for p in self.patients if p.username == username), None)
         
         if new_password:
@@ -124,5 +131,7 @@ class ScheduleManager():
             patient.email = new_email
         if new_contact_num:
             patient.contact_num = new_contact_num
+        if new_remark:
+            patient.p_remark = new_remark
         
         return True

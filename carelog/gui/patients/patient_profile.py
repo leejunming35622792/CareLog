@@ -10,7 +10,7 @@ def profile(manager, username):
         patient = next((p for p in manager.patients if p.username == username), None)
 
         if not patient:
-            st.error("Patient not found.")
+            st.error("Unexpected Error!")
             return
 
         st.subheader("Patient Profile")
@@ -26,10 +26,12 @@ def profile(manager, username):
                                           index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
 
         with col2:
-            new_address = st.text_area("Address", value=patient.address)
+            new_address = st.text_area("Address", value=patient.address).title()
             new_email = st.text_input("Email", value=patient.email)
             new_contact_num = st.text_input("Contact Number", value=patient.contact_num)
             new_date_joined = st.text_input("Date Joined", value=patient.date_joined, disabled=True)
+
+        new_remark = st.text_area("Remark", value=patient.p_remark)
 
         # Save button
         button = st.form_submit_button("Save Changes")
@@ -67,7 +69,7 @@ def profile(manager, username):
                 for e in errors:
                     st.error(e)
             else:
-                result = manager.update_patient_detail(username, new_password, new_name, new_gender, new_address, new_email, new_contact_num)
+                result = manager.update_patient_detail(username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark)
                 with st.spinner("Saving changes..."):
                     time.sleep(1)
                 if result:
