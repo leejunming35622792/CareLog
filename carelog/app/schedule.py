@@ -54,7 +54,7 @@ class ScheduleManager():
                 self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
 
                 # Patient record objects
-                self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timstamp"], pr["pr_conditions"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
+                self.records = [PatientRecord(pr["pr_record_id"], pr["patient"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
 
                 # Shift objects
                 self.shifts = [Shift(s["shift_id"], s["staff_id"], s["day"], s["start_time"], s["end_time"], s["remark"]) for s in data.get("shifts", [])]
@@ -94,7 +94,35 @@ class ScheduleManager():
         self._save_data()
 
     def add_account_patient(self, username, password):
-        new_patient = PatientUser(self.next_patient_id, username, password, "", "", "", "", "", "")
+        joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_patient = PatientUser(self.next_patient_id, 
+                                username,
+                                password, 
+                                "", #name
+                                "", #gender
+                                "", #address
+                                "", #email
+                                "", #contact_unum
+                                joined_date, #date_joined
+                                [])
         self.patients.append(new_patient)
         self.next_patient_id += 1
+        return True
+    
+    def update_patient_detail(self, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num):
+        patient = next((p for p in self.patients if p.username == username), None)
+        
+        if new_password:
+            patient.password = new_password
+        if new_name:
+            patient.name = new_name
+        if new_gender:
+            patient.gender = new_gender
+        if new_address:
+            patient.address = new_address
+        if new_email:
+            patient.email = new_email
+        if new_contact_num:
+            patient.contact_num = new_contact_num
+        
         return True
