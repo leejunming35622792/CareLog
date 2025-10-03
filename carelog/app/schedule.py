@@ -77,6 +77,8 @@ class ScheduleManager():
             print("Data file not found, Starting with a clean state.")
 
     def _save_data(self):
+        os.makedirs(os.path.dirname(self.data_path), exist_ok=True)
+
         data_to_save = {
             "patients": [p.__dict__ for p in self.patients],
             "doctors": [d.__dict__ for d in self.doctors],
@@ -84,6 +86,7 @@ class ScheduleManager():
             "receptionists": [r.__dict__ for r in self.receptionists],
             "admins": [a.__dict__ for a in self.admins],
             "records": [pr.__dict__ for pr in self.records],
+            "appointments": [a.__dict__ for a in self.appointments],
             "shifts": [s.__dict__ for s in self.shifts],
             "next_patient_id": self.next_patient_id,
             "next_doctor_id": self.next_doctor_id,
@@ -109,7 +112,7 @@ class ScheduleManager():
                                 "", #gender
                                 "", #address
                                 "", #email
-                                "", #contact_unum
+                                "", #contact_num
                                 joined_date, #date_joined
                                 [])
         self.patients.append(new_patient)
@@ -118,7 +121,8 @@ class ScheduleManager():
     
     def update_patient_detail(self, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
         patient = next((p for p in self.patients if p.username == username), None)
-        
+        if patient is None: #Check if patient list empty or no
+            return False
         if new_password:
             patient.password = new_password
         if new_name:
@@ -133,5 +137,49 @@ class ScheduleManager():
             patient.contact_num = new_contact_num
         if new_remark:
             patient.p_remark = new_remark
-        
+            
+        self._save_data()
+        return True 
+
+
+    def add_account_doctor(self,username,password):
+        joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        new_doctor = DoctorUser(self.next_doctor_id, 
+                                username,
+                                password, 
+                                "", #name
+                                "", #gender
+                                "", #address
+                                "", #email
+                                "", #contact_num
+                                joined_date, #date_joined
+                                "", #speciality
+                                "", #department
+                                )
+        self.doctors.append(new_doctor)
+        self.next_doctor_id += 1
         return True
+    
+    def update_doctor_details(self,username,new_password,new_name,new_gender,new_address,new_email, new_contact_num,new_department,new_speciality):
+        doctor=next((d for d in self.doctors if d.username==username),None)
+        if doctor is None:
+            return False
+        if new_password:
+            doctor.password = new_password
+        if new_name:
+            doctor.name = new_name
+        if new_gender:
+            doctor.gender = new_gender
+        if new_address:
+            doctor.address = new_address
+        if new_email:
+            doctor.email = new_email
+        if new_contact_num:
+            doctor.contact_num = new_contact_num
+        if new_speciality:
+            doctor.speciality = new_speciality
+        if new_department:
+            doctor.department = new_department
+
+        self._save_data()
+        return True 
