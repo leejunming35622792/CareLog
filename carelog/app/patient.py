@@ -10,7 +10,7 @@ class PatientUser(User):
 class PatientRecord():
     def __init__(self, pr_record_id, p_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score):
         self.pr_record_id = pr_record_id
-        self.patient = p_id
+        self.p_id = p_id
         self.pr_timestamp = pr_timestamp
         self.pr_conditions = pr_conditions
         self.pr_medications = pr_medications

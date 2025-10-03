@@ -57,7 +57,7 @@ class ScheduleManager():
                 self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
 
                 # Patient record objects
-                self.records = [PatientRecord(pr["pr_record_id"], pr["patient"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
+                self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_medications"], pr["pr_billings"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
 
                 self.appointments = [PatientAppointment(appt["appt_id"], appt["patient"], appt["doctor"], appt["date"], appt["time"], appt["appt_status"], appt["appt_remark"]) for appt in self.appointments]
 

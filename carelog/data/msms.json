@@ -13,7 +13,8 @@
             "p_record": [
                 1,
                 2
-            ]
+            ],
+            "p_remark": ""
         },
         {
             "p_id": 2,
@@ -25,7 +26,8 @@
             "email": "abc@mail.com",
             "contact_num": "0123456789",
             "date_joined": "2025-10-01",
-            "p_record": []
+            "p_record": [],
+            "p_remark": ""
         }
     ],
     "doctors": [
@@ -88,22 +90,26 @@
     "records": [
         {
             "pr_record_id": 1,
-            "patient": 1,
+            "p_id": 1,
             "pr_timestamp": "2025-10-01T09:30:00",
             "pr_conditions": {
                 "Diabetes": "Mild",
                 "Hypertension": "Moderate"
             },
+            "pr_medications": "",
+            "pr_billings": "",
             "pr_prediction_result": "At risk",
             "pr_confidence_score": 0.87
         },
         {
             "pr_record_id": 2,
-            "patient": 1,
+            "p_id": 1,
             "pr_timestamp": "2025-10-02T14:10:00",
             "pr_conditions": {
                 "Flu": "Mild"
             },
+            "pr_medications": "",
+            "pr_billings": "",
             "pr_prediction_result": "Recovering",
             "pr_confidence_score": 0.95
         }
