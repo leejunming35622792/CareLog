@@ -1,6 +1,4 @@
-import json
-import datetime
-import os
+import json, datetime, os, shutil, logging
 
 from app.user import User
 from app.patient import PatientUser
@@ -15,6 +13,14 @@ from app.shift_schedule import Shift
 class ScheduleManager():
     def __init__(self, data_path="data/msms.json"):
         self.data_path = data_path
+        # Configure logging including path
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.StreamHandler(),
+                logging.FileHandler(os.path.join(os.path.dirname(self.data_path),'msms.log'))]
+        )
         self.patients = []
         self.doctors = []
         self.nurses = []
@@ -31,6 +37,7 @@ class ScheduleManager():
         self.next_record_id = 1
         self.next_appt_id = 1
         self.next_shift_id = 1
+        self.systemlogs = []
 
         # Load existing data
         self._load_data()
@@ -57,9 +64,9 @@ class ScheduleManager():
                 self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
 
                 # Patient record objects
-                self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_medications"], pr["pr_billings"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
+                self.records = [PatientRecord(pr["pr_record_id"], pr["patient"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_prediction_result"], pr["pr_confidence_score"]) for pr in data.get("records", [])]
 
-                self.appointments = [PatientAppointment(appt["appt_id"], appt["patient"], appt["doctor"], appt["date"], appt["time"], appt["appt_status"], appt["appt_remark"]) for appt in self.appointments]
+                self.appointments = [PatientAppointment(appt["appt_id"], appt["patient"], appt["doctor"], appt["date"], appt["time"], appt["appt_status"], appt["appt_remark"]) for appt in data.get("appointments", [])]
 
                 # Shift objects
                 self.shifts = [Shift(s["shift_id"], s["staff_id"], s["day"], s["start_time"], s["end_time"], s["remark"]) for s in data.get("shifts", [])]
@@ -72,9 +79,11 @@ class ScheduleManager():
                 self.next_record_id = data.get("next_record_id", 1)
                 self.next_appt_id = data.get("next_appt_id", 1)
                 self.next_shift_id = data.get("next_shift_id", 1)
+                return data
         
         except FileNotFoundError:
-            print("Data file not found, Starting with a clean state.")
+            self.log_event("Data file not found, Starting with a clean state.", "WARNING")
+            return {}
 
     def _save_data(self):
         os.makedirs(os.path.dirname(self.data_path), exist_ok=True)
@@ -97,11 +106,40 @@ class ScheduleManager():
             "next_appt_id": self.next_appt_id,
             "next_shift_id": self.next_shift_id
         }
-        with open(self.data_path, "w") as f:
-            json.dump(data_to_save, f, indent=4)
-
+        try:
+            with open(self.data_path, "w") as f:
+                json.dump(data_to_save, f, indent=4)
+        except OSError as e:
+            self.log_event(f"Error saving data: {e}", "ERROR")
+            raise
+            
     def save(self):
         self._save_data()
+
+    def BackupSystem(self):
+        """Backup Database"""
+        backup_dir = "carelog/backup"
+        os.makedirs(backup_dir, exist_ok=True)
+        backup_path = os.path.join(backup_dir, f"msms_backup_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+        shutil.copy(self.data_path, backup_path)
+        self.log_event(f"Backup created at {backup_path} on {datetime.datetime.now().isoformat()}", "INFO")
+        self._save_data()
+
+    def log_event(self, event, level="INFO"):
+        """Logs an event to systemlogs and logging.
+        Args:
+        event (str): Description of the event.
+        level (str): Logging level (INFO, ERROR, etc.).
+        """
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = {"timestamp": timestamp, "event": event}
+        self.systemlogs.append(log_entry)
+        if level == "INFO":
+            logging.info(event)
+        elif level == "ERROR":
+            logging.error(event)
+        elif level == "WARNING":
+            logging.warning(event)
 
     def add_account_patient(self, username, password):
         joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

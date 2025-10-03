@@ -7,4 +7,3 @@ class NurseUser(User):
         self.speciality = speciality
         self.department = department 
         self.with_doctor = with_doctor  # store doctor ID
-        

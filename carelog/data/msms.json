@@ -27,7 +27,7 @@
             "contact_num": "0123456789",
             "date_joined": "2025-10-01",
             "p_record": [],
-            "p_remark": ""
+            "p_remark": "i want a female doctor"
         }
     ],
     "doctors": [
@@ -114,6 +114,39 @@
             "pr_confidence_score": 0.95
         }
     ],
+    "appointments": [
+        {
+            "appointments": [
+                {
+                    "appt_id": 1,
+                    "p_id": 1,
+                    "d_id": 1,
+                    "appt_date": "2025-10-05",
+                    "appt_time": "09:30",
+                    "appt_status": "Booked",
+                    "appt_remark": "Follow-up check on blood pressure"
+                },
+                {
+                    "appt_id": 2,
+                    "p_id": 1,
+                    "d_id": 1,
+                    "appt_date": "2025-10-07",
+                    "appt_time": "14:00",
+                    "appt_status": "Cancelled",
+                    "appt_remark": "Patient requested to reschedule"
+                },
+                {
+                    "appt_id": 3,
+                    "p_id": 2,
+                    "d_id": 1,
+                    "appt_date": "2025-10-10",
+                    "appt_time": "11:15",
+                    "appt_status": "Rescheduled",
+                    "appt_remark": "Doctor unavailable on original date"
+                }
+            ]
+        }
+    ],
     "shifts": [
         {
             "shift_id": 1,
@@ -138,5 +171,6 @@
     "next_receptionist_id": 2,
     "next_admin_id": 2,
     "next_record_id": 3,
+    "next_appt_id": 1,
     "next_shift_id": 3
 }
