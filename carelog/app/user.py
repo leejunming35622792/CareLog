@@ -103,45 +103,45 @@ class User:
         else:
             raise ValueError(f"Invalid role type: {role}")
 
-    def add_account_patient(self, username, password):
-        joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        new_patient = PatientUser.create_acc(self.next_patient_id, username, password, str(joined_date))
-        self.patients.append(new_patient)
-        self.next_patient_id += 1
-        return True
+    # def add_account_patient(self, username, password):
+    #     joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #     new_patient = PatientUser.create_acc(self.next_patient_id, username, password, str(joined_date))
+    #     self.patients.append(new_patient)
+    #     self.next_patient_id += 1
+    #     return True
     
-    def register_doctor(self, email, password):
+    # def register_doctor(self, email, password):
 
-        if not email or "@" not in email:
-            return False, "Invalid email address", None
+    #     if not email or "@" not in email:
+    #         return False, "Invalid email address", None
         
-        if any(d.email == email for d in self.doctors):
-            return False, "Email already registered", None
+    #     if any(d.email == email for d in self.doctors):
+    #         return False, "Email already registered", None
         
-        if not password or len(password) < 6:
-            return False, "Password must be at least 6 characters", None
+    #     if not password or len(password) < 6:
+    #         return False, "Password must be at least 6 characters", None
         
-        joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        new_doctor = DoctorUser(
-            self.next_doctor_id,
-            email,
-            password,
-            "",
-            "",
-            "",
-            email,
-            "",
-            joined_date,
-            "",
-            ""
-        )
+    #     joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #     new_doctor = DoctorUser(
+    #         self.next_doctor_id,
+    #         email,
+    #         password,
+    #         "",
+    #         "",
+    #         "",
+    #         email,
+    #         "",
+    #         joined_date,
+    #         "",
+    #         ""
+    #     )
         
-        self.doctors.append(new_doctor)
-        doctor_id = self.next_doctor_id
-        self.next_doctor_id += 1
-        self._save_data()
+    #     self.doctors.append(new_doctor)
+    #     doctor_id = self.next_doctor_id
+    #     self.next_doctor_id += 1
+    #     self._save_data()
         
-        return True, "Doctor registered successfully", doctor_id
+    #     return True, "Doctor registered successfully", doctor_id
     
 
     #Update detail
