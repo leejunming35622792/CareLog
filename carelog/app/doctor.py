@@ -5,9 +5,8 @@ class DoctorUser(User):
                  address: str, email: str, contact_num: str, date_joined: str,
                  speciality: str, department: str):
         
-        super().__init__(username, password, name, gender, address, email, contact_num, date_joined)
-
         self.d_id = d_id
+        super().__init__(username, password, name, gender, address, email, contact_num, date_joined)
         self.speciality = speciality
         self.department = department
 

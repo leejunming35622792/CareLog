@@ -2,7 +2,7 @@ import streamlit as st
 from gui.patients.patient_dashboard import dashboard
 from gui.patients.patient_profile import profile
 from gui.patients.patient_record import record
-from app.schedule import ScheduleManager
+from gui.patients.patient_appointment import appointment
 
 def patient_page(manager):
     # Variables
@@ -15,8 +15,8 @@ def patient_page(manager):
         st.rerun()
 
     # Page design
-    st.title("CareLog")
-    st.sidebar.title("CareLog Navigation")
+    st.sidebar.title("CareLog")
+    st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.button("Logout", on_click=logout)
 
@@ -25,9 +25,9 @@ def patient_page(manager):
     elif option == "Profile":
         profile(manager, username)
     elif option == "Records":
-        record(manager, username)
+        record(manager)
     elif option == "Appointments":
-        st.write("This is the Appointments Page")
+        appointment(manager)
 
 def logout():
     st.session_state.page = "login"

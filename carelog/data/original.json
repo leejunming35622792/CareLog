@@ -1,0 +1,203 @@
+{
+    "patients": [
+        {
+            "p_id": 1,
+            "username": "patient1",
+            "password": "pass123",
+            "name": "Alice Smith",
+            "gender": "F",
+            "address": "123 Main Street",
+            "email": "alice@example.com",
+            "contact_num": "0123456789",
+            "date_joined": "2025-10-01",
+            "p_record": [
+                1
+            ],
+            "p_remark": ""
+        },
+        {
+            "p_id": 2,
+            "username": "patient",
+            "password": "patientpass",
+            "name": "Tim Cook",
+            "gender": "Male",
+            "address": "Monash Uni1",
+            "email": "abc@mail.com",
+            "contact_num": "0123456789",
+            "date_joined": "2025-10-01",
+            "p_record": [
+                2
+            ],
+            "p_remark": "i want a female doctor"
+        },
+        {
+            "p_id": 3,
+            "username": "username1",
+            "password": "username1",
+            "name": "",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-03 19:11:08",
+            "p_record": [],
+            "p_remark": ""
+        }
+    ],
+    "doctors": [
+        {
+            "d_id": 1,
+            "username": "doc",
+            "password": "docpass",
+            "name": "Dr. John Doe",
+            "gender": "M",
+            "address": "45 Clinic Rd",
+            "email": "doctor1@example.com",
+            "contact_num": "0198765432",
+            "date_joined": "2025-09-15",
+            "speciality": "Cardiology",
+            "department": "Heart"
+        }
+    ],
+    "nurses": [
+        {
+            "n_id": 1,
+            "username": "nurse",
+            "password": "nursepass",
+            "name": "Nurse Joy",
+            "gender": "F",
+            "address": "12 Hospital Lane",
+            "email": "nurse1@example.com",
+            "contact_num": "0112233445",
+            "date_joined": "2025-09-20",
+            "speciality": "General",
+            "department": "Emergency",
+            "with_doctor": 1
+        }
+    ],
+    "receptionists": [
+        {
+            "r_id": 1,
+            "username": "rec",
+            "password": "recpass",
+            "name": "Reception Bot",
+            "gender": "N/A",
+            "address": "Front Desk",
+            "email": "rec1@example.com",
+            "contact_num": "0133355777",
+            "date_joined": "2025-09-25"
+        }
+    ],
+    "admins": [
+        {
+            "admin_password": "admin",
+            "a_id": 1,
+            "username": "admin",
+            "password": "adminpass",
+            "name": "Admin Root",
+            "gender": "M",
+            "address": "HQ Office",
+            "email": "admin1@example.com",
+            "contact_num": "0101010101",
+            "date_joined": "2025-09-01"
+        }
+    ],
+    "records": [
+        {
+            "pr_record_id": 1,
+            "p_id": 1,
+            "pr_timestamp": "2025-10-01T09:30:00",
+            "pr_conditions": {
+                "Diabetes": "Mild",
+                "Hypertension": "Moderate"
+            },
+            "pr_medications": "",
+            "pr_billings": "",
+            "pr_prediction_result": "At risk",
+            "pr_confidence_score": 0.87,
+            "pr_remark": ""
+        },
+        {
+            "pr_record_id": 2,
+            "p_id": 2,
+            "pr_timestamp": "2025-10-02T14:10:00",
+            "pr_conditions": {
+                "Flu": "Mild",
+                "Stomach Ache": "Severe"
+            },
+            "pr_medications": "",
+            "pr_billings": "",
+            "pr_prediction_result": "Recovering",
+            "pr_confidence_score": 0.95,
+            "pr_remark": ""
+        }
+    ],
+    "remarks": [
+  {
+    "remark_id": 1,
+    "patient_id": 2,
+    "doctor_id": 1,
+    "timestamp": "2025-10-03 20:55:00",
+    "remark_type": "general",
+    "content": "Patient requested a female doctor.",
+    "is_active": true,
+    "last_modified": "2025-10-03 20:55:00"
+  }
+],
+    "appointments": [
+        {
+            "appt_id": 1,
+            "p_id": 1,
+            "d_id": 1,
+            "date": "2025-10-05",
+            "time": "09:30",
+            "status": "Booked",
+            "remark": "Follow-up check on blood pressure"
+        },
+        {
+            "appt_id": 2,
+            "p_id": 2,
+            "d_id": 1,
+            "date": "2025-10-07",
+            "time": "14:00",
+            "status": "Cancelled",
+            "remark": "Patient requested to reschedule"
+        },
+        {
+            "appt_id": 3,
+            "p_id": 2,
+            "d_id": 1,
+            "date": "2025-10-10",
+            "time": "11:15",
+            "status": "Rescheduled",
+            "remark": "Doctor unavailable on original date"
+        }
+    ],
+    "shifts": [
+        {
+            "shift_id": 1,
+            "staff_id": 1,
+            "day": "Monday",
+            "start_time": "08:00",
+            "end_time": "16:00",
+            "remark": "Day shift"
+        },
+        {
+            "shift_id": 2,
+            "staff_id": 1,
+            "day": "Tuesday",
+            "start_time": "16:00",
+            "end_time": "00:00",
+            "remark": "Evening shift"
+        }
+    ],
+    "next_patient_id": 4,
+    "next_doctor_id": 2,
+    "next_nurse_id": 2,
+    "next_receptionist_id": 2,
+    "next_admin_id": 2,
+    "next_record_id": 3,
+    "next_appt_id": 4,
+    "next_shift_id": 3,
+    "next_remark_id": 2
+}
