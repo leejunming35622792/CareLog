@@ -1,27 +1,33 @@
 import streamlit as st
+import datetime, time
+from app.schedule import ScheduleManager
+import app.utils as utils
+
+@st.cache_resource
+def get_manager():
+    return ScheduleManager()
 
 def dashboard():
     st.write("This is the Dashboard")
+    placeholder = st.empty()
+    while True:
+        with placeholder.container():
+            col1, col2 = st.columns(2)
+            col1.metric("Time", datetime.datetime.now().today())
+        time.sleep(1)
 
-def admin_page(Manager):
+def admin_page(manager):
     # Variables
-    global manager
-    manager = Manager
-    global username
-    username = st.session_state.username
+    manager = get_manager()
     tabs = ["Dashboard", "Profile", "Management", "Records"]
 
-    # Session state
-    if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
-        st.session_state.logout_triggered = False
-        st.rerun()
+    # guard for username/session
+    username = st.session_state.get("username", "Admin")
 
-    # Page design
     st.title(f"CareLog Dashboard - Welcome {username}")
     st.sidebar.title("Navigation")
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.button("Logout", on_click=logout)
-    st.subheader("TBC")
 
     if option == "Dashboard":
         dashboard()
@@ -32,68 +38,77 @@ def admin_page(Manager):
 
         with tab1:
             st.subheader("User Management")
+            with st.form("register_form"):
+                user_type = st.selectbox("User type", ["Patient", "Doctor", "Nurse", "Receptionist"])
+                name = st.text_input("Name")
+                password = st.text_input("Password", type="password")
+                username = st.text_input("Username")
+                gender = st.selectbox("Gender", ["Male", "Female", "Other"])
+                address = st.text_input("Address")
+                email = st.text_input("Email")
+                contact = st.text_input("Contact")
+                submitted = st.form_submit_button("Register")
+                if submitted:
+                    if user_type == "Patient":
+                        success, msg, _ = manager.add_account_patient(username, password)
+                        # you can extend add_account_patient to accept full details later
+                    elif user_type == "Doctor":
+                        success = True
+                        try:
+                            doc = manager.add_account_doctor(username, password)
+                            msg = f"Doctor created: {doc.__dict__.get('username', username)}"
+                        except Exception as e:
+                            success = False
+                            msg = str(e)
+                    elif user_type == "Nurse":
+                        # implement a manager.register_new_nurse(...) if you want full details
+                        success = False
+                        msg = "Nurse registration not implemented in GUI yet"
+                    elif user_type == "Receptionist":
+                        success, msg, _ = manager.register_new_receptionist(username, password, name, gender, address, email, contact)
 
-            user_type = st.selectbox("User type", ["Patient", "Doctor", "Nurse", "Receptionist"])
-            match user_type:
-                case "Patient":
-                    name = st.text_input("Name", key="register_name")
-                    password = st.text_input("Password", type="password", key="register_password")
-                    username = st.text_input("Username", key="register_username")
-                    gender = st.selectbox("Gender", ["Male, Female, Other"], key="register_gender")
-                    address = st.text_input("Address", key="register_address")
-                    email = st.text_input("Email", key="register_email")
-                    contact = st.text_input("Contact", key="register_contact")
+                    if success:
+                        st.success(msg)
+                    else:
+                        st.error(msg)
 
-                case "Doctor":
-                    name = st.text_input("Name", key="register_name")
-                    password = st.text_input("Password", type="password", key="register_password")
-                    username = st.text_input("Username", key="register_username")
-                    gender = st.selectbox("Gender", ["Male, Female, Other"], key="register_gender")
-                    address = st.text_input("Address", key="register_address")
-                    email = st.text_input("Email", key="register_email")
-                    contact = st.text_input("Contact", key="register_contact")
-                case "Nurse":
-                    name = st.text_input("Name", key="register_name")
-                    password = st.text_input("Password", type="password", key="register_password")
-                    username = st.text_input("Username", key="register_username")
-                    gender = st.selectbox("Gender", ["Male, Female, Other"], key="register_gender")
-                    address = st.text_input("Address", key="register_address")
-                    email = st.text_input("Email", key="register_email")
-                    contact = st.text_input("Contact", key="register_contact")
-                case "Receptionist":
-                    name = st.text_input("Name", key="register_name")
-                    password = st.text_input("Password", type="password", key="register_password")
-                    username = st.text_input("Username", key="register_username")
-                    gender = st.selectbox("Gender", ["Male, Female, Other"], key="register_gender")
-                    address = st.text_input("Address", key="register_address")
-                    email = st.text_input("Email", key="register_email")
-                    contact = st.text_input("Contact", key="register_contact")
+            if st.button("Remove User", key="remove_user_button"):
+                pass
 
-            # Create a register button
-            if st.button("Register", key="register_button"):
-                if user_type == "Patient":
-                    success, message, _ = Manager.register_new_patient(name, password, username, gender, address, email, contact)
-                elif user_type == "Doctor":
-                    success, message, _ = Manager.register_new_doctor(name, password, username, gender, address, email, contact)
-                elif user_type == "Nurse":
-                    success, message, _ = Manager.register_new_doctor(name, password, username, gender, address, email, contact)
-                elif user_type == "Receptionist":
-                    success, message, _ = Manager.register_new_receptionist(name, password, username, gender, address, email, contact)
-                if success:
-                    st.success(message)
-                    st.info("Account created")
-                else:
-                    st.error(message)
-
+        with tab2:
+            st.subheader("Appointment")
+            pass
 
         st.write("This is the Appointments Page")
-        st.write("This is the Management Page")
 
-    elif option == "3":
+    elif option == "Records":
         st.write("This is the Records Page")
 
-def register(prompt):
-    pass
+def admin_logs_page():
+    """Function to view logs"""
+    st.title("System Logs")
+
+    # Options
+    search_term = st.text_input("Search Logs")
+    level_filter = st.selectbox("Filter by level", ["All", "INFO", "WARNING", "ERROR"])
+    # slider, prompt, min, max, value
+    n = st.slider("Show last N logs", 5, 50, 10)
+
+    # Get Logs
+    logs = utils.get_recent_logs(n)
+
+    # Filters
+    if level_filter != "All":
+        logs = [log for log in logs if log['level'] == level_filter]
+    if search_term:
+        logs = [log for log in logs if search_term.lower() in log["event"].lower()]
+    
+    # Display Logs
+    if logs:
+        for log in logs:
+            st.write(f"[{log['timestamp']}] {log['level']} - {log['event']}")
+    else:
+        st.info("No logs found matching your filters.")
 
 def logout():
     st.session_state.page = "login"

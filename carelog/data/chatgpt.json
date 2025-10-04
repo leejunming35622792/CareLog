@@ -1,0 +1,398 @@
+{
+    "patients": [
+        {
+            "p_id": 1,
+            "username": "patient",
+            "password": "patientpass",
+            "name": "John Doe",
+            "gender": "Male",
+            "address": "123 Street A",
+            "email": "john@example.com",
+            "contact_num": "0123456789",
+            "date_joined": "2025-01-01T09:00:00",
+            "p_record": [1, 2, 3],
+            "p_remark": []
+        },
+        {
+            "p_id": 2,
+            "username": "alice123",
+            "password": "AlicePass1",
+            "name": "Alice Tan",
+            "gender": "Female",
+            "address": "456 Road B",
+            "email": "alice@example.com",
+            "contact_num": "0198765432",
+            "date_joined": "2025-02-01T11:00:00",
+            "p_record": [4],
+            "p_remark": []
+        },
+        {
+            "p_id": 3,
+            "username": "mikelee",
+            "password": "MikePass1",
+            "name": "Mike Lee",
+            "gender": "Male",
+            "address": "789 Road C",
+            "email": "mike@example.com",
+            "contact_num": "0165558888",
+            "date_joined": "2025-03-01T10:30:00",
+            "p_record": [5],
+            "p_remark": []
+        },
+        {
+            "p_id": 4,
+            "username": "sarasiva",
+            "password": "SaraPass1",
+            "name": "Sara Siva",
+            "gender": "Female",
+            "address": "321 Road D",
+            "email": "sara@example.com",
+            "contact_num": "0184449999",
+            "date_joined": "2025-04-01T12:15:00",
+            "p_record": [],
+            "p_remark": []
+        }
+    ],
+    "doctors": [
+        {
+            "d_id": 1,
+            "username": "doc",
+            "password": "docpass",
+            "name": "Dr. Smith",
+            "gender": "Male",
+            "address": "789 Avenue C",
+            "email": "smith@example.com",
+            "contact_num": "0112233445",
+            "date_joined": "2025-01-05T09:30:00",
+            "speciality": "Cardiology",
+            "department": "Heart"
+        },
+        {
+            "d_id": 2,
+            "username": "drjane",
+            "password": "JanePass1",
+            "name": "Dr. Jane Lim",
+            "gender": "Female",
+            "address": "11 Medical Lane",
+            "email": "jane@example.com",
+            "contact_num": "0145566778",
+            "date_joined": "2025-02-15T10:00:00",
+            "speciality": "Neurology",
+            "department": "Brain"
+        },
+        {
+            "d_id": 3,
+            "username": "drkumar",
+            "password": "KumarPass1",
+            "name": "Dr. Kumar",
+            "gender": "Male",
+            "address": "55 Hospital Ave",
+            "email": "kumar@example.com",
+            "contact_num": "0176677888",
+            "date_joined": "2025-03-01T11:30:00",
+            "speciality": "Orthopedics",
+            "department": "Bones"
+        },
+        {
+            "d_id": 4,
+            "username": "drchoi",
+            "password": "ChoiPass1",
+            "name": "Dr. Choi",
+            "gender": "Male",
+            "address": "77 Clinic Rd",
+            "email": "choi@example.com",
+            "contact_num": "0152233445",
+            "date_joined": "2025-03-20T09:00:00",
+            "speciality": "Dermatology",
+            "department": "Skin"
+        }
+    ],
+    "nurses": [
+        {
+            "n_id": 1,
+            "username": "nurse",
+            "password": "nursepass",
+            "name": "Nurse Kelly",
+            "gender": "Female",
+            "address": "22 Nursing Street",
+            "email": "kelly@example.com",
+            "contact_num": "0161122334",
+            "date_joined": "2025-01-10T08:00:00",
+            "speciality": "General",
+            "department": "Ward 1",
+            "with_doctor": 1
+        },
+        {
+            "n_id": 2,
+            "username": "nursetom",
+            "password": "TomPass1",
+            "name": "Nurse Tom",
+            "gender": "Male",
+            "address": "33 Care Lane",
+            "email": "tom@example.com",
+            "contact_num": "0189988776",
+            "date_joined": "2025-03-01T07:45:00",
+            "speciality": "Pediatrics",
+            "department": "Children",
+            "with_doctor": 2
+        },
+        {
+            "n_id": 3,
+            "username": "nurseaisha",
+            "password": "AishaPass1",
+            "name": "Nurse Aisha",
+            "gender": "Female",
+            "address": "88 Healing St",
+            "email": "aisha@example.com",
+            "contact_num": "0132223344",
+            "date_joined": "2025-03-15T08:30:00",
+            "speciality": "Surgical",
+            "department": "Surgery",
+            "with_doctor": 3
+        },
+        {
+            "n_id": 4,
+            "username": "nurselee",
+            "password": "LeePass1",
+            "name": "Nurse Lee",
+            "gender": "Male",
+            "address": "99 Recovery Rd",
+            "email": "lee@example.com",
+            "contact_num": "0178899223",
+            "date_joined": "2025-04-01T09:15:00",
+            "speciality": "Dermatology",
+            "department": "Skin",
+            "with_doctor": 4
+        }
+    ],
+    "receptionists": [
+        {
+            "r_id": 1,
+            "username": "rec",
+            "password": "recpass",
+            "name": "Reception Anna",
+            "gender": "Female",
+            "address": "55 Front Desk Road",
+            "email": "anna@example.com",
+            "contact_num": "0176677889",
+            "date_joined": "2025-01-02T09:15:00"
+        },
+        {
+            "r_id": 2,
+            "username": "recjohn",
+            "password": "JohnPass1",
+            "name": "Reception John",
+            "gender": "Male",
+            "address": "66 Lobby Street",
+            "email": "recjohn@example.com",
+            "contact_num": "0132233445",
+            "date_joined": "2025-02-20T09:45:00"
+        },
+        {
+            "r_id": 3,
+            "username": "recmei",
+            "password": "MeiPass1",
+            "name": "Reception Mei",
+            "gender": "Female",
+            "address": "77 Welcome Rd",
+            "email": "recmei@example.com",
+            "contact_num": "0199991234",
+            "date_joined": "2025-03-10T10:15:00"
+        },
+        {
+            "r_id": 4,
+            "username": "recdavid",
+            "password": "DavidPass1",
+            "name": "Reception David",
+            "gender": "Male",
+            "address": "44 Desk Lane",
+            "email": "recdavid@example.com",
+            "contact_num": "0123456781",
+            "date_joined": "2025-03-25T09:30:00"
+        }
+    ],
+    "admins": [
+        {
+            "a_id": 1,
+            "username": "admin",
+            "password": "adminpass",
+            "name": "Super Admin",
+            "gender": "Male",
+            "address": "HQ Building",
+            "email": "admin@example.com",
+            "contact_num": "0101111111",
+            "date_joined": "2025-01-01T08:00:00"
+        },
+        {
+            "a_id": 2,
+            "username": "admin2",
+            "password": "Admin2Pass",
+            "name": "Backup Admin",
+            "gender": "Female",
+            "address": "HQ2 Building",
+            "email": "admin2@example.com",
+            "contact_num": "0102222222",
+            "date_joined": "2025-02-10T09:00:00"
+        }
+    ],
+    "records": [
+        {
+            "pr_record_id": 1,
+            "p_id": 1,
+            "pr_timestamp": "2025-01-12T10:30:00",
+            "pr_conditions": {"Diabetes": "Mild"},
+            "pr_medications": "Metformin",
+            "pr_billings": "RM150",
+            "pr_prediction_result": "At risk",
+            "pr_confidence_score": 0.85,
+            "pr_remark": "Monitor sugar level"
+        },
+        {
+            "pr_record_id": 2,
+            "p_id": 1,
+            "pr_timestamp": "2025-02-20T14:00:00",
+            "pr_conditions": {"Hypertension": "Moderate"},
+            "pr_medications": "Amlodipine",
+            "pr_billings": "RM200",
+            "pr_prediction_result": "Stable",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Continue medication"
+        },
+        {
+            "pr_record_id": 3,
+            "p_id": 1,
+            "pr_timestamp": "2025-03-05T15:00:00",
+            "pr_conditions": {"Flu": "Mild"},
+            "pr_medications": "Paracetamol",
+            "pr_billings": "RM80",
+            "pr_prediction_result": "Recovering",
+            "pr_confidence_score": 0.95,
+            "pr_remark": "Bed rest"
+        },
+        {
+            "pr_record_id": 4,
+            "p_id": 2,
+            "pr_timestamp": "2025-03-05T15:45:00",
+            "pr_conditions": {"Asthma": "Severe"},
+            "pr_medications": "Inhaler",
+            "pr_billings": "RM120",
+            "pr_prediction_result": "Critical",
+            "pr_confidence_score": 0.7,
+            "pr_remark": "Frequent attacks"
+        },
+        {
+            "pr_record_id": 5,
+            "p_id": 3,
+            "pr_timestamp": "2025-04-01T10:30:00",
+            "pr_conditions": {"Back Pain": "Moderate"},
+            "pr_medications": "Painkiller",
+            "pr_billings": "RM90",
+            "pr_prediction_result": "At risk",
+            "pr_confidence_score": 0.8,
+            "pr_remark": "Needs physiotherapy"
+        }
+    ],
+    "appointments": [
+        {
+            "appt_id": 1,
+            "p_id": 1,
+            "d_id": 1,
+            "date": "2025-03-15",
+            "time": "09:00:00",
+            "status": "Pending",
+            "remark": "First checkup"
+        },
+        {
+            "appt_id": 2,
+            "p_id": 2,
+            "d_id": 2,
+            "date": "2025-04-10",
+            "time": "11:30:00",
+            "status": "Booked",
+            "remark": "Follow-up"
+        },
+        {
+            "appt_id": 3,
+            "p_id": 1,
+            "d_id": 3,
+            "date": "2025-04-12",
+            "time": "10:00:00",
+            "status": "Booked",
+            "remark": "Bone checkup"
+        },
+        {
+            "appt_id": 4,
+            "p_id": 3,
+            "d_id": 4,
+            "date": "2025-05-01",
+            "time": "14:00:00",
+            "status": "Pending",
+            "remark": "Skin consultation"
+        }
+    ],
+    "shifts": [
+        {
+            "shift_id": 1,
+            "staff_id": 1,
+            "day": "Monday",
+            "start_time": "08:00",
+            "end_time": "16:00",
+            "remark": "Morning shift"
+        },
+        {
+            "shift_id": 2,
+            "staff_id": 2,
+            "day": "Tuesday",
+            "start_time": "12:00",
+            "end_time": "20:00",
+            "remark": "Afternoon shift"
+        },
+        {
+            "shift_id": 3,
+            "staff_id": 3,
+            "day": "Wednesday",
+            "start_time": "09:00",
+            "end_time": "17:00",
+            "remark": "Ward duty"
+        },
+        {
+            "shift_id": 4,
+            "staff_id": 4,
+            "day": "Thursday",
+            "start_time": "08:30",
+            "end_time": "16:30",
+            "remark": "Clinic duty"
+        }
+    ],
+    "remarks": [
+        {
+            "remark_id": 1,
+            "patient_id": 1,
+            "doctor_id": 1,
+            "timestamp": "2025-01-12T11:00:00",
+            "remark_type": "Note",
+            "content": "Patient advised to reduce sugar intake",
+            "is_active": true,
+            "last_modified": "2025-01-12T11:00:00"
+        },
+        {
+            "remark_id": 2,
+            "patient_id": 1,
+            "doctor_id": 3,
+            "timestamp": "2025-04-12T10:30:00",
+            "remark_type": "Diagnosis",
+            "content": "Possible bone weakness",
+            "is_active": true,
+            "last_modified": "2025-04-12T10:30:00"
+        }
+    ],
+    "next_patient_id": 5,
+    "next_doctor_id": 5,
+    "next_nurse_id": 5,
+    "next_receptionist_id": 5,
+    "next_admin_id": 3,
+    "next_record_id": 6,
+    "next_appt_id": 5,
+    "next_shift_id": 5,
+    "next_remark_id": 3
+}

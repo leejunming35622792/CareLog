@@ -2,8 +2,11 @@ import streamlit as st
 import time
 
 def profile(manager, username):
-
+    # Variables
     manager = st.session_state.manager
+
+    # Page design
+    st.title("CareLog - About You")
 
     with st.form("profile-form"):
         # Find patient by username

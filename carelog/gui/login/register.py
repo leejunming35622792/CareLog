@@ -4,9 +4,6 @@ import time
 def create_account(manager):
     # Variables
     all_username = [p.username for p in manager.patients] + [d.username for d in manager.doctors] + [n.username for n in manager.nurses] + [r.username for r in manager.receptionists] + [a.username for a in manager.admins]
-    
-    # Page design
-    st.title("CareLog")
 
     col1, col2 = st.columns(2)
 
@@ -18,6 +15,7 @@ def create_account(manager):
             st.subheader("Create Account")
             username = st.text_input("Username: ")
             password = st.text_input("Password: ")
+            name = None
             button = st.form_submit_button("Create Account")
 
             if button:

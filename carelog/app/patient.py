@@ -7,8 +7,23 @@ class PatientUser(User):
         self.p_record = p_record or []
         self.p_remark = p_remark
 
+    def create_acc(p_id, username, password, joined_date):
+        return PatientUser(
+            p_id,
+            username,
+            password,
+            "",
+            "",
+            "",
+            "",
+            "",
+            joined_date,
+            [],
+            ""
+        )
+
 class PatientRecord():
-    def __init__(self, pr_record_id, p_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score):
+    def __init__(self, pr_record_id, p_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score, pr_remark):
         self.pr_record_id = pr_record_id
         self.p_id = p_id
         self.pr_timestamp = pr_timestamp
@@ -17,16 +32,44 @@ class PatientRecord():
         self.pr_billings = pr_billings
         self.pr_prediction_result = pr_prediction_result
         self.pr_confidence_score = pr_confidence_score
+        self.pr_remark = pr_remark
 
 class PatientAppointment():
     def __init__(self, appt_id, p_id, d_id, appt_date, appt_time, appt_status, appt_remark):
         self.appt_id = appt_id
-        self.patient = p_id
-        self.doctor = d_id
+        self.p_id = p_id
+        self.d_id = d_id
         self.date = appt_date
         self.time = appt_time
         self.status = appt_status
         self.remark = appt_remark
+
+    @property
+    def patient(self):
+        return self.p_id
+
+    @property
+    def doctor(self):
+        return self.d_id
+
+    @property
+    def appt_status(self):
+        return self.status
+
+    @property
+    def appt_remark(self):
+        return self.remark
+
+    def create(appt_id, p_id, d_id, appt_date, appt_time, appt_status, appt_remark):
+        return PatientAppointment(
+            appt_id, 
+            p_id,
+            d_id,
+            appt_date,
+            appt_time,
+            appt_status,
+            appt_remark
+            )
 
 # TODO: appointments
 # TODO: class PatientCondition():

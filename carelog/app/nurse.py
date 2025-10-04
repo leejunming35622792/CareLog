@@ -1,4 +1,5 @@
 from app.user import User
+from datetime import datetime
 
 class NurseUser(User):
     def __init__(self, n_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
