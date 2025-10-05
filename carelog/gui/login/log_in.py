@@ -56,4 +56,6 @@ def log_in(manager):
                         st.session_state.username = username
                     else:
                         st.error("Username and password do not match!")
+                        st.stop()
+                    st.rerun()
                            
