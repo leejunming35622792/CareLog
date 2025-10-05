@@ -3847,3 +3847,225 @@
 2025-10-05 18:06:45,699 - INFO - System startup complete
 2025-10-05 18:06:46,991 - INFO - System startup complete
 2025-10-05 18:06:47,750 - INFO - System startup complete
+2025-10-05 20:21:49,351 - INFO - System startup complete
+2025-10-05 20:23:05,792 - INFO - System startup complete
+2025-10-05 20:23:16,663 - INFO - System startup complete
+2025-10-05 20:23:17,701 - ERROR - Failed registration for Doctor (doctor101): Password must contain at least one uppercase letter
+2025-10-05 20:23:24,687 - INFO - System startup complete
+2025-10-05 20:31:29,692 - INFO - System startup complete
+2025-10-05 20:31:31,282 - INFO - System startup complete
+2025-10-05 20:31:32,302 - INFO - Doctor Doctor101 registered with ID D0005
+2025-10-05 20:31:32,309 - INFO - Doctor Doctor101 registered successfully.
+2025-10-05 20:31:32,379 - INFO - System startup complete
+2025-10-05 20:33:35,272 - INFO - System startup complete
+2025-10-05 20:33:42,232 - INFO - System startup complete
+2025-10-05 20:33:43,290 - INFO - System startup complete
+2025-10-05 20:33:53,923 - INFO - System startup complete
+2025-10-05 20:33:57,892 - INFO - System startup complete
+2025-10-05 20:34:09,494 - INFO - System startup complete
+2025-10-05 20:34:10,517 - INFO - Doctor Doctor101 registered with ID D0005
+2025-10-05 20:34:10,527 - INFO - Doctor Doctor101 registered successfully.
+2025-10-05 20:34:10,584 - INFO - System startup complete
+2025-10-05 20:35:36,333 - INFO - System startup complete
+2025-10-05 20:35:43,300 - INFO - System startup complete
+2025-10-05 20:35:59,245 - INFO - System startup complete
+2025-10-05 20:36:00,280 - INFO - Doctor Doctor101 registered with ID D0005
+2025-10-05 20:36:00,295 - INFO - Doctor Doctor101 registered successfully.
+2025-10-05 20:36:00,358 - INFO - System startup complete
+2025-10-05 20:37:51,743 - INFO - System startup complete
+2025-10-05 20:37:52,396 - INFO - System startup complete
+2025-10-05 20:38:08,419 - INFO - System startup complete
+2025-10-05 20:38:12,826 - INFO - System startup complete
+2025-10-05 20:38:20,807 - INFO - System startup complete
+2025-10-05 20:38:21,838 - INFO - Nurse Nurse101 registered with ID N0005
+2025-10-05 20:38:21,860 - INFO - Nurse Nurse101 registered successfully.
+2025-10-05 20:38:21,947 - INFO - System startup complete
+2025-10-05 20:38:26,078 - INFO - System startup complete
+2025-10-05 20:41:02,142 - INFO - System startup complete
+2025-10-05 20:41:04,895 - INFO - System startup complete
+2025-10-05 20:41:12,018 - INFO - System startup complete
+2025-10-05 20:41:13,049 - INFO - Nurse Nurse101 registered with ID N0005
+2025-10-05 20:41:13,058 - INFO - Nurse Nurse101 registered successfully.
+2025-10-05 20:41:13,121 - INFO - System startup complete
+2025-10-05 20:42:48,779 - INFO - System startup complete
+2025-10-05 20:42:56,153 - INFO - System startup complete
+2025-10-05 20:42:58,922 - INFO - System startup complete
+2025-10-05 20:43:06,671 - INFO - System startup complete
+2025-10-05 20:43:07,687 - INFO - Patient Patient101 registered with ID P0005
+2025-10-05 20:43:28,285 - INFO - System startup complete
+2025-10-05 20:43:31,260 - INFO - System startup complete
+2025-10-05 20:43:39,114 - INFO - System startup complete
+2025-10-05 20:43:40,142 - INFO - Nurse Nurse101 registered with ID N0005
+2025-10-05 20:43:40,150 - INFO - Nurse Nurse101 registered successfully.
+2025-10-05 20:43:40,205 - INFO - System startup complete
+2025-10-05 20:43:59,999 - INFO - System startup complete
+2025-10-05 20:44:06,051 - INFO - System startup complete
+2025-10-05 20:44:14,915 - INFO - System startup complete
+2025-10-05 20:44:15,930 - INFO - Nurse Nurse101 registered with ID N0005
+2025-10-05 20:44:15,938 - INFO - Nurse Nurse101 registered successfully.
+2025-10-05 20:44:15,993 - INFO - System startup complete
+2025-10-05 20:45:08,007 - INFO - System startup complete
+2025-10-05 20:45:10,304 - INFO - System startup complete
+2025-10-05 20:45:18,694 - INFO - System startup complete
+2025-10-05 20:45:19,711 - INFO - Nurse Nurse101 registered with ID N0005
+2025-10-05 20:45:19,715 - INFO - Nurse Nurse101 registered successfully.
+2025-10-05 20:45:19,767 - INFO - System startup complete
+2025-10-05 20:46:02,991 - INFO - System startup complete
+2025-10-05 20:46:05,151 - INFO - System startup complete
+2025-10-05 20:46:10,317 - INFO - System startup complete
+2025-10-05 20:47:45,215 - INFO - System startup complete
+2025-10-05 20:47:47,665 - INFO - System startup complete
+2025-10-05 20:47:53,069 - INFO - System startup complete
+2025-10-05 20:47:54,081 - ERROR - Failed registration for Patient (P1): Password must be at least 8 characters
+2025-10-05 20:47:58,213 - INFO - System startup complete
+2025-10-05 20:47:59,226 - ERROR - Failed registration for Patient (P1): Password must contain at least one uppercase letter
+2025-10-05 20:48:05,060 - INFO - System startup complete
+2025-10-05 20:48:06,075 - INFO - Patient P1 registered with ID P0005
+2025-10-05 20:48:06,085 - INFO - Patient P1 registered successfully.
+2025-10-05 20:48:06,143 - INFO - System startup complete
+2025-10-05 20:49:43,704 - INFO - System startup complete
+2025-10-05 20:50:51,719 - INFO - System startup complete
+2025-10-05 20:50:57,738 - INFO - System startup complete
+2025-10-05 20:50:58,756 - INFO - Patient Patietn101 registered with ID P0005
+2025-10-05 20:50:58,764 - INFO - Patient Patietn101 registered successfully.
+2025-10-05 20:50:58,825 - INFO - System startup complete
+2025-10-05 20:51:27,097 - INFO - System startup complete
+2025-10-05 20:51:29,572 - INFO - System startup complete
+2025-10-05 20:51:35,698 - INFO - System startup complete
+2025-10-05 20:51:36,716 - INFO - Patient Patient1-1 registered with ID P0005
+2025-10-05 20:51:36,723 - INFO - Patient Patient1-1 registered successfully.
+2025-10-05 20:51:36,788 - INFO - System startup complete
+2025-10-05 20:52:13,458 - INFO - System startup complete
+2025-10-05 20:52:43,732 - INFO - System startup complete
+2025-10-05 20:52:51,715 - INFO - System startup complete
+2025-10-05 20:52:52,738 - INFO - Patient Patient101 registered with ID P0005
+2025-10-05 20:52:52,752 - INFO - Patient Patient101 registered successfully.
+2025-10-05 20:52:52,816 - INFO - System startup complete
+2025-10-05 20:54:05,102 - INFO - System startup complete
+2025-10-05 20:54:06,917 - INFO - System startup complete
+2025-10-05 20:54:09,560 - INFO - System startup complete
+2025-10-05 20:54:11,306 - INFO - System startup complete
+2025-10-05 20:54:39,829 - INFO - System startup complete
+2025-10-05 20:54:40,850 - INFO - Patient Patient101 registered with ID P0005
+2025-10-05 20:54:40,857 - INFO - Patient Patient101 registered successfully.
+2025-10-05 20:54:40,916 - INFO - System startup complete
+2025-10-05 20:55:26,850 - INFO - System startup complete
+2025-10-05 20:55:29,314 - INFO - System startup complete
+2025-10-05 20:55:34,455 - INFO - System startup complete
+2025-10-05 20:55:35,483 - INFO - Patient Patient101 registered with ID P0005
+2025-10-05 20:55:35,490 - INFO - Patient Patient101 registered successfully.
+2025-10-05 20:55:35,536 - INFO - System startup complete
+2025-10-05 20:55:35,587 - INFO - System startup complete
+2025-10-05 20:55:55,427 - INFO - System startup complete
+2025-10-05 21:03:11,702 - INFO - System startup complete
+2025-10-05 21:03:14,281 - INFO - System startup complete
+2025-10-05 21:03:17,757 - INFO - System startup complete
+2025-10-05 21:03:19,146 - INFO - System startup complete
+2025-10-05 21:03:32,394 - INFO - System startup complete
+2025-10-05 21:03:35,582 - INFO - System startup complete
+2025-10-05 21:03:46,802 - INFO - System startup complete
+2025-10-05 21:03:47,834 - INFO - Nurse Nurse101 registered with ID N0005
+2025-10-05 21:03:47,842 - INFO - Nurse Nurse101 registered successfully.
+2025-10-05 21:03:47,893 - INFO - System startup complete
+2025-10-05 21:10:24,168 - INFO - System startup complete
+2025-10-05 21:10:28,423 - INFO - System startup complete
+2025-10-05 21:10:53,425 - INFO - System startup complete
+2025-10-05 21:10:55,501 - INFO - System startup complete
+2025-10-05 21:11:04,188 - INFO - System startup complete
+2025-10-05 21:11:06,561 - INFO - System startup complete
+2025-10-05 21:11:13,073 - INFO - System startup complete
+2025-10-05 21:11:14,123 - INFO - Nurse Nurse102 registered with ID N0006
+2025-10-05 21:11:14,131 - INFO - Nurse Nurse102 registered successfully.
+2025-10-05 21:11:14,194 - INFO - System startup complete
+2025-10-05 21:12:34,509 - INFO - System startup complete
+2025-10-05 21:12:38,086 - INFO - System startup complete
+2025-10-05 21:12:46,546 - INFO - System startup complete
+2025-10-05 21:12:48,620 - INFO - System startup complete
+2025-10-05 21:12:51,131 - INFO - System startup complete
+2025-10-05 21:12:54,113 - INFO - System startup complete
+2025-10-05 21:13:08,025 - INFO - System startup complete
+2025-10-05 21:13:09,052 - INFO - Patient Patient101 registered with ID P0005
+2025-10-05 21:13:09,058 - INFO - Patient Patient101 registered successfully.
+2025-10-05 21:13:09,108 - INFO - System startup complete
+2025-10-05 21:13:09,165 - INFO - System startup complete
+2025-10-05 21:13:11,876 - INFO - System startup complete
+2025-10-05 21:13:13,293 - INFO - System startup complete
+2025-10-05 21:13:16,412 - INFO - System startup complete
+2025-10-05 21:13:20,583 - INFO - System startup complete
+2025-10-05 21:13:44,587 - INFO - System startup complete
+2025-10-05 21:13:45,961 - INFO - System startup complete
+2025-10-05 21:13:46,549 - INFO - System startup complete
+2025-10-05 21:13:46,927 - INFO - System startup complete
+2025-10-05 21:13:50,196 - INFO - System startup complete
+2025-10-05 21:13:55,395 - INFO - System startup complete
+2025-10-05 21:13:57,462 - INFO - System startup complete
+2025-10-05 21:13:57,515 - INFO - System startup complete
+2025-10-05 21:18:50,952 - INFO - System startup complete
+2025-10-05 21:18:52,793 - INFO - System startup complete
+2025-10-05 21:18:53,192 - INFO - System startup complete
+2025-10-05 21:18:58,978 - INFO - System startup complete
+2025-10-05 21:19:05,398 - INFO - System startup complete
+2025-10-05 21:19:07,464 - INFO - System startup complete
+2025-10-05 21:19:29,839 - INFO - System startup complete
+2025-10-05 21:19:32,216 - INFO - System startup complete
+2025-10-05 21:19:32,672 - INFO - System startup complete
+2025-10-05 21:22:20,794 - INFO - System startup complete
+2025-10-05 21:22:21,036 - INFO - System startup complete
+2025-10-05 21:22:21,658 - INFO - System startup complete
+2025-10-05 21:22:41,022 - INFO - System startup complete
+2025-10-05 21:22:48,547 - INFO - System startup complete
+2025-10-05 21:22:49,791 - INFO - System startup complete
+2025-10-05 21:22:51,868 - INFO - System startup complete
+2025-10-05 21:24:44,553 - INFO - System startup complete
+2025-10-05 21:24:45,032 - INFO - System startup complete
+2025-10-05 21:27:13,422 - INFO - System startup complete
+2025-10-05 21:27:13,662 - INFO - System startup complete
+2025-10-05 21:28:12,880 - INFO - System startup complete
+2025-10-05 21:28:13,171 - INFO - System startup complete
+2025-10-05 21:28:23,381 - INFO - System startup complete
+2025-10-05 21:28:23,629 - INFO - System startup complete
+2025-10-05 21:35:08,262 - INFO - System startup complete
+2025-10-05 21:35:30,761 - INFO - System startup complete
+2025-10-05 21:35:31,121 - INFO - System startup complete
+2025-10-05 21:39:30,289 - INFO - System startup complete
+2025-10-05 21:39:57,736 - INFO - System startup complete
+2025-10-05 21:40:01,343 - INFO - System startup complete
+2025-10-05 21:46:44,908 - INFO - System startup complete
+2025-10-05 21:46:45,385 - INFO - System startup complete
+2025-10-05 21:47:10,088 - INFO - System startup complete
+2025-10-05 21:47:12,390 - INFO - System startup complete
+2025-10-05 21:47:13,232 - INFO - System startup complete
+2025-10-05 21:47:13,879 - INFO - System startup complete
+2025-10-05 21:47:14,850 - INFO - System startup complete
+2025-10-05 21:47:15,644 - INFO - System startup complete
+2025-10-05 21:47:21,192 - INFO - System startup complete
+2025-10-05 21:48:39,166 - INFO - System startup complete
+2025-10-05 21:48:39,609 - INFO - System startup complete
+2025-10-05 21:49:23,220 - INFO - System startup complete
+2025-10-05 21:49:26,184 - INFO - System startup complete
+2025-10-05 21:49:30,196 - INFO - System startup complete
+2025-10-05 21:49:39,281 - INFO - System startup complete
+2025-10-05 21:49:45,460 - INFO - System startup complete
+2025-10-05 21:49:47,515 - INFO - System startup complete
+2025-10-05 21:50:25,207 - INFO - System startup complete
+2025-10-05 21:50:25,503 - INFO - System startup complete
+2025-10-05 21:50:29,810 - INFO - System startup complete
+2025-10-05 21:50:36,120 - INFO - System startup complete
+2025-10-05 21:50:38,183 - INFO - System startup complete
+2025-10-05 21:50:39,742 - INFO - System startup complete
+2025-10-05 21:51:22,126 - INFO - System startup complete
+2025-10-05 21:51:22,480 - INFO - System startup complete
+2025-10-05 21:51:28,749 - INFO - System startup complete
+2025-10-05 21:51:29,145 - INFO - System startup complete
+2025-10-05 21:51:35,534 - INFO - System startup complete
+2025-10-05 21:51:35,902 - INFO - System startup complete
+2025-10-05 21:52:02,532 - INFO - System startup complete
+2025-10-05 21:52:07,247 - INFO - System startup complete
+2025-10-05 21:52:08,443 - INFO - System startup complete
+2025-10-05 21:52:10,505 - INFO - System startup complete
+2025-10-05 21:52:11,855 - INFO - System startup complete
+2025-10-05 21:52:15,545 - INFO - System startup complete
+2025-10-05 21:52:16,302 - INFO - System startup complete
+2025-10-05 21:52:48,448 - INFO - System startup complete
+2025-10-05 21:52:48,842 - INFO - System startup complete
+2025-10-05 21:52:49,479 - INFO - System startup complete
