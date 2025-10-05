@@ -149,6 +149,25 @@ class ScheduleManager():
         else:
             return False
 
+    def create_account(self, role, user_obj):
+        role = role.lower()
+        if role == "patient":
+            self.patients.append(user_obj)
+            self.next_patient_id += 1
+        elif role == "doctor":
+            self.doctors.append(user_obj)
+            self.next_doctor_id += 1
+        elif role == "nurse":
+            self.nurses.append(user_obj)
+            self.next_nurse_id += 1
+        elif role == "receptionist":
+            self.receptionists.append(user_obj)
+            self.next_receptionist_id += 1
+        elif role == "admin":
+            self.admins.append(user_obj)
+            self.next_admin_id += 1
+        self.save()
+
     def login_doctor(self,username,password):
         doctor=next((d for d in self.doctors if d.username==username))
         if doctor is None:
@@ -274,9 +293,10 @@ class ScheduleManager():
         r_type=remark_type.strip().lower()
         if r_type not in valid_types:
             return False, f" Invalid Remark Type. Must be one of : {', '.join (valid_types)}", None
+        remark_id = f"RM{self.next_remark_id:04d}"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         new_remark=PatientRemark(
-            remark_id=self.next_remark_id,
+            remark_id=remark_id,
             patient_id=patient_id,
             doctor_id=doctor.d_id,
             timestamp=timestamp,
@@ -334,7 +354,8 @@ class ScheduleManager():
 
     # --- Appointments ---
     def add_appointments(self, p_id, d_id, appt_date, appt_time, appt_remark):
-        new_appt = PatientAppointment.create(self.next_appt_id, p_id, d_id, appt_date, appt_time, "Pending", appt_remark)
+        appt_id = f"AAPT{self.next_appt_id:04d}"
+        new_appt = PatientAppointment.create(appt_id, p_id, d_id, appt_date, appt_time, "Pending", appt_remark)
         self.appointments.append(new_appt)
         self.next_appt_id += 1
         self._save_data()
