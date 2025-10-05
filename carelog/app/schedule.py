@@ -205,13 +205,14 @@ class ScheduleManager():
                 }
 
     # --- Doctors ---
-    def view_doctor_details(self,username,password):
-        doctor=next((d for d in self.doctors if d.username== username), None)
+    def view_doctor_details(self,username):
+        doctor = next((d for d in self.doctors if d.username == username), None)
+
         if doctor is None:
-            return False, "Doctor Not Found", None
+            return None, "Doctor Not Found"
         
-        if doctor.password != password:
-            return False, "Doctor Not Found", None
+        # if doctor.password != password:
+        #     return False, "Doctor Not Found", None
         
         profile= {
             "staff_id":doctor.d_id,
@@ -225,7 +226,7 @@ class ScheduleManager():
             "speciality": doctor.speciality,
             "date_joined": doctor.date_joined,
         }
-        return True, "Profile Successfully Retrieved",profile
+        return profile, "Profile Successfully Retrieved"
     
     def view_patient_details_by_doctor(self,patient_id :int):
         patient=next((p for p in self.patients if p.p_id ==patient_id),None)

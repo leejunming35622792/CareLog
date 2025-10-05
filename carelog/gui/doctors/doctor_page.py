@@ -1,15 +1,16 @@
 import streamlit as st
 import datetime
 
-def dashboard(manager, username):
+def dashboard():
     """Main dashboard showing overview and quick stats"""
+    manager = st.session_state.manager
     st.header("Dashboard Overview")
     
     # Get doctor details
     password = st.session_state.get('password', '')
-    success, message, profile = manager.view_doctor_details(username, password)
+    profile, message = manager.view_doctor_details(username)
     
-    if success:
+    if profile:
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -20,6 +21,7 @@ def dashboard(manager, username):
             st.metric("Speciality", profile.get('speciality', 'Not Set'))
         
         # Upcoming appointments preview
+        st.divider()
         st.subheader("Today's Appointments")
         success, msg, appointments = manager.view_upcoming_appointments(username, password)
         if success and appointments:
@@ -320,7 +322,7 @@ def appointments_page(manager, username):
 def doctor_page(Manager):
     """Main doctor page with navigation"""
     global manager
-    manager = Manager
+    manager = st.session_state.manager
     global username
     username = st.session_state.username
     
@@ -345,7 +347,7 @@ def doctor_page(Manager):
 
     # Route to appropriate page
     if option == "Dashboard":
-        dashboard(manager, username)
+        dashboard()
     elif option == "Profile":
         profile_page(manager, username)
     elif option == "Patient Records":

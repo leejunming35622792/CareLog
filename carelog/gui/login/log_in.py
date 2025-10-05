@@ -9,7 +9,7 @@ def log_in(manager):
     col1, col2 = st.columns(2)
 
     with col1:
-        st.image("C:\\Users\\Owner\\FIT1056-Sem2-2025\\carelog\\img\\wallpaper.jpg")
+        st.image(".\\img\\wallpaper.jpg")
     with col2:
         with st.form("register-form"):
             st.subheader("Login")

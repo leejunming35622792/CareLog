@@ -18,7 +18,7 @@ def patient_page(manager):
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Select", tabs)
-    st.sidebar.button("Logout", on_click=logout)
+    st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
 
     if option == "Dashboard":
         dashboard(manager, username)
