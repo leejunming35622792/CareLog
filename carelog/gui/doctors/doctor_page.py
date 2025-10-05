@@ -47,15 +47,15 @@ def profile_page(manager, username):
     st.header("My Profile")
     
     password = st.session_state.get('password', '')
-    success, message, profile = manager.view_doctor_details(username, password)
+    profile, message = manager.view_doctor_details(username)
     
-    if success:
+    if message:
         # Display current profile
         st.subheader("Current Profile Information")
         col1, col2 = st.columns(2)
         
         with col1:
-            st.text_input("Name", value=profile.get('name', ''), disabled=True)
+            st.text_input("Name", value=profile.get('name',''), disabled=True)
             st.text_input("Email", value=profile.get('email', ''), disabled=True)
             st.text_input("Gender", value=profile.get('gender', ''), disabled=True)
             st.text_input("Date of Birth", value=profile.get('date_of_birth', ''), disabled=True)
@@ -269,7 +269,7 @@ def appointments_page(manager, username):
     st.header("Appointments")
     
     password = st.session_state.get('password', '')
-    success, message, appointments = manager.view_upcoming_appointments(username, password)
+    success, message, appointments = manager.view_upcoming_appointments(username)
     
     if success:
         st.success(message)
