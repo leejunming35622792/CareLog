@@ -10,7 +10,7 @@ def record(manager):
     patient = next((p for p in manager.patients if p.username == username), None)
 
     # --- Get all record IDs for patient ---
-    p_record_id = [r.pr_record_id for r in manager.records if int(r.pr_record_id) in patient.p_record]
+    p_record_id = [r.pr_record_id for r in manager.records if r.pr_record_id in patient.p_record]
     if not p_record_id:
         st.warning("No records found!")
         return
