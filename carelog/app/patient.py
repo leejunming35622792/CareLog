@@ -70,10 +70,3 @@ class PatientAppointment():
             appt_status,
             appt_remark
             )
-
-# TODO: appointments
-# TODO: class PatientCondition():
-#     def __init__(self, name, severity, notes):
-#         self.name = name
-#         self.severity = severity
-#         self.notes = notes

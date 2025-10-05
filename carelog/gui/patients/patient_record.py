@@ -2,36 +2,27 @@ import streamlit as st
 import pandas as pd
 
 def record(manager):
-    # Variables
+    # --- Setup ---
     username = st.session_state.username
-
-    # Page design
     st.title("CareLog - We Know You")
 
-    with st.container():
-        # Variables
-        patient = next((p for p in manager.patients if p.username == username), None)
-        p_record_id = [record.pr_record_id for record in manager.records if record.p_id in patient.p_record]
+    # --- Find patient ---
+    patient = next((p for p in manager.patients if p.username == username), None)
 
-        if not patient:
-            st.error("Unexpected Error!")
-            return
-        if not p_record_id:
-            st.warning("No records found!")
-            return
-        
-        st.subheader("Patient Records")
-        
-        # Input box
-        choose_record = st.selectbox("Select Record ID", p_record_id)
-        current_record = manager.search_record(patient.p_id, choose_record)
+    # --- Get all record IDs for patient ---
+    p_record_id = [r.pr_record_id for r in manager.records if r.pr_record_id in patient.p_record]
+    if not p_record_id:
+        st.warning("No records found!")
+        return
 
-        # Display using dataframe
-        if current_record:
-            record_df = pd.Series(current_record).to_frame("")
-            st.dataframe(record_df)
-        else:
-            st.warning("No records found!")
+    st.subheader("Patient Records")
 
-        
+    # --- Record selection ---
+    record_id = st.selectbox("Select Record ID", p_record_id)
 
+    # --- Display selected record ---
+    current_record = manager.search_record(patient.p_id, record_id)
+
+    # Convert object to readable table
+    record_df = pd.Series(current_record).to_frame("Details")
+    st.dataframe(record_df)

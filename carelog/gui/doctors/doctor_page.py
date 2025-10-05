@@ -1,15 +1,19 @@
 import streamlit as st
 import datetime
 
-def dashboard(manager, username):
+def dashboard():
     """Main dashboard showing overview and quick stats"""
+    manager = st.session_state.manager
+
+    # Page design
+    st.divider()
     st.header("Dashboard Overview")
     
     # Get doctor details
     password = st.session_state.get('password', '')
-    success, message, profile = manager.view_doctor_details(username, password)
+    profile, message = manager.view_doctor_details(username)
     
-    if success:
+    if profile:
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -19,9 +23,11 @@ def dashboard(manager, username):
         with col3:
             st.metric("Speciality", profile.get('speciality', 'Not Set'))
         
+        st.divider()
+
         # Upcoming appointments preview
-        st.subheader("Today's Appointments")
-        success, msg, appointments = manager.view_upcoming_appointments(username, password)
+        st.header("Today's Appointments")
+        success, msg, appointments = manager.view_upcoming_appointments(username)
         if success and appointments:
             today = datetime.datetime.now().strftime("%Y-%m-%d")
             today_appts = [a for a in appointments if a['date'] == today]
@@ -41,15 +47,15 @@ def profile_page(manager, username):
     st.header("My Profile")
     
     password = st.session_state.get('password', '')
-    success, message, profile = manager.view_doctor_details(username, password)
+    profile, message = manager.view_doctor_details(username)
     
-    if success:
+    if message:
         # Display current profile
         st.subheader("Current Profile Information")
         col1, col2 = st.columns(2)
         
         with col1:
-            st.text_input("Name", value=profile.get('name', ''), disabled=True)
+            st.text_input("Name", value=profile.get('name',''), disabled=True)
             st.text_input("Email", value=profile.get('email', ''), disabled=True)
             st.text_input("Gender", value=profile.get('gender', ''), disabled=True)
             st.text_input("Date of Birth", value=profile.get('date_of_birth', ''), disabled=True)
@@ -263,7 +269,7 @@ def appointments_page(manager, username):
     st.header("Appointments")
     
     password = st.session_state.get('password', '')
-    success, message, appointments = manager.view_upcoming_appointments(username, password)
+    success, message, appointments = manager.view_upcoming_appointments(username)
     
     if success:
         st.success(message)
@@ -320,7 +326,7 @@ def appointments_page(manager, username):
 def doctor_page(Manager):
     """Main doctor page with navigation"""
     global manager
-    manager = Manager
+    manager = st.session_state.manager
     global username
     username = st.session_state.username
     
@@ -345,7 +351,7 @@ def doctor_page(Manager):
 
     # Route to appropriate page
     if option == "Dashboard":
-        dashboard(manager, username)
+        dashboard()
     elif option == "Profile":
         profile_page(manager, username)
     elif option == "Patient Records":

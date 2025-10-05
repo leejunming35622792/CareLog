@@ -1,7 +1,7 @@
 {
     "patients": [
         {
-            "p_id": 1,
+            "p_id": "P0001",
             "username": "patient",
             "password": "patientpass",
             "name": "John Doe",
@@ -10,11 +10,15 @@
             "email": "john@example.com",
             "contact_num": "0123456789",
             "date_joined": "2025-01-01T09:00:00",
-            "p_record": [1, 2, 3],
-            "p_remark": []
+            "p_record": [
+                "PR0001",
+                "PR0002",
+                "PR0003"
+            ],
+            "p_remark": "female doctors"
         },
         {
-            "p_id": 2,
+            "p_id": "P0002",
             "username": "alice123",
             "password": "AlicePass1",
             "name": "Alice Tan",
@@ -23,11 +27,13 @@
             "email": "alice@example.com",
             "contact_num": "0198765432",
             "date_joined": "2025-02-01T11:00:00",
-            "p_record": [4],
-            "p_remark": []
+            "p_record": [
+                "PR0004"
+            ],
+            "p_remark": ""
         },
         {
-            "p_id": 3,
+            "p_id": "P0003",
             "username": "mikelee",
             "password": "MikePass1",
             "name": "Mike Lee",
@@ -36,11 +42,13 @@
             "email": "mike@example.com",
             "contact_num": "0165558888",
             "date_joined": "2025-03-01T10:30:00",
-            "p_record": [5],
-            "p_remark": []
+            "p_record": [
+                "PR0005"
+            ],
+            "p_remark": ""
         },
         {
-            "p_id": 4,
+            "p_id": "P0004",
             "username": "sarasiva",
             "password": "SaraPass1",
             "name": "Sara Siva",
@@ -50,12 +58,25 @@
             "contact_num": "0184449999",
             "date_joined": "2025-04-01T12:15:00",
             "p_record": [],
-            "p_remark": []
+            "p_remark": ""
+        },
+        {
+            "p_id": "P0005",
+            "username": "Patient101",
+            "password": "Patient101",
+            "name": "",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-05 21:13:08",
+            "p_record": [],
+            "p_remark": ""
         }
     ],
     "doctors": [
         {
-            "d_id": 1,
+            "d_id": "D0001",
             "username": "doc",
             "password": "docpass",
             "name": "Dr. Smith",
@@ -68,7 +89,7 @@
             "department": "Heart"
         },
         {
-            "d_id": 2,
+            "d_id": "D0002",
             "username": "drjane",
             "password": "JanePass1",
             "name": "Dr. Jane Lim",
@@ -81,7 +102,7 @@
             "department": "Brain"
         },
         {
-            "d_id": 3,
+            "d_id": "D0003",
             "username": "drkumar",
             "password": "KumarPass1",
             "name": "Dr. Kumar",
@@ -94,7 +115,7 @@
             "department": "Bones"
         },
         {
-            "d_id": 4,
+            "d_id": "D0004",
             "username": "drchoi",
             "password": "ChoiPass1",
             "name": "Dr. Choi",
@@ -109,7 +130,7 @@
     ],
     "nurses": [
         {
-            "n_id": 1,
+            "n_id": "N0001",
             "username": "nurse",
             "password": "nursepass",
             "name": "Nurse Kelly",
@@ -120,10 +141,10 @@
             "date_joined": "2025-01-10T08:00:00",
             "speciality": "General",
             "department": "Ward 1",
-            "with_doctor": 1
+            "with_doctor": "D0001"
         },
         {
-            "n_id": 2,
+            "n_id": "N0002",
             "username": "nursetom",
             "password": "TomPass1",
             "name": "Nurse Tom",
@@ -134,10 +155,10 @@
             "date_joined": "2025-03-01T07:45:00",
             "speciality": "Pediatrics",
             "department": "Children",
-            "with_doctor": 2
+            "with_doctor": "D0002"
         },
         {
-            "n_id": 3,
+            "n_id": "N0003",
             "username": "nurseaisha",
             "password": "AishaPass1",
             "name": "Nurse Aisha",
@@ -148,10 +169,10 @@
             "date_joined": "2025-03-15T08:30:00",
             "speciality": "Surgical",
             "department": "Surgery",
-            "with_doctor": 3
+            "with_doctor": "D0003"
         },
         {
-            "n_id": 4,
+            "n_id": "N0004",
             "username": "nurselee",
             "password": "LeePass1",
             "name": "Nurse Lee",
@@ -162,12 +183,40 @@
             "date_joined": "2025-04-01T09:15:00",
             "speciality": "Dermatology",
             "department": "Skin",
-            "with_doctor": 4
+            "with_doctor": "D0004"
+        },
+        {
+            "n_id": "N0005",
+            "username": "Nurse101",
+            "password": "Nurse101",
+            "name": "",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-05 21:03:46",
+            "speciality": "",
+            "department": "",
+            "with_doctor": ""
+        },
+        {
+            "n_id": "N0006",
+            "username": "Nurse102",
+            "password": "Nurse102",
+            "name": "",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-05 21:11:13",
+            "speciality": "",
+            "department": "",
+            "with_doctor": ""
         }
     ],
     "receptionists": [
         {
-            "r_id": 1,
+            "r_id": "R0001",
             "username": "rec",
             "password": "recpass",
             "name": "Reception Anna",
@@ -178,7 +227,7 @@
             "date_joined": "2025-01-02T09:15:00"
         },
         {
-            "r_id": 2,
+            "r_id": "R0002",
             "username": "recjohn",
             "password": "JohnPass1",
             "name": "Reception John",
@@ -189,7 +238,7 @@
             "date_joined": "2025-02-20T09:45:00"
         },
         {
-            "r_id": 3,
+            "r_id": "R0003",
             "username": "recmei",
             "password": "MeiPass1",
             "name": "Reception Mei",
@@ -200,7 +249,7 @@
             "date_joined": "2025-03-10T10:15:00"
         },
         {
-            "r_id": 4,
+            "r_id": "R0004",
             "username": "recdavid",
             "password": "DavidPass1",
             "name": "Reception David",
@@ -213,7 +262,8 @@
     ],
     "admins": [
         {
-            "a_id": 1,
+            "admin_password": "admin",
+            "a_id": "A0001",
             "username": "admin",
             "password": "adminpass",
             "name": "Super Admin",
@@ -224,7 +274,8 @@
             "date_joined": "2025-01-01T08:00:00"
         },
         {
-            "a_id": 2,
+            "admin_password": "admin",
+            "a_id": "A0002",
             "username": "admin2",
             "password": "Admin2Pass",
             "name": "Backup Admin",
@@ -237,10 +288,12 @@
     ],
     "records": [
         {
-            "pr_record_id": 1,
-            "p_id": 1,
+            "pr_record_id": "PR0001",
+            "p_id": "P0001",
             "pr_timestamp": "2025-01-12T10:30:00",
-            "pr_conditions": {"Diabetes": "Mild"},
+            "pr_conditions": {
+                "Diabetes": "Mild"
+            },
             "pr_medications": "Metformin",
             "pr_billings": "RM150",
             "pr_prediction_result": "At risk",
@@ -248,10 +301,12 @@
             "pr_remark": "Monitor sugar level"
         },
         {
-            "pr_record_id": 2,
-            "p_id": 1,
+            "pr_record_id": "PR0002",
+            "p_id": "P0001",
             "pr_timestamp": "2025-02-20T14:00:00",
-            "pr_conditions": {"Hypertension": "Moderate"},
+            "pr_conditions": {
+                "Hypertension": "Moderate"
+            },
             "pr_medications": "Amlodipine",
             "pr_billings": "RM200",
             "pr_prediction_result": "Stable",
@@ -259,10 +314,12 @@
             "pr_remark": "Continue medication"
         },
         {
-            "pr_record_id": 3,
-            "p_id": 1,
+            "pr_record_id": "PR0003",
+            "p_id": "P0001",
             "pr_timestamp": "2025-03-05T15:00:00",
-            "pr_conditions": {"Flu": "Mild"},
+            "pr_conditions": {
+                "Flu": "Mild"
+            },
             "pr_medications": "Paracetamol",
             "pr_billings": "RM80",
             "pr_prediction_result": "Recovering",
@@ -270,10 +327,12 @@
             "pr_remark": "Bed rest"
         },
         {
-            "pr_record_id": 4,
-            "p_id": 2,
+            "pr_record_id": "PR0004",
+            "p_id": "P0002",
             "pr_timestamp": "2025-03-05T15:45:00",
-            "pr_conditions": {"Asthma": "Severe"},
+            "pr_conditions": {
+                "Asthma": "Severe"
+            },
             "pr_medications": "Inhaler",
             "pr_billings": "RM120",
             "pr_prediction_result": "Critical",
@@ -281,10 +340,12 @@
             "pr_remark": "Frequent attacks"
         },
         {
-            "pr_record_id": 5,
-            "p_id": 3,
+            "pr_record_id": "PR0005",
+            "p_id": "P0003",
             "pr_timestamp": "2025-04-01T10:30:00",
-            "pr_conditions": {"Back Pain": "Moderate"},
+            "pr_conditions": {
+                "Back Pain": "Moderate"
+            },
             "pr_medications": "Painkiller",
             "pr_billings": "RM90",
             "pr_prediction_result": "At risk",
@@ -294,36 +355,36 @@
     ],
     "appointments": [
         {
-            "appt_id": 1,
-            "p_id": 1,
-            "d_id": 1,
+            "appt_id": "APPT0001",
+            "p_id": "P0001",
+            "d_id": "D0001",
             "date": "2025-03-15",
             "time": "09:00:00",
             "status": "Pending",
             "remark": "First checkup"
         },
         {
-            "appt_id": 2,
-            "p_id": 2,
-            "d_id": 2,
+            "appt_id": "APPT0002",
+            "p_id": "P0002",
+            "d_id": "D0002",
             "date": "2025-04-10",
             "time": "11:30:00",
             "status": "Booked",
             "remark": "Follow-up"
         },
         {
-            "appt_id": 3,
-            "p_id": 1,
-            "d_id": 3,
+            "appt_id": "APPT0003",
+            "p_id": "P0001",
+            "d_id": "D0003",
             "date": "2025-04-12",
             "time": "10:00:00",
             "status": "Booked",
             "remark": "Bone checkup"
         },
         {
-            "appt_id": 4,
-            "p_id": 3,
-            "d_id": 4,
+            "appt_id": "APPT0004",
+            "p_id": "P0003",
+            "d_id": "D0004",
             "date": "2025-05-01",
             "time": "14:00:00",
             "status": "Pending",
@@ -332,32 +393,32 @@
     ],
     "shifts": [
         {
-            "shift_id": 1,
-            "staff_id": 1,
+            "shift_id": "SH0001",
+            "staff_id": "D0001",
             "day": "Monday",
             "start_time": "08:00",
             "end_time": "16:00",
             "remark": "Morning shift"
         },
         {
-            "shift_id": 2,
-            "staff_id": 2,
+            "shift_id": "SH0002",
+            "staff_id": "D0002",
             "day": "Tuesday",
             "start_time": "12:00",
             "end_time": "20:00",
             "remark": "Afternoon shift"
         },
         {
-            "shift_id": 3,
-            "staff_id": 3,
+            "shift_id": "SH0003",
+            "staff_id": "D0003",
             "day": "Wednesday",
             "start_time": "09:00",
             "end_time": "17:00",
             "remark": "Ward duty"
         },
         {
-            "shift_id": 4,
-            "staff_id": 4,
+            "shift_id": "SH0004",
+            "staff_id": "D0004",
             "day": "Thursday",
             "start_time": "08:30",
             "end_time": "16:30",
@@ -366,9 +427,9 @@
     ],
     "remarks": [
         {
-            "remark_id": 1,
-            "patient_id": 1,
-            "doctor_id": 1,
+            "remark_id": "RM0001",
+            "patient_id": "P0001",
+            "doctor_id": "D0001",
             "timestamp": "2025-01-12T11:00:00",
             "remark_type": "Note",
             "content": "Patient advised to reduce sugar intake",
@@ -376,9 +437,9 @@
             "last_modified": "2025-01-12T11:00:00"
         },
         {
-            "remark_id": 2,
-            "patient_id": 1,
-            "doctor_id": 3,
+            "remark_id": "RM0002",
+            "patient_id": "P0001",
+            "doctor_id": "D0003",
             "timestamp": "2025-04-12T10:30:00",
             "remark_type": "Diagnosis",
             "content": "Possible bone weakness",
@@ -386,9 +447,9 @@
             "last_modified": "2025-04-12T10:30:00"
         }
     ],
-    "next_patient_id": 5,
+    "next_patient_id": 6,
     "next_doctor_id": 5,
-    "next_nurse_id": 5,
+    "next_nurse_id": 7,
     "next_receptionist_id": 5,
     "next_admin_id": 3,
     "next_record_id": 6,

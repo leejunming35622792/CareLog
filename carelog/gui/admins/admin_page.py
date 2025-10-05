@@ -1,11 +1,8 @@
 import streamlit as st
 import datetime, time
-from app.schedule import ScheduleManager
+from app.admin import AdminUser as admin
+from app.user import User as user
 import app.utils as utils
-
-@st.cache_resource
-def get_manager():
-    return ScheduleManager()
 
 def dashboard():
     st.write("This is the Dashboard")
@@ -17,8 +14,7 @@ def dashboard():
         time.sleep(1)
 
 def admin_page(manager):
-    # Variables
-    manager = get_manager()
+    from app.schedule import ScheduleManager as sc
     tabs = ["Dashboard", "Profile", "Management", "Records"]
 
     # guard for username/session
@@ -34,52 +30,60 @@ def admin_page(manager):
     elif option == "Profile":
         st.write("This is the Profile Page")
     elif option == "Management":
-        tab1, tab2 = st.tabs(["User Management", "Appointment"])
+        tab1, tab2, tab3 = st.tabs(["Add User", "Remove User", "Appointment"])
 
         with tab1:
             st.subheader("User Management")
             with st.form("register_form"):
-                user_type = st.selectbox("User type", ["Patient", "Doctor", "Nurse", "Receptionist"])
-                name = st.text_input("Name")
-                password = st.text_input("Password", type="password")
+                role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
+
+                user_id = user.get_next_id(role)
+                st.text_input("Assigned ID", user_id, disabled=True)
+
                 username = st.text_input("Username")
-                gender = st.selectbox("Gender", ["Male", "Female", "Other"])
-                address = st.text_input("Address")
-                email = st.text_input("Email")
-                contact = st.text_input("Contact")
-                submitted = st.form_submit_button("Register")
-                if submitted:
-                    if user_type == "Patient":
-                        success, msg, _ = manager.add_account_patient(username, password)
-                        # you can extend add_account_patient to accept full details later
-                    elif user_type == "Doctor":
-                        success = True
-                        try:
-                            doc = manager.add_account_doctor(username, password)
-                            msg = f"Doctor created: {doc.__dict__.get('username', username)}"
-                        except Exception as e:
-                            success = False
-                            msg = str(e)
-                    elif user_type == "Nurse":
-                        # implement a manager.register_new_nurse(...) if you want full details
-                        success = False
-                        msg = "Nurse registration not implemented in GUI yet"
-                    elif user_type == "Receptionist":
-                        success, msg, _ = manager.register_new_receptionist(username, password, name, gender, address, email, contact)
+                password = st.text_input("Password", type="password")
+
+                if st.button("Create Account"):
+                    with st.spinner("Registering..."):
+                        time.sleep(1)
+                    success, message, _ = admin.register_user(role, username, password)
 
                     if success:
-                        st.success(msg)
+                        sc.save()
+                        st.success(message)
+                        st.toast(f"{role} account successfully created!")
+                        st.rerun()
                     else:
-                        st.error(msg)
-
-            if st.button("Remove User", key="remove_user_button"):
-                pass
+                        utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
+                        st.error(message)
 
         with tab2:
+            """Remove user by role and id"""
+            st.subheader("Remove User")
+
+            role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
+            user_list = getattr(sc, f"{role.lower()}s", [])
+
+            if not user_list:
+                st.info(f"No {role} found")
+            else:
+                user_display = [f"{u.username} ({getattr(u, f'{role[0].lower()}_id', 'N/A')})" for u in user_list]
+                selected_user = st.selectbox(f"Select {role} to remove", user_display)
+                if st.button("Confirm Remove"):
+                    user_id = selected_user.split("(")[1].strip(")")
+                    success, message = admin.remove_user(role, user_id)
+                    if success:
+                        st.success(message)
+                        st.toast(message)
+                        st.rerun()
+                    else:
+                        st.error(message)
+
+        with tab3:
             st.subheader("Appointment")
             pass
 
-        st.write("This is the Appointments Page")
+            st.write("This is the Appointments Page")
 
     elif option == "Records":
         st.write("This is the Records Page")

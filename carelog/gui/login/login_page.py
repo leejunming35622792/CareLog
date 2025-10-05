@@ -48,7 +48,7 @@ def login_page():
         doctor_page(st.session_state.manager)
 
     elif st.session_state.page == "nurse":
-        nurse_page(st.session_state.manager)
+        nurse_page()
 
     elif st.session_state.page == "receptionist":
         receptionist_page(st.session_state.manager)

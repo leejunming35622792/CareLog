@@ -18,6 +18,7 @@ def log_in(manager):
             password = st.text_input("Password: ", placeholder="", type="password")
             button = st.form_submit_button("Login")
 
+
             if button:
                 # Variables
                 errors = []
@@ -36,22 +37,23 @@ def log_in(manager):
                     with st.spinner("Logging In..."):
                         time.sleep(2)
 
-                    staff = manager.check_credentials(username, password)
+                    role = manager.check_credentials(staff, username, password)
 
-                    if staff == "patient" :
+                    if role == "Patient" :
                         st.session_state.page = "patient"
                         st.session_state.username = username
-                    elif staff == "doctor":
+                    elif role == "Doctor":
                         st.session_state.page = "doctor"
                         st.session_state.username = username
-                    elif staff == "nurse":
+                    elif role == "Nurse":
                         st.session_state.page = "nurse"
                         st.session_state.username = username
-                    elif staff == "receptionist":
+                    elif role == "Receptionist":
                         st.session_state.page = "receptionist"
                         st.session_state.username = username
-                    elif staff == "admin":
+                    elif role == "Admin":
                         st.session_state.page = "admin"
                         st.session_state.username = username
                     else:
                         st.error("Username and password do not match!")
+                           
