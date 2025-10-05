@@ -7,9 +7,7 @@ def register(manager):
     # --- Variable ---
     user = User("","","","","","","","")
 
-    # --- Page design ---
-    st.title("Register New Account")
-    
+    # --- Page design ---    
     col1, col2 = st.columns(2)
 
     with col1:
@@ -37,13 +35,14 @@ def register(manager):
             if submit:
                 with st.spinner("Processing..."):
                     time.sleep(1)
-                success, message, user_obj = user.create_user(role, username, password, user_id, date)
+                success, message, user_obj = user.create_user(manager, role, username, password, user_id, date)
 
                 if success:
                     manager.save()
                     utils.log_event(f"{role} {username} registered successfully.", "INFO")
                     st.success(message)
                     st.toast(f"Welcome, {username}!")
+                    st.session_state.username = username
                     st.session_state.page = role.lower()
                     st.rerun()
                 else:
