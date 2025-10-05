@@ -18,7 +18,6 @@ def log_in(manager):
             password = st.text_input("Password: ", placeholder="", type="password")
             button = st.form_submit_button("Login")
 
-
             if button:
                 # Variables
                 errors = []
@@ -58,4 +57,3 @@ def log_in(manager):
                         st.error("Username and password do not match!")
                         st.stop()
                     st.rerun()
-                           
