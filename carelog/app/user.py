@@ -64,7 +64,7 @@ class User:
 
         # Capitalize turns the first letter to upper, remaining be lower
         utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
-        return True, f"{role.capitalize()} created successfully! ID: {user_id}", user_obj
+        return True, f"{role.capitalize()} created successfully! ID: {user_id}", None
     
     # Update detail
     def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
