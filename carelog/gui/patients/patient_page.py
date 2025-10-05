@@ -14,6 +14,12 @@ def patient_page(manager):
         st.session_state.logout_triggered = False
         st.rerun()
 
+    if "edit" not in st.session_state:
+        st.session_state.edit = ""
+
+    if "cancel" not in st.session_state:
+        st.session_state.cancel = ""
+
     # Page design
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
@@ -23,7 +29,7 @@ def patient_page(manager):
     if option == "Dashboard":
         dashboard(manager, username)
     elif option == "Profile":
-        profile(manager, username)
+        profile(manager)
     elif option == "Records":
         record(manager)
     elif option == "Appointments":

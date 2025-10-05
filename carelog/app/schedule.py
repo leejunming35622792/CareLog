@@ -127,39 +127,25 @@ class ScheduleManager():
         return len(self.doctors)
 
     # --- Login ---
-    def check_credentials(self, username, password):
-        # Variables
-        patient_acc = {p.username: p.password for p in self.patients}
-        doctor_acc = {d.username: d.password for d in self.doctors}
-        nurse_acc = {n.username: n.password for n in self.nurses}
-        receptionist_acc = {r.username: r.password for r in self.receptionists}
-        admin_acc = {a.username: a.password for a in self.admins}
+    def check_credentials(self, staff, username, password):
+        # Map each role to its user-password dict
+        accounts = {
+            "Patient": {p.username: p.password for p in self.patients},
+            "Doctor": {d.username: d.password for d in self.doctors},
+            "Nurse": {n.username: n.password for n in self.nurses},
+            "Receptionist": {r.username: r.password for r in self.receptionists},
+            "Admin": {a.username: a.password for a in self.admins},
+        }
 
-        if username in list(patient_acc.keys()):
-            if password == patient_acc.get(username):
-                return "patient"
-            else:
-                return False
-        elif username in list(doctor_acc.keys()):
-            if password == doctor_acc.get(username):
-                return "doctor"
-            else:
-                return False
-        elif username in list(nurse_acc.keys()):
-            if password == nurse_acc.get(username):
-                return "nurse"
-            else:
-                return False
-        elif username in list(receptionist_acc.keys()):
-            if password == receptionist_acc.get(username):
-                return "receptionist"
-            else:
-                return False
-        elif username in list(admin_acc.keys()):
-            if password == admin_acc.get(username):
-                return "admin"
-            else:
-                return False
+        # Check if role exists
+        if staff not in accounts:
+            return False
+
+        acc = accounts[staff]
+
+        # Verify username and password
+        if username in acc and acc[username].strip() == password:
+            return staff
         else:
             return False
 
@@ -176,7 +162,7 @@ class ScheduleManager():
     def search_record(self, p_id, record_id):
         record_dict = {}
         for record in self.records:
-            if record.p_id == p_id:
+            if record_id == record.pr_record_id:
                 record_dict = {
                     "Record ID": record.pr_record_id,
                     "Patient ID": record.p_id,
@@ -354,14 +340,13 @@ class ScheduleManager():
         self._save_data()
         return True
 
-    def view_upcoming_appointments(self,username,password):
+    def view_upcoming_appointments(self,username):
         doctor=next((d for d in self.doctors if d.username ==username), None)
         if doctor is None:
             return False, "No Doctor Found", None
-        if doctor.password != password:
-            return False, "Incorrect Password", None
-        now=datetime.datetime.now()
+        now = datetime.datetime.now()
         upcoming: list[dict]=[]
+
         for appt in self.appointments:
             if appt.doctor==doctor.d_id:
                 try:
@@ -384,6 +369,23 @@ class ScheduleManager():
         upcoming.sort(key=lambda x: f"{x['date']} {x['time']}")
         return True, f"Found {len(upcoming)} upcoming appointments", upcoming
     
+    def edit_appointments(self, appt_id, d_id, appt_date, appt_time, appt_remark):
+        for appt in self.appointments:
+            if appt.appt_id == appt_id:
+                if d_id:
+                    appt.d_id = d_id
+                if appt_date:
+                    appt.date = appt_date
+                if appt_time:
+                    appt.time = appt_time
+                if appt_remark:
+                    appt.remark = appt_remark
+            return True
+
+    def delete_appointments(self, appt_id):
+        self.appointments = [appt for appt in self.appointments if appt.appt_id != appt_id]
+        return True
+
     # --- Nurse ---
     def view_nurse_details(self, username, password):
         nurse = next((n for n in self.nurses if n.username == username), None)
@@ -472,4 +474,4 @@ class ScheduleManager():
         appt=next((a for a in self.add_appointments if a.appt_id == appointment_id),None)
         if appt is None:
             return False, "No appointment found", None
-        return appt        
+        return appt       

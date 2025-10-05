@@ -2,7 +2,7 @@ import streamlit as st
 import datetime
 
 def dashboard(manager, username):
-    st.header("Nurse Dashboard Overview")
+    st.header("🩺Nurse Dashboard Overview")
 
     password = st.session_state.get("password", "")
     success, message, profile = manager.view_nurse_details(username, password)
@@ -43,7 +43,7 @@ def profile_page(manager, username):
             new_email = st.text_input("New Email (optional)")
             new_contact = st.text_input("New Contact Number (optional)")
             new_address = st.text_area("New Address (optional)")
-            new_department = st.text_input("New Speciality (optional)")
+            new_department = st.text_input("New Department (optional)")
             new_speciality = st.text_input("New Speciality (optional)")
             new_password = st.text_input("New Password (optional)", type="password")
 
@@ -84,9 +84,9 @@ def patient_records_page(manager, username):
 
     with tab2:
         with st.form("add_remark_form"):
-            patient_id_remark = st.number_input("Patient ID", min_value=1, step=1)
-            remark_type = st.selectbox("Remark Type", ["mood", "pain_level", "general", "observation"])
-            remark_content = st.text_area("Remark Conetnt")
+            patient_id_remark = st.number_input("Patient ID", min_value=1, step=1, key="nurse_patient_remark")
+            remark_type = st.selectbox("Remark Type", ["mood", "pain_level", "general", "observation"], key="remark_type")
+            remark_content = st.text_area("Remark Content", key="remark_content")
             submitted = st.form_submit_button("Add Remark")
             if submitted:
                 success, msg, rid = manager.add_patient_remark_nurse(
@@ -98,26 +98,27 @@ def patient_records_page(manager, username):
                     st.error(msg)
 
 def nurse_page(Manager):
-    global manager
+
     manager = Manager
-    global username
-    username = st.session_state.username
+    username = st.session_state.get("username", None)
+    if not username:
+        st.error("No user logged in")
+        return
 
     if "password" not in st.session_state:
         st.session_state.password = st.session_state.get("password", "")
 
     tabs = ["Dashboard", "Profile", "Patient Records"]
 
-    if "logout_trigerred" in st.session_state and st.session_state.logout_triggered:
+    if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
         st.rerun()
 
     st.title(f"🏥 CareLog dashboard - Welcome Nurse {username}")
     st.sidebar.title("Navigation")
-    option = st.sidebar.radio("Select", tabs)
-    st.sidebar.radio("Select", tabs)
+    option = st.sidebar.radio("Select", tabs, key="nurse_sidebar_radio")
     st.sidebar.divider()
-    st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
+    st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True, key="nurse_logout_btn")
     
     if option == "Dashboard":
         dashboard(manager, username)

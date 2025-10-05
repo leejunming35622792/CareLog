@@ -1,11 +1,70 @@
 import streamlit as st
+from app.receptionist import ReceptionistUser as manager
 
-def dashboard():
-    st.write("This is the Dashboard")
+def receptionist_page(manager):
+    st.title("Receptionist Dashboard")
+    tabs = ["Dashboard", "Patient Search", "Appointments", "Profile"]
 
+    # Sidebar
+    username = st.session_state.get("username", "Receptionist")
+    st.sidebar.title(f"Welcome, {username}")
+    option = st.sidebar.radio("Navigation", tabs)
+    st.sidebar.button("Logout", on_click=logout)
+
+    receptionist = next((r for r in manager.receptionists if r.username == username), None)
+
+    if option == "Dashboard":
+        dashboard(username)
+    elif option == "Patient Search":
+        patient_search_ui()
+    elif option == "Appointments":
+        tab1, tab2, tab3 = st.tabs(["Create Appointment", "View Appointments", "Update Status"])
+
+        with tab1:
+            st.subheader("Create New Appointment")
+            patient_id = st.selectbox("Select Patient", [p.p_id for p in manager.patients])
+            doctor_id = st.selectbox("Select Doctor", [d.d_id for d in manager.doctors])
+            date = st.date_input("Appointment Date")
+            time_ = st.time_input("Appointment Time")
+
+            if st.button("Create Appointment"):
+                success, message, _ = receptionist.create_appointment(patient_id, doctor_id, date.isoformat(), str(time_))
+                if success:
+                    st.success(message)
+                else:
+                    st.error(message)
+
+        with tab2:
+            st.subheader("All Appointments")
+            if manager.appointments:
+                for a in manager.appointments:
+                    st.write(f"**{a['appt_id']}** - {a['patient_id']} with {a['doctor_id']} on {a['date']} at {a['time']} ({a['status']})")
+            else:
+                st.info("No appointments found.")
+
+        with tab3:
+            st.subheader("Update Appointment Status")
+            appt_id = st.text_input("Enter Appointment ID")
+            new_status = st.selectbox("New Status", ["Scheduled", "Completed", "Cancelled"])
+            if st.button("Update Status"):
+                success, message = receptionist.update_appointment_status(appt_id, new_status)
+                if success:
+                    st.success(message)
+                else:
+                    st.error(message)
+                    
+    elif option == "Profile":
+        st.write("Profile page coming soon...")
+
+def dashboard(username):
+    st.subheader("Dashboard Overview")
+    st.write(f"Logged in as: **{username}**")
+    st.metric("Total Patients", len(manager.patients))
+    st.metric("Total Appointments", len(manager.appointments))
+
+# TODO: Already implemented receptionist.py, will redo this
 def patient_search_ui():
     st.subheader("Search Patients")
-    manager = ReceptionistManager()
 
     # Search bar
     query = st.text_input("Enter name, patient ID, email or contact: ")
@@ -27,34 +86,6 @@ def patient_search_ui():
     else:
         st.info("Type something to search.")
     pass
-
-def receptionist_page(manager):
-    # Variables
-    username = st.session_state.get("username", "Unknown")
-    # doctor = next((d for d in manager.doctos if d.username == username), None)
-    tabs = ["Dashboard", "Patient Search", "Appointments", "Profile"]
-
-    # Session state
-    if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
-        st.session_state.logout_triggered = False
-        st.rerun()
-
-    # Sidebar
-    st.sidebar.title("Navigation")
-    option = st.sidebar.radio("Select", tabs)
-    st.sidebar.button("Logout", on_click=logout)
-
-    # Page design
-    st.title(f"CareLog Dashboard - Welcome {username}")
-
-    if option == "Dashboard":
-        dashboard()
-    elif option == "Patient Search":
-        patient_search_ui()
-    elif option == "Appointments":
-        st.write("Appointments page coming soon...")
-    elif option == "Profile":
-        st.write("Profile page coming soon...")
 
 def logout():
     st.session_state.page = "login"

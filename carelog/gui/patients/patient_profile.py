@@ -1,9 +1,11 @@
 import streamlit as st
 import time
+from app.user import User
 
-def profile(manager, username):
+def profile(Manager):
     # Variables
     manager = st.session_state.manager
+    username = st.session_state.username
 
     # Page design
     st.title("CareLog - About You")
@@ -72,7 +74,7 @@ def profile(manager, username):
                 for e in errors:
                     st.error(e)
             else:
-                result = manager.update_patient_detail(username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark)
+                result = User.update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark)
                 with st.spinner("Saving changes..."):
                     time.sleep(1)
                 if result:

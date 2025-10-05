@@ -14,7 +14,7 @@ class User:
         self.contact_num = contact_num
         self.date_joined = date_joined
 
-    # Login Page - Create Account first
+    # Create account (Global)
     @staticmethod
     def get_next_id(role):
         from app.schedule import ScheduleManager
@@ -107,52 +107,12 @@ class User:
         else:
             raise ValueError(f"Invalid role type: {role}")
 
-    # def add_account_patient(self, username, password):
-    #     joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #     new_patient = PatientUser.create_acc(self.next_patient_id, username, password, str(joined_date))
-    #     self.patients.append(new_patient)
-    #     self.next_patient_id += 1
-    #     return True
-    
-    # def register_doctor(self, email, password):
-
-    #     if not email or "@" not in email:
-    #         return False, "Invalid email address", None
-        
-    #     if any(d.email == email for d in self.doctors):
-    #         return False, "Email already registered", None
-        
-    #     if not password or len(password) < 6:
-    #         return False, "Password must be at least 6 characters", None
-        
-    #     joined_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #     new_doctor = DoctorUser(
-    #         self.next_doctor_id,
-    #         email,
-    #         password,
-    #         "",
-    #         "",
-    #         "",
-    #         email,
-    #         "",
-    #         joined_date,
-    #         "",
-    #         ""
-    #     )
-        
-    #     self.doctors.append(new_doctor)
-    #     doctor_id = self.next_doctor_id
-    #     self.next_doctor_id += 1
-    #     self._save_data()
-        
-    #     return True, "Doctor registered successfully", doctor_id
-    
-
-    #Update detail
-    def update_patient_detail(self, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
-        patient = next((p for p in self.patients if p.username == username), None)
+    # Update detail
+    def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
+        patient = next((p for p in manager.patients if p.username == username), None)
         if patient is None: #Check if patient list empty or no
             return False
+        
         if new_password:
             patient.password = new_password
         if new_name:
@@ -167,8 +127,8 @@ class User:
             patient.contact_num = new_contact_num
         if new_remark:
             patient.p_remark = new_remark
-            
-        self._save_data()
+        
+        manager._save_data()
         return True
     
     def add_doctor_personal_info(self,username,password,name,staff_id,contact_num,address,gender,date_of_birth):

@@ -10,8 +10,12 @@
             "email": "john@example.com",
             "contact_num": "0123456789",
             "date_joined": "2025-01-01T09:00:00",
-            "p_record": [1, 2, 3],
-            "p_remark": []
+            "p_record": [
+                1,
+                2,
+                3
+            ],
+            "p_remark": "female doctors"
         },
         {
             "p_id": 2,
@@ -23,8 +27,10 @@
             "email": "alice@example.com",
             "contact_num": "0198765432",
             "date_joined": "2025-02-01T11:00:00",
-            "p_record": [4],
-            "p_remark": []
+            "p_record": [
+                4
+            ],
+            "p_remark": ""
         },
         {
             "p_id": 3,
@@ -36,8 +42,10 @@
             "email": "mike@example.com",
             "contact_num": "0165558888",
             "date_joined": "2025-03-01T10:30:00",
-            "p_record": [5],
-            "p_remark": []
+            "p_record": [
+                5
+            ],
+            "p_remark": ""
         },
         {
             "p_id": 4,
@@ -50,7 +58,7 @@
             "contact_num": "0184449999",
             "date_joined": "2025-04-01T12:15:00",
             "p_record": [],
-            "p_remark": []
+            "p_remark": ""
         }
     ],
     "doctors": [
@@ -213,6 +221,7 @@
     ],
     "admins": [
         {
+            "admin_password": "admin",
             "a_id": 1,
             "username": "admin",
             "password": "adminpass",
@@ -224,6 +233,7 @@
             "date_joined": "2025-01-01T08:00:00"
         },
         {
+            "admin_password": "admin",
             "a_id": 2,
             "username": "admin2",
             "password": "Admin2Pass",
@@ -240,7 +250,9 @@
             "pr_record_id": 1,
             "p_id": 1,
             "pr_timestamp": "2025-01-12T10:30:00",
-            "pr_conditions": {"Diabetes": "Mild"},
+            "pr_conditions": {
+                "Diabetes": "Mild"
+            },
             "pr_medications": "Metformin",
             "pr_billings": "RM150",
             "pr_prediction_result": "At risk",
@@ -251,7 +263,9 @@
             "pr_record_id": 2,
             "p_id": 1,
             "pr_timestamp": "2025-02-20T14:00:00",
-            "pr_conditions": {"Hypertension": "Moderate"},
+            "pr_conditions": {
+                "Hypertension": "Moderate"
+            },
             "pr_medications": "Amlodipine",
             "pr_billings": "RM200",
             "pr_prediction_result": "Stable",
@@ -262,7 +276,9 @@
             "pr_record_id": 3,
             "p_id": 1,
             "pr_timestamp": "2025-03-05T15:00:00",
-            "pr_conditions": {"Flu": "Mild"},
+            "pr_conditions": {
+                "Flu": "Mild"
+            },
             "pr_medications": "Paracetamol",
             "pr_billings": "RM80",
             "pr_prediction_result": "Recovering",
@@ -273,7 +289,9 @@
             "pr_record_id": 4,
             "p_id": 2,
             "pr_timestamp": "2025-03-05T15:45:00",
-            "pr_conditions": {"Asthma": "Severe"},
+            "pr_conditions": {
+                "Asthma": "Severe"
+            },
             "pr_medications": "Inhaler",
             "pr_billings": "RM120",
             "pr_prediction_result": "Critical",
@@ -284,7 +302,9 @@
             "pr_record_id": 5,
             "p_id": 3,
             "pr_timestamp": "2025-04-01T10:30:00",
-            "pr_conditions": {"Back Pain": "Moderate"},
+            "pr_conditions": {
+                "Back Pain": "Moderate"
+            },
             "pr_medications": "Painkiller",
             "pr_billings": "RM90",
             "pr_prediction_result": "At risk",

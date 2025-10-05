@@ -4,6 +4,9 @@ import datetime
 def dashboard():
     """Main dashboard showing overview and quick stats"""
     manager = st.session_state.manager
+
+    # Page design
+    st.divider()
     st.header("Dashboard Overview")
     
     # Get doctor details
@@ -20,10 +23,11 @@ def dashboard():
         with col3:
             st.metric("Speciality", profile.get('speciality', 'Not Set'))
         
-        # Upcoming appointments preview
         st.divider()
-        st.subheader("Today's Appointments")
-        success, msg, appointments = manager.view_upcoming_appointments(username, password)
+
+        # Upcoming appointments preview
+        st.header("Today's Appointments")
+        success, msg, appointments = manager.view_upcoming_appointments(username)
         if success and appointments:
             today = datetime.datetime.now().strftime("%Y-%m-%d")
             today_appts = [a for a in appointments if a['date'] == today]

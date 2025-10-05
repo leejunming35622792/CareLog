@@ -7,17 +7,17 @@ def appointment(manager):
     st.title("CareLog - We are here for you!")
 
     # Variables
-    tabs = ["Book Appointment", "View Appointments"]
+    tabs = ["Book Appointment", "View Appointments", "Edit Appointments"]
+    doctors = {d.d_id:d.name for d in manager.doctors}
     status_type = ["Pending", "Booked", "Reschedules", "Cancelled"]
     errors = []
     username = st.session_state.username
     patient = next((p for p in manager.patients if p.username == username), None)
     doctor_list = {d.d_id:d.name for d in manager.doctors}
 
-    tab1, tab2 = st.tabs(tabs)
+    tab1, tab2, tabs3 = st.tabs(tabs)
 
     with tab1:
-        
             # Page Design
             # st.subheader("Book Appointment")
             st.markdown("### 🗓️ Book a New Appointment")
@@ -92,3 +92,101 @@ def appointment(manager):
                 if search_button:
                     appt_df = pd.Series(appt).to_frame("")
                     st.dataframe(appt_df)
+
+    with tabs3:
+        st.markdown("### 🖊️ Edit Your Appointments\nEdit section in.")
+        st.divider()
+
+        if "edit" not in st.session_state:
+            st.session_state.edit = ""
+
+        if "cancel" not in st.session_state:
+            st.session_state.cancel = ""
+
+        patient_appt = [appt for appt in manager.appointments if appt.p_id == patient.p_id]
+
+        if patient_appt:
+            for i, appt in enumerate(patient_appt):
+                with st.form(f"appt-box{i}"):
+                    col1, col2, col3 = st.columns([2, 2, 1])
+                    with col1:
+                        st.markdown(f"""
+                        **Appointment ID:** {appt.appt_id}  
+                        **Date:** {appt.date}  
+                        **Time:** {appt.time}  
+                        **Doctor:** {appt.d_id} - {doctors[appt.d_id]}  
+                        **Remark:** {appt.remark}
+                        """)
+
+                    with col2:
+                        if appt.status == "Pending":
+                            st.markdown(f"""
+                            ### Status: :blue[{appt.status}]
+                            """)
+                        if appt.status == "Booked":
+                            st.markdown(f"""
+                            ### Status: :green[{appt.status}]
+                            """)
+                        if appt.status == "Reschedules":
+                            st.markdown(f"""
+                            ### Status: :yellow[{appt.status}]
+                            """)
+                        if appt.status == "Cancelled":
+                            st.markdown(f"""
+                            ### Status: :red[{appt.status}]
+                            """)
+
+                    with col3:
+                        edit_button = st.form_submit_button("Edit", key=f"edit-{appt.appt_id}", use_container_width=True)
+                        cancel_button = st.form_submit_button("Cancel", key=f"cancel-{appt.appt_id}", use_container_width=True)
+
+                        if edit_button:
+                            st.session_state.edit = appt.appt_id
+                            st.rerun()
+                        if cancel_button:
+                            st.session_state.cancel = appt.appt_id
+                            st.rerun()
+
+                        if st.session_state.cancel:
+                            confirm_delete_button = st.form_submit_button("Confirm Delete", use_container_width=True)
+
+                            if confirm_delete_button != "":
+                                manager.delete_appointments(st.session_state.cancel)
+                                st.session_state.edit = ""
+                                st.session_state.cancel = ""
+                        
+        else:
+            st.warning("No appointments found!")
+
+        st.divider()
+
+        if "edit" in st.session_state and st.session_state.edit != "":
+            # Variables
+            target_appt_id = st.session_state.edit
+            target_appt = next((a for a in patient_appt if a.appt_id == target_appt_id), None)
+            doctor_options = list(doctor_id.keys())
+            current_doc_display = next((disp for disp, did in doctor_id.items() if did == target_appt.d_id), doctor_options[0])
+
+
+            if target_appt:
+                st.markdown(f"### ✏️ Editing Appointment {target_appt.appt_id}")
+                with st.form("edit-appt-form"):
+                    doctor_disp = st.selectbox("Select Doctor", doctor_id.keys(), index=doctor_options.index(current_doc_display))
+                    d_id = doctor_id[doctor_disp]
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        appt_date = st.date_input("Appointment Date", value=target_appt.date)
+                    with col2:
+                        appt_time = st.time_input("Appointment Time", value=target_appt.time)
+
+                    appt_remark = st.text_area("Remarks", value=target_appt.remark)
+
+                    submitted = st.form_submit_button("Save Changes")
+
+                    if submitted:
+                        result = manager.edit_appointments(target_appt_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                        st.success(f"Appointment {target_appt.appt_id} updated successfully!")
+                        manager.save()
+                        st.session_state.edit = ""  # reset
+        
+        st.divider()
