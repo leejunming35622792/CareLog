@@ -210,7 +210,7 @@ class ScheduleManager():
                 }
 
     # --- Doctors ---
-    def view_doctor_details(self,username):
+    def view_doctor_details(self, username):
         doctor = next((d for d in self.doctors if d.username == username), None)
 
         if doctor is None:
@@ -496,3 +496,4 @@ class ScheduleManager():
         if appt is None:
             return False, "No appointment found", None
         return appt       
+    
