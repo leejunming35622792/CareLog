@@ -14,7 +14,6 @@ class User:
         self.contact_num = contact_num
         self.date_joined = date_joined
 
-    # Create account (Global)
     @staticmethod
     def get_next_id(role):
         from app.schedule import ScheduleManager
@@ -34,21 +33,19 @@ class User:
         else:
             raise ValueError(f"Invalid role: {role}")
     
-    def create_user(self, role, username, password, user_id, date):
+    def create_user(self, manager, role, username, password, user_id, date):
         """Register new user"""
-        from app.schedule import ScheduleManager
-        sc = ScheduleManager()
         if not all([username, password]):
             utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
             return False, "Username and password required", None
         
-        # Check duplicates
+        # Check username duplicates
         all_usernames = [u.username for group in [
-            sc.patients,
-            sc.doctors,
-            sc.nurses,
-            sc.receptionists,
-            sc.admins
+            manager.patients,
+            manager.doctors,
+            manager.nurses,
+            manager.receptionists,
+            manager.admins
         ] for u in group]
 
         if username in all_usernames:
@@ -66,21 +63,8 @@ class User:
         user_obj = self._user(role, user_id, username, password, date)
 
         # Add object to list
-        if role == "patient":
-            sc.patients.append(user_obj)
-            sc.next_patient_id += 1
-        elif role == "doctor":
-            sc.doctors.append(user_obj)
-            sc.next_doctor_id += 1
-        elif role == "nurse":
-            sc.nurses.append(user_obj)
-            sc.next_nurse_id += 1
-        elif role == "receptionist":
-            sc.receptionists.append(user_obj)
-            sc.next_nurse_id += 1
-        elif role == "admin":
-            sc.admins.append(user_obj)
-            sc.next_admin_id += 1
+        manager.create_account(role, user_obj)
+        manager._save_data()
 
         # Capitalize turns the first letter to upper, remaining be lower
         utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
@@ -94,10 +78,10 @@ class User:
             return PatientUser(user_id, username, password, "", "", "", "", "", date, [], "")
         elif role == "doctor":
             from app.doctor import DoctorUser
-            return DoctorUser(user_id, username, password, "", "", "", "", "", date)
+            return DoctorUser(user_id, username, password, "", "", "", "", "", date, "", "")
         elif role == "nurse":
             from app.nurse import NurseUser
-            return NurseUser(user_id, username, password, "", "", "", "", "", date)
+            return NurseUser(user_id, username, password, "", "", "", "", "", date, "", "", "")
         elif role == "receptionist":
             from app.receptionist import ReceptionistUser
             return ReceptionistUser(user_id, username, password, "", "", "", "", "", date)
@@ -109,6 +93,8 @@ class User:
 
     # Update detail
     def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
+        from app.schedule import ScheduleManager
+        manager = ScheduleManager()
         patient = next((p for p in manager.patients if p.username == username), None)
         if patient is None: #Check if patient list empty or no
             return False
