@@ -58,39 +58,14 @@ class User:
             return False, "Password must contain at least one uppercase letter", None
         if not any(c.isdigit() for c in password):
             return False, "Password must contain at least one number", None
-        
-        # Create object using function
-        user_obj = self._user(role, user_id, username, password, date)
 
-        # Add object to list
-        manager.create_account(role, user_obj)
-        manager._save_data()
+        # create account in auth_manager
+        manager.create_account(role, user_id, username, password, date)
 
         # Capitalize turns the first letter to upper, remaining be lower
         utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
         return True, f"{role.capitalize()} created successfully! ID: {user_id}", user_obj
     
-    def _user(self, role, user_id, username, password, date):
-        """Create correct role object"""
-        role = role.lower()
-        if role == "patient":
-            from app.patient import PatientUser
-            return PatientUser(user_id, username, password, "", "", "", "", "", date, [], "")
-        elif role == "doctor":
-            from app.doctor import DoctorUser
-            return DoctorUser(user_id, username, password, "", "", "", "", "", date, "", "")
-        elif role == "nurse":
-            from app.nurse import NurseUser
-            return NurseUser(user_id, username, password, "", "", "", "", "", date, "", "", "")
-        elif role == "receptionist":
-            from app.receptionist import ReceptionistUser
-            return ReceptionistUser(user_id, username, password, "", "", "", "", "", date)
-        elif role == "admin":
-            from app.admin import AdminUser
-            return AdminUser(user_id, username, password, "", "", "", "", "", date)
-        else:
-            raise ValueError(f"Invalid role type: {role}")
-
     # Update detail
     def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
         from app.schedule import ScheduleManager

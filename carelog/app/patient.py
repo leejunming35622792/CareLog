@@ -7,21 +7,6 @@ class PatientUser(User):
         self.p_record = p_record or []
         self.p_remark = p_remark
 
-    def create_acc(p_id, username, password, joined_date):
-        return PatientUser(
-            p_id,
-            username,
-            password,
-            "",
-            "",
-            "",
-            "",
-            "",
-            joined_date,
-            [],
-            ""
-        )
-
 class PatientRecord():
     def __init__(self, pr_record_id, p_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score, pr_remark):
         self.pr_record_id = pr_record_id
