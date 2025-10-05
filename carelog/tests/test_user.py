@@ -1,4 +1,6 @@
 # tests/test_user.py
+# to run, run 'python -m pytest -v' in terminal
+import pytest 
 from app.user import User
 
 # --- MOCK manager class for testing ---
@@ -39,8 +41,13 @@ def test_update_patient_detail_success():
     )
 
     assert result is True
+    assert manager.patients[0].username == "john123"
     assert manager.patients[0].password == "NewPass1"
     assert manager.patients[0].name == "John Doe"
+    assert manager.patients[0].gender == "Male"
+    assert manager.patients[0].address == "New Street"
+    assert manager.patients[0].email == "john@new.com"
+    assert manager.patients[0].contact_num == "0198765432"
     assert manager.saved is True
 
 
@@ -60,11 +67,11 @@ def test_update_patient_detail_invalid_username():
     )
     assert result is False
 
-
+# Instead of waiting real user input, MonkeyPatch directly create a sample of user input 
 def test_get_next_id_valid_roles(monkeypatch):
     """Positive test — get_next_id should return correct format"""
     class MockSchedule:
-        next_patient_id = 1
+        next_patient_id = 5
         next_doctor_id = 2
         next_nurse_id = 3
         next_receptionist_id = 4
@@ -72,7 +79,7 @@ def test_get_next_id_valid_roles(monkeypatch):
 
     monkeypatch.setattr("app.user.ScheduleManager", lambda: MockSchedule())
 
-    assert User.get_next_id("patient") == "P0001"
+    assert User.get_next_id("patient") == "P0005"
     assert User.get_next_id("doctor") == "D0002"
     assert User.get_next_id("nurse") == "N0003"
     assert User.get_next_id("receptionist") == "R0004"
