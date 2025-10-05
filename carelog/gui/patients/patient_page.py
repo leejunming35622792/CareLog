@@ -15,7 +15,7 @@ def patient_page(manager):
         st.rerun()
 
     # Page design
-    st.sidebar.title("CareLog")
+    st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.button("Logout", on_click=logout)

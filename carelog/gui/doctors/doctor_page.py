@@ -336,8 +336,9 @@ def doctor_page(Manager):
         st.rerun()
 
     # Page design
-    st.title(f"🏥 CareLog Dashboard - Welcome Dr. {username}")
-    st.sidebar.title("Navigation")
+    st.title(f"🏥 CareLog Dashboard")
+    st.sidebar.title("CareLog Navigation")
+    st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.divider()
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)

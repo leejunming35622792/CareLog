@@ -1,8 +1,13 @@
 import streamlit as st
 import time, datetime
 import app.utils as utils
+from app.user import User
 
 def register(manager):
+    # --- Variable ---
+    user = User("","","","","","","","")
+
+    # --- Page design ---
     st.title("Register New Account")
     
     col1, col2 = st.columns(2)
@@ -18,8 +23,9 @@ def register(manager):
             role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist"])
 
             # Generate ID
-            user_id = manager.get_next_id(role)
-            st.text_input("Assigned ID:", value=user_id, disabled=True)
+            user_id = user.get_next_id(role)
+            
+            # st.text_input("Assigned ID:", value=user_id, disabled=True)
 
             # Credentials
             username = st.text_input("Username:")
@@ -31,7 +37,7 @@ def register(manager):
             if submit:
                 with st.spinner("Processing..."):
                     time.sleep(1)
-                success, message, user_obj = manager.create_user(role, username, password, user_id, date)
+                success, message, user_obj = user.create_user(role, username, password, user_id, date)
 
                 if success:
                     manager.save()

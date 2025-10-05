@@ -15,9 +15,11 @@ class User:
         self.date_joined = date_joined
 
     # Login Page - Create Account first
-    def get_next_id(self, role):
-        """Generate the next unique ID based on ScheduleManager counters."""
-        from app.schedule import ScheduleManager as sc
+    @staticmethod
+    def get_next_id(role):
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
+
         role = role.lower()
         if role == "patient":
             return f"P{sc.next_patient_id:04d}"
@@ -34,7 +36,8 @@ class User:
     
     def create_user(self, role, username, password, user_id, date):
         """Register new user"""
-        from app.schedule import ScheduleManager as sc
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
         if not all([username, password]):
             utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
             return False, "Username and password required", None
@@ -47,6 +50,7 @@ class User:
             sc.receptionists,
             sc.admins
         ] for u in group]
+
         if username in all_usernames:
             return False, "Username already in used", None
         
@@ -317,6 +321,3 @@ class User:
         for key, value in kwargs.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-
-# TODO: encrypt password
-# TODO:  self.date_joined = str(date_joined)

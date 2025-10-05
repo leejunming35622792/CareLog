@@ -1,7 +1,7 @@
 import streamlit as st
 from app.schedule import ScheduleManager
-from gui.login.register import create_account
 from gui.login.log_in import log_in
+from gui.login.register import register
 from gui.login.about_us import about_us
 from gui.patients.patient_page import patient_page
 from gui.doctors.doctor_page import doctor_page
@@ -24,7 +24,6 @@ def login_page():
 
     # --- Variables ---
 
-
     # --- Default Display ---
     if st.session_state.get("page") == "login":
         # Page Design
@@ -38,7 +37,7 @@ def login_page():
         if option == "Log In":
             log_in(st.session_state.manager)
         elif option == "Create Account":
-            create_account(st.session_state.manager)
+            register(st.session_state.manager)
         elif option == "About Us":
             about_us(st.session_state.manager)
 
