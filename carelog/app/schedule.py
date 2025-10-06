@@ -1,6 +1,5 @@
-import json, datetime, os
+import json, os
 
-from app.user import User
 from app.patient import PatientUser
 from app.patient import PatientRecord
 from app.patient import PatientAppointment

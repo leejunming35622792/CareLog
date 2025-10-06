@@ -13,7 +13,8 @@ class AdminUser(User):
         """
         Admin creates any user (including admin)
         """
-        from app.schedule import ScheduleManager as sc
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
         # Validation
         if not all([username, password]):
             utils.log_event(f"Failed to register {role}: Missing details", "ERROR")
@@ -46,9 +47,9 @@ class AdminUser(User):
 
     def remove_user(self, role, user_id):
         """Remove user by role and id"""
-        from app.schedule import ScheduleManager as sc
+        from app.schedule import ScheduleManager
 
-        user_list = getattr(sc, f"{role}s")
+        user_list = getattr(ScheduleManager, f"{role}s")
 
         # Search by ID
         user_to_remove = None
@@ -63,13 +64,12 @@ class AdminUser(User):
 
         # Remove user
         user_list.remove(user_to_remove)
-        sc.save()
+        ScheduleManager.save()
         utils.log_event(f"Admin removed {role} '{user_to_remove.user_id}' ({user_id})", "INFO")
 
         return True, f"{role.capitalize()} '{user_to_remove.user_id}' removed successfully."
 
     """System Management"""
-
     def view_all_logs(self, n=20):
         """Return last n system logs"""
         return utils.get_recent_logs(n)
