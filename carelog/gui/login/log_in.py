@@ -3,7 +3,7 @@ import time
 
 def log_in(manager):
     # Variable
-    user = ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"]
+    user_list = ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"]
 
     # Page design
     col1, col2 = st.columns(2)
@@ -13,7 +13,7 @@ def log_in(manager):
     with col2:
         with st.form("register-form"):
             st.subheader("Login")
-            staff = st.selectbox("User", user)
+            user = st.selectbox("User", user_list)
             username = st.text_input("Username: ", placeholder="")
             password = st.text_input("Password: ", placeholder="", type="password")
             button = st.form_submit_button("Login")
@@ -32,27 +32,18 @@ def log_in(manager):
                         st.error(e)
                     st.stop()
                 else:
+                    from manager.auth_manager import AuthManager
+                    am = AuthManager(manager) # Pass in schedule manager
                     # Add login delay
                     with st.spinner("Logging In..."):
                         time.sleep(2)
 
-                    role = manager.check_credentials(staff, username, password)
+                    success, message, role = am.check_credentials(user, username, password)
 
-                    if role == "Patient" :
-                        st.session_state.page = "patient"
+                    if success:
+                        st.success(message)
                         st.session_state.username = username
-                    elif role == "Doctor":
-                        st.session_state.page = "doctor"
-                        st.session_state.username = username
-                    elif role == "Nurse":
-                        st.session_state.page = "nurse"
-                        st.session_state.username = username
-                    elif role == "Receptionist":
-                        st.session_state.page = "receptionist"
-                        st.session_state.username = username
-                    elif role == "Admin":
-                        st.session_state.page = "admin"
-                        st.session_state.username = username
+                        st.session_state.page = role
+                        st.rerun()
                     else:
-                        st.error("Username and password do not match!")
-                    st.rerun()
+                        st.error(message)
