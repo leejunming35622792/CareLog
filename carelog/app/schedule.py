@@ -118,6 +118,31 @@ class ScheduleManager():
     def save(self): 
         self._save_data()
 
+    def add_user(self, role, user_obj):
+        """Add a new user to the correct list and increment ID"""
+        role = role.lower()
+
+        if role == "patient":
+            self.patients.append(user_obj)
+            self.next_patient_id += 1
+        elif role == "doctor":
+            self.doctors.append(user_obj)
+            self.next_doctor_id += 1
+        elif role == "nurse":
+            self.nurses.append(user_obj)
+            self.next_nurse_id += 1
+        elif role == "receptionist":
+            self.receptionists.append(user_obj)
+            self.next_receptionist_id += 1
+        elif role == "admin":
+            self.admins.append(user_obj)
+            self.next_admin_id += 1
+        else:
+            raise ValueError(f"Invalid role: {role}")
+
+        self.save()
+        return True
+
     # Additional
     def get_patient_count(self):
         return len(self.patients)

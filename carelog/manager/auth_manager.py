@@ -48,23 +48,10 @@ class AuthManager:
     def create_account(self, role, user_id, username, password, date):
         user_obj = self._user(role, user_id, username, password, date)
         role = role.lower()
-        if role == "patient":
-            self.system.patients.append(user_obj)
-            self.system.next_patient_id += 1
-        elif role == "doctor":
-            self.system.doctors.append(user_obj)
-            self.system.next_doctor_id += 1
-        elif role == "nurse":
-            self.system.nurses.append(user_obj)
-            self.system.next_nurse_id += 1
-        elif role == "receptionist":
-            self.system.receptionists.append(user_obj)
-            self.system.next_receptionist_id += 1
-        elif role == "admin":
-            self.system.admins.append(user_obj)
-            self.system.next_admin_id += 1
-        self.system.save()
-        return
+        
+        # Delegate adding user to ScheduleManager
+        self.system.add_user(role, user_obj)
+        return True, f"{role.capitalize()} account created successfully!", user_obj
 
     def _user(self, role, user_id, username, password, date):
         """Create correct role object"""
@@ -81,6 +68,11 @@ class AuthManager:
             return AdminUser(user_id, username, password, "", "", "", "", "", date)
         else:
             raise ValueError(f"Invalid role type: {role}")
+
+    def _get_next_id(self, role):
+        """Ask system for the next available user ID"""
+        role = role.lower()
+        return getattr(self.system, f"next_{role}_id")
 
     def check_email_validation(self, email):
         if not email:
