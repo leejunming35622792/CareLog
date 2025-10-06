@@ -27,10 +27,28 @@ def admin_page(manager):
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.button("Logout", on_click=logout)
 
+    # ============================================================
+    # DASHBOARD
+    # ============================================================
     if option == "Dashboard":
         dashboard()
+
+    # ============================================================
+    # PROFILE TAB
+    # ============================================================
     elif option == "Profile":
-        st.write("This is the Profile Page")
+        admin = manager.admins if hasattr(manager, "admins") else None
+
+        if admin:
+            st.text_input("Username", admin.username, disabled=True)
+            st.text_input("Email", admin.email, disabled=True)
+            st.text_input("Role", "Administrator", disabled=True)
+        else:
+            st.warning("No admin data found.")
+
+    # ============================================================
+    # MANAGEMENT
+    # ============================================================
     elif option == "Management":
         tab1, tab2, tab3 = st.tabs(["Add User", "Remove User", "Appointment"])
 
@@ -89,8 +107,20 @@ def admin_page(manager):
 
             st.write("This is the Appointments Page")
 
+    # ============================================================
+    # RECORDS
+    # ============================================================
     elif option == "Records":
         st.write("This is the Records Page")
+        st.header("📁 Records")
+
+        if hasattr(manager, "records"):
+            if manager.records:
+                st.dataframe(manager.records)
+            else:
+                st.info("No records available.")
+        else:
+            st.warning("Records not found in manager.")
 
 def admin_logs_page():
     """Function to view logs"""
