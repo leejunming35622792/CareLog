@@ -1,4 +1,4 @@
-import json, re
+import re
 from app.user import User
 import app.utils as utils
 
@@ -7,11 +7,13 @@ class ReceptionistUser(User):
         self.r_id = r_id
         super().__init__(username, password, name, gender, address, email, contact_num, date_joined)
 
+    # Account creation (Patients only)
     def create_user(self, role, username, password, user_id, date):
         return super().create_user(role, username, password, user_id, date)
     
     def create_appointment(self, patient_id, doctor_id, date, time):
-        from app.schedule import ScheduleManager as sc
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
 
         # Validate ID
         patient = next((p for p in sc.patients if p.p_id == patient_id), None)
@@ -39,13 +41,15 @@ class ReceptionistUser(User):
         return True, f"Appointment {appt_id} successfully created.", appointment
     
     def view_appointments(self):
-        from app.schedule import ScheduleManager as sc
-        return sc.appointments
+        from app.schedule import ScheduleManager
+        return ScheduleManager.appointments
     
     def update_appointment_status(self, appt_id, new_status):
-        from app.schedule import ScheduleManager as sc
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
 
         appointment = next((a for a in sc.appointments if a["appt_id"] == appt_id), None)
+        
         if not appointment:
             return False, "Appointment not found"
 
@@ -59,13 +63,31 @@ class ReceptionistUser(User):
 
     """ Patient and Doctor Info """
     def list_patients(self):
-        from app.schedule import ScheduleManager as sc
-        return [(p.p_id, p.name, p.contact_num) for p in sc.patients]
+        from app.schedule import ScheduleManager
+        return [(p.p_id, p.name, p.contact_num) for p in ScheduleManager.patients]
 
     def list_doctors(self):
-        from app.schedule import ScheduleManager as sc
-        return [(d.d_id, d.name, d.contact_num) for d in sc.doctors]
+        from app.schedule import ScheduleManager
+        return [(d.d_id, d.name, d.contact_num) for d in ScheduleManager.doctors]
     
     def list_nurses(self):
-        from app.schedule import ScheduleManager as sc
-        return [(n.n_id, n.name, n.contact_num) for n in sc.nurses]
+        from app.schedule import ScheduleManager
+        return [(n.n_id, n.name, n.contact_num) for n in ScheduleManager.nurses]
+    
+    """Search for patient"""
+    def search_patients(self, query):
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
+        query = query.lower()
+        pattern = re.compile(re.escape(query))
+        results = []
+
+        for p in sc.patients:
+            if (
+                pattern.search(p.p_id.lower())
+                or pattern.search(p.name.lower())
+                or pattern.search(p.email.lower())
+                or pattern.search(p.contact_num.lower())
+            ):
+                results.append(p)
+        return results
