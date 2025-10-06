@@ -1,5 +1,5 @@
 import streamlit as st
-import datetime
+from app.nurse import NurseUser
 from gui.nurses.nurse_dashboard import dashboard
 from gui.nurses.nurse_profile import profile_page
 
@@ -34,7 +34,7 @@ def patient_records_page():
                 else:
                     st.error(msg)
 
-def nurse_page():
+def nurse_page(nurse: NurseUser):
     global username
     username = st.session_state.username
     global manager

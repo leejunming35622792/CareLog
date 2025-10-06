@@ -2,8 +2,11 @@ import streamlit as st
 
 def dashboard(manager, username):
     st.divider()
-    st.header("Dashboard Overview")
+    st.header("🩺 Nurse Dashboard Overview")
+
     nurse = next((n for n in manager.nurses if n.username == username), None)
+    if nurse is None:
+        st.error("Nurse not found.")
 
     col1, col2, col3 = st.columns(3)
 

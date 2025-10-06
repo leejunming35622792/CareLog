@@ -37,7 +37,7 @@ def admin_page(manager):
     # PROFILE TAB
     # ============================================================
     elif option == "Profile":
-        admin = manager.admins if hasattr(manager, "admins") else None
+        admin = next((a for a in manager.admins if a.username == st.session_state.username), None)
 
         if admin:
             st.text_input("Username", admin.username, disabled=True)

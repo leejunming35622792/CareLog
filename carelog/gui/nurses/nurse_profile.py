@@ -3,7 +3,7 @@ from app.user import User
 
 def profile_page(manager, username):
     # Page design
-    st.header("My Profile")
+    st.header("👩‍⚕️ My Profile")
 
     # Variables
     nurse = next((n for n in manager.nurses if n.username == username), None)
