@@ -20,8 +20,8 @@ def login_page():
         st.title("CareLog")
 
         # Sidebar
-        st.sidebar.title("Login")
-        option = st.sidebar.selectbox("Select", ["Log In", "Create Account", "About Us"])
+        st.sidebar.title("Navigation")
+        option = st.sidebar.selectbox("", ["Log In", "Create Account", "About Us"])
 
         # Logic
         if option == "Log In":

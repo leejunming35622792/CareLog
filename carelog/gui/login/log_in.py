@@ -38,12 +38,14 @@ def log_in(manager):
                     with st.spinner("Logging In..."):
                         time.sleep(2)
 
-                    success, message, role = am.check_credentials(user, username, password)
+                    success, message, user_obj = am.check_credentials(user, username, password)
+                    user = user.lower()
 
                     if success:
-                        st.success(message)
                         st.session_state.username = username
-                        st.session_state.page = role
+                        st.session_state.user = user_obj
+                        st.session_state.page = user
+                        st.success(message)
                         st.rerun()
                     else:
                         st.error(message)

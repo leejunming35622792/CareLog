@@ -1,17 +1,18 @@
 import streamlit as st
 import datetime, time
-from app.admin import AdminUser as admin
+from app.admin import AdminUser
 from app.user import User as user
 import app.utils as utils
 
 def dashboard():
     st.write("This is the Dashboard")
-    placeholder = st.empty()
-    while True:
-        with placeholder.container():
-            col1, col2 = st.columns(2)
-            col1.metric("Time", datetime.datetime.now().today())
-        time.sleep(1)
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    col1, col2 = st.columns(2)
+    col1.metric("Current time", now)
+    col2.write("")
+
+    if st.button("Refresh time"):
+        st.rerun()
 
 def admin_page(manager):
     from app.schedule import ScheduleManager
@@ -44,9 +45,10 @@ def admin_page(manager):
                 username = st.text_input("Username")
                 password = st.text_input("Password", type="password")
 
-                if st.button("Create Account"):
+                if st.form_submit_button("Create Account"):
                     with st.spinner("Registering..."):
                         time.sleep(1)
+                    admin = AdminUser()
                     success, message, _ = admin.register_user(role, username, password)
 
                     if success:
@@ -72,6 +74,7 @@ def admin_page(manager):
                 selected_user = st.selectbox(f"Select {role} to remove", user_display)
                 if st.button("Confirm Remove"):
                     user_id = selected_user.split("(")[1].strip(")")
+                    admin = AdminUser()
                     success, message = admin.remove_user(role, user_id)
                     if success:
                         st.success(message)
