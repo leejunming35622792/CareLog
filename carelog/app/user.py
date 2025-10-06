@@ -1,6 +1,7 @@
 # Super class for other user classes
 # Common fields as below
 import datetime
+from manager.auth_manager import AuthManager
 import app.utils as utils
 
 class User:
@@ -60,7 +61,7 @@ class User:
             return False, "Password must contain at least one number", None
 
         # create account in auth_manager
-        manager.create_account(role, user_id, username, password, date)
+        AuthManager.create_account(role, user_id, username, password, date)
 
         # Capitalize turns the first letter to upper, remaining be lower
         utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")

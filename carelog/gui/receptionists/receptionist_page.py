@@ -1,9 +1,13 @@
 import streamlit as st
+import time
+from app.schedule import ScheduleManager
 from app.receptionist import ReceptionistUser as manager
+from app.user import User as user
+import app.utils as utils
 
 def receptionist_page(manager):
     st.title("Receptionist Dashboard")
-    tabs = ["Dashboard", "Patient Search", "Appointments", "Profile"]
+    tabs = ["Dashboard", "Account", "Patient Search", "Appointments", "Profile"]
 
     # Sidebar
     username = st.session_state.get("username", "Receptionist")
@@ -15,6 +19,33 @@ def receptionist_page(manager):
 
     if option == "Dashboard":
         dashboard(username)
+    elif option == "Account":
+        from app.admin import AdminUser
+        st.subheader("Create Account")
+        with st.form("register_form"):
+            role = "Patient"
+            st.text_input("Role", role, disabled=True)
+
+            user_id = user.get_next_id(role)
+            st.text_input("Assigned ID", user_id, disabled=True)
+
+            username = st.text_input("Username")
+            password = st.text_input("Password", type="password")
+
+            if st.button("Create Account"):
+                with st.spinner("Registering..."):
+                    time.sleep(1)
+                success, message, _ = AdminUser.register_user(role, username, password)
+
+            if success:
+                ScheduleManager.save()
+                st.success(message)
+                st.toast(f"{role} account successfully created!")
+                st.rerun()
+            else:
+                utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
+                st.error(message)
+                
     elif option == "Patient Search":
         patient_search_ui()
     elif option == "Appointments":

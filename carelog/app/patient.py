@@ -29,6 +29,10 @@ class PatientAppointment():
         self.status = appt_status
         self.remark = appt_remark
 
+    @staticmethod
+    def create(appt_id, p_id, d_id, appt_date, appt_time, appt_status, appt_remark):
+        return PatientAppointment(appt_id, p_id, d_id, appt_date, appt_time, appt_status, appt_remark)
+    
     @property
     def patient(self):
         return self.p_id
@@ -44,14 +48,3 @@ class PatientAppointment():
     @property
     def appt_remark(self):
         return self.remark
-
-    def create(appt_id, p_id, d_id, appt_date, appt_time, appt_status, appt_remark):
-        return PatientAppointment(
-            appt_id, 
-            p_id,
-            d_id,
-            appt_date,
-            appt_time,
-            appt_status,
-            appt_remark
-            )
