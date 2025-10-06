@@ -21,8 +21,8 @@ class AuthManager:
         # using next to search for a user in user_list, stop when found, or return none by default if not found
         user = next((u for u in users if u.username == username and u.password == password), None)
         if user:
-            return True, user
-        return False, None
+            return True, "Logging in...", user
+        return False, "Incorrect credentials", None
         
         # Map each role to its user-password dict
         # accounts = {
@@ -49,39 +49,35 @@ class AuthManager:
         user_obj = self._user(role, user_id, username, password, date)
         role = role.lower()
         if role == "patient":
-            self.patients.append(user_obj)
-            self.next_patient_id += 1
+            self.system.patients.append(user_obj)
+            self.system.next_patient_id += 1
         elif role == "doctor":
-            self.doctors.append(user_obj)
-            self.next_doctor_id += 1
+            self.system.doctors.append(user_obj)
+            self.system.next_doctor_id += 1
         elif role == "nurse":
-            self.nurses.append(user_obj)
-            self.next_nurse_id += 1
+            self.system.nurses.append(user_obj)
+            self.system.next_nurse_id += 1
         elif role == "receptionist":
-            self.receptionists.append(user_obj)
-            self.next_receptionist_id += 1
+            self.system.receptionists.append(user_obj)
+            self.system.next_receptionist_id += 1
         elif role == "admin":
-            self.admins.append(user_obj)
-            self.next_admin_id += 1
+            self.system.admins.append(user_obj)
+            self.system.next_admin_id += 1
         self.system.save()
+        return
 
     def _user(self, role, user_id, username, password, date):
         """Create correct role object"""
         role = role.lower()
         if role == "patient":
-            from app.patient import PatientUser
             return PatientUser(user_id, username, password, "", "", "", "", "", date, [], "")
         elif role == "doctor":
-            from app.doctor import DoctorUser
             return DoctorUser(user_id, username, password, "", "", "", "", "", date, "", "")
         elif role == "nurse":
-            from app.nurse import NurseUser
             return NurseUser(user_id, username, password, "", "", "", "", "", date, "", "", "")
         elif role == "receptionist":
-            from app.receptionist import ReceptionistUser
             return ReceptionistUser(user_id, username, password, "", "", "", "", "", date)
         elif role == "admin":
-            from app.admin import AdminUser
             return AdminUser(user_id, username, password, "", "", "", "", "", date)
         else:
             raise ValueError(f"Invalid role type: {role}")
@@ -114,5 +110,5 @@ class AuthManager:
 #             return False, "Doctor Not Found ", None
 #         if doctor.password != password:
 #             return False, "Incorrect Password"
-        
+
 #         return True, "Logic Successful", doctor

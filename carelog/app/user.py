@@ -67,100 +67,183 @@ class User:
         return True, f"{role.capitalize()} created successfully! ID: {user_id}", None
     
     # Update detail
-    def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
+    def update_profile(self, user_id, role, password, name, gender, address, email, contact_num, date_of_birth, department, speciality):
         from app.schedule import ScheduleManager
-        manager = ScheduleManager()
-        patient = next((p for p in manager.patients if p.username == username), None)
-        if patient is None: #Check if patient list empty or no
-            return False
+        sc = ScheduleManager()
+        role = role.lower()
         
-        if new_password:
-            patient.password = new_password
-        if new_name:
-            patient.name = new_name
-        if new_gender:
-            patient.gender = new_gender
-        if new_address:
-            patient.address = new_address
-        if new_email:
-            patient.email = new_email
-        if new_contact_num:
-            patient.contact_num = new_contact_num
-        if new_remark:
-            patient.p_remark = new_remark
+        # Get correct user list
+        user_list = getattr(sc, f"{role}s")
+        if user_list is None:
+            return False, f"Invalid role: {role}"
         
-        manager._save_data()
-        return True
-    
-    def add_doctor_personal_info(self,username,password,name,staff_id,contact_num,address,gender,date_of_birth):
-        doctor=next((d for d in self.doctors if d.username==username), None)
-        if doctor is None:
-            return False, "Doctor Not Found", None 
-        if doctor.password != password:
-            return False, "Incorrect Password", None
+        # Find target user
+        user = next((u for u in user_list if getattr(u, f"{role[0]}_id", None) == user_id), None)
+        if user is None:
+            return False, f"No user found with ID {user_id}"
+        
+        # Update field
+        if password:
+            user.password = password
         if name:
-            doctor.name = name
-        if contact_num:
-            doctor.contact_num = contact_num
-        if address:
-            doctor.address = address
+            user.name = name
         if gender:
-            doctor.gender = gender
+            user.gender = gender
+        if address:
+            user.address = address
+        if email:
+            from manager.auth_manager import AuthManager
+            success, message, _ = AuthManager.check_email_validation(email)
+            if success:
+                user.email = email
+        if contact_num:
+            user.contact_num = contact_num
         if date_of_birth:
-                doctor.date_of_birth = date_of_birth
-        self._save_data()
-        return True, "Personal information added successfully"
+            user.date_of_birth = date_of_birth
 
-    def update_doctor_details(self,username,new_password,new_name,new_gender,new_address,new_email, new_contact_num,new_department,new_speciality):
-        doctor=next((d for d in self.doctors if d.username==username),None)
-        if doctor is None:
-            return False
+        if role == "doctor":
+            if speciality:
+                user.speciality = speciality
+            if department:
+                user.department = department
+
+        sc.save()
+        utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
+
+        return True, f"{role.capitalize()} profile updated successfully", user
+    
+    def update_new_profile(self, user_id, role, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_department, new_speciality):
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
+        role = role.lower()
+        
+        # Get correct user list
+        user_list = getattr(sc, f"{role}s")
+        if user_list is None:
+            return False, f"Invalid role: {role}"
+        
+        # Find target user
+        user = next((u for u in user_list if getattr(u, f"{role[0]}_id", None) == user_id), None)
+        if user is None:
+            return False, f"No user found with ID {user_id}"
+        
+        # Update field
         if new_password:
-            doctor.password = new_password
+            user.password = new_password
         if new_name:
-            doctor.name = new_name
+            user.name = new_name
         if new_gender:
-            doctor.gender = new_gender
+            user.gender = new_gender
         if new_address:
-            doctor.address = new_address
+            user.address = new_address
         if new_email:
-            doctor.email = new_email
+            from manager.auth_manager import AuthManager
+            success, message, _ = AuthManager.check_email_validation(new_email)
+            if success:
+                user.email = new_email
         if new_contact_num:
-            doctor.contact_num = new_contact_num
-        if new_speciality:
-            doctor.speciality = new_speciality
-        if new_department:
-            doctor.department = new_department
+            user.contact_num = new_contact_num
 
-        self._save_data()
-        return True 
+        # Specific details for role (Can be added more)
+        if role == "doctor":
+            if new_speciality:
+                user.speciality = new_speciality
+            if new_department:
+                user.department = new_department
+
+        sc.save()
+        utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
+
+        return True, f"{role.capitalize()} profile updated successfully", user
+
+    # def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
+    #     from app.schedule import ScheduleManager
+    #     manager = ScheduleManager()
+    #     patient = next((p for p in manager.patients if p.username == username), None)
+    #     if patient is None: #Check if patient list empty or no
+    #         return False
+        
+    #     if new_password:
+    #         patient.password = new_password
+    #     if new_name:
+    #         patient.name = new_name
+    #     if new_gender:
+    #         patient.gender = new_gender
+    #     if new_address:
+    #         patient.address = new_address
+    #     if new_email:
+    #         patient.email = new_email
+    #     if new_contact_num:
+    #         patient.contact_num = new_contact_num
+    #     if new_remark:
+    #         patient.p_remark = new_remark
+        
+    #     manager._save_data()
+    #     return True
     
-    def update_doctor_limited_info(self, username: str, new_contact_num: str | None = None, new_address: str | None = None):
-        doc = self.get_doctor_by_username(username)
-        if doc is None:
-            return False, "Doctor not found"
-        if not doc.update_contact(contact=new_contact_num, address=new_address):
-            return False, "No fields to update"
-        self._save_data()
-        return True, "Updated successfully"
+    # def add_doctor_personal_info(self,username,password,name,staff_id,contact_num,address,gender,date_of_birth):
+    #     doctor=next((d for d in self.doctors if d.username==username), None)
+    #     if doctor is None:
+    #         return False, "Doctor Not Found", None 
+    #     if doctor.password != password:
+    #         return False, "Incorrect Password", None
+    #     if name:
+    #         doctor.name = name
+    #     if contact_num:
+    #         doctor.contact_num = contact_num
+    #     if address:
+    #         doctor.address = address
+    #     if gender:
+    #         doctor.gender = gender
+    #     if date_of_birth:
+    #             doctor.date_of_birth = date_of_birth
+    #     self._save_data()
+    #     return True, "Personal information added successfully"
+
+    # def update_doctor_details(self,username,new_password,new_name,new_gender,new_address,new_email, new_contact_num,new_department,new_speciality):
+    #     doctor=next((d for d in self.doctors if d.username==username),None)
+    #     if doctor is None:
+    #         return False
+    #     if new_password:
+    #         doctor.password = new_password
+    #     if new_name:
+    #         doctor.name = new_name
+    #     if new_gender:
+    #         doctor.gender = new_gender
+    #     if new_address:
+    #         doctor.address = new_address
+    #     if new_email:
+    #         doctor.email = new_email
+    #     if new_contact_num:
+    #         doctor.contact_num = new_contact_num
+    #     if new_speciality:
+    #         doctor.speciality = new_speciality
+    #     if new_department:
+    #         doctor.department = new_department
+
+    #     self._save_data()
+    #     return True
     
-    def update_nurse_details(self, username, new_password=None, new_name=None, new_gender=None, new_address=None, new_email=None, new_contact_num=None, new_department=None, new_speciality=None):
-        nurse = next((n for n in self.nurses if n.username == username), None)
-        if nurse is None:
-            return False
-        if new_password: nurse.password = new_password
-        if new_name: nurse.name = new_name
-        if new_gender: nurse.gender = new_gender
-        if new_address: nurse.address = new_address
-        if new_email: nurse.email = new_email
-        if new_contact_num: nurse.contact_num = new_contact_num
-        if new_department: nurse.department = new_department
-        if new_speciality: nurse.speciality = new_speciality
-        self._save_data()
-        return True    
+    # def update_doctor_limited_info(self, username: str, new_contact_num: str | None = None, new_address: str | None = None):
+    #     doc = self.get_doctor_by_username(username)
+    #     if doc is None:
+    #         return False, "Doctor not found"
+    #     if not doc.update_contact(contact=new_contact_num, address=new_address):
+    #         return False, "No fields to update"
+    #     self._save_data()
+    #     return True, "Updated successfully"
     
-    def update_profile(self, **kwargs):
-        """Allow partial updates to user details"""
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
+    # def update_nurse_details(self, username, new_password=None, new_name=None, new_gender=None, new_address=None, new_email=None, new_contact_num=None, new_department=None, new_speciality=None):
+    #     nurse = next((n for n in self.nurses if n.username == username), None)
+    #     if nurse is None:
+    #         return False
+    #     if new_password: nurse.password = new_password
+    #     if new_name: nurse.name = new_name
+    #     if new_gender: nurse.gender = new_gender
+    #     if new_address: nurse.address = new_address
+    #     if new_email: nurse.email = new_email
+    #     if new_contact_num: nurse.contact_num = new_contact_num
+    #     if new_department: nurse.department = new_department
+    #     if new_speciality: nurse.speciality = new_speciality
+    #     self._save_data()
+    #     return True

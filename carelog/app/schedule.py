@@ -115,7 +115,7 @@ class ScheduleManager():
         except OSError as e:
             utils.log_event(f"Error saving data: {e}", "ERROR")
             raise
-            
+
     def save(self): 
         self._save_data()
 
@@ -128,31 +128,31 @@ class ScheduleManager():
 
     # Helper functions
     def find_doctor_by_id(self,doctor_id):
-        doctor=next((d for d in self.doctors if d.d_id == doctor_id),None)
+        doctor = next((d for d in self.doctors if d.d_id == doctor_id),None)
         if doctor is None:
             return False, "No doctor found",None
         return doctor
     
     def find_nurse_by_id(self,nurse_id):
-        nurse=next((n for n in self.nurses if n.n_id == nurse_id),None)
+        nurse = next((n for n in self.nurses if n.n_id == nurse_id),None)
         if nurse is None:
             return False,"No nurse found",None
         return nurse
     
     def find_patient_by_id(self,patient_id):
-        patient=next((p for p in self.patients if p.p_id == patient_id),None)
+        patient = next((p for p in self.patients if p.p_id == patient_id),None)
         if patient is None:
             return False,"No patient found",None
         return patient
     
     def find_remark_by_id(self,remark_id):
-        remark=next((r for r in self.remarks if r.remark_id ==remark_id),None)
+        remark = next((r for r in self.remarks if r.remark_id == remark_id),None)
         if remark is None:
             return False, "No remark found", None
         return remark
 
     def find_appointment_by_id(self,appointment_id):
-        appt=next((a for a in self.add_appointments if a.appt_id == appointment_id),None)
+        appt = next((a for a in self.add_appointments if a.appt_id == appointment_id),None)
         if appt is None:
             return False, "No appointment found", None
         return appt
