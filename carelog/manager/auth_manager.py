@@ -1,9 +1,4 @@
 import re
-from app.patient import PatientUser
-from app.doctor import DoctorUser
-from app.nurse import NurseUser
-from app.receptionist import ReceptionistUser
-from app.admin import AdminUser
 import app.utils as utils
 
 """
@@ -57,14 +52,19 @@ class AuthManager:
         """Create correct role object"""
         role = role.lower()
         if role == "patient":
+            from app.patient import PatientUser
             return PatientUser(user_id, username, password, "", "", "", "", "", date, [], "")
         elif role == "doctor":
+            from app.doctor import DoctorUser
             return DoctorUser(user_id, username, password, "", "", "", "", "", date, "", "")
         elif role == "nurse":
+            from app.nurse import NurseUser
             return NurseUser(user_id, username, password, "", "", "", "", "", date, "", "", "")
         elif role == "receptionist":
+            from app.receptionist import ReceptionistUser
             return ReceptionistUser(user_id, username, password, "", "", "", "", "", date)
         elif role == "admin":
+            from app.admin import AdminUser
             return AdminUser(user_id, username, password, "", "", "", "", "", date)
         else:
             raise ValueError(f"Invalid role type: {role}")

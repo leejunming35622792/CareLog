@@ -1,6 +1,5 @@
 # Super class for other user classes
 # Common fields as below
-import datetime
 from manager.auth_manager import AuthManager
 import app.utils as utils
 
