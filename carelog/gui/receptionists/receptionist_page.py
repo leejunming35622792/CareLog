@@ -6,6 +6,7 @@ from app.user import User as user
 import app.utils as utils
 
 def receptionist_page(receptionist: ReceptionistUser):
+    sc = ScheduleManager()
     st.title("🏥 Receptionist Dashboard")
     tabs = ["Dashboard", "Account", "Patient Search", "Appointments", "Profile"]
 
@@ -21,9 +22,9 @@ def receptionist_page(receptionist: ReceptionistUser):
     if option == "Dashboard":
         st.header("📊 Overview")
         st.write(f"Logged in as: **{username}**")
-        st.metric("Total Patients", len(ScheduleManager.patients))
-        st.metric("Total Doctors", len(ScheduleManager.doctors))
-        st.metric("Total Appointments", len(ScheduleManager.appointments))
+        st.metric("Total Patients", len(sc.patients))
+        st.metric("Total Doctors", len(sc.doctors))
+        st.metric("Total Appointments", len(sc.appointments))
 
     # ============================================================
     # CREATE PATIENT ACCOUNT
@@ -50,7 +51,7 @@ def receptionist_page(receptionist: ReceptionistUser):
                 success, message, _ = receptionist.register_user(role, username, password)
 
             if success:
-                ScheduleManager.save()
+                sc.save()
                 st.success(message)
                 st.toast(f"{role} account successfully created!")
                 utils.log_event(f"Receptionist {receptionist.username} created new patient {username}", "INFO")
@@ -96,8 +97,8 @@ def receptionist_page(receptionist: ReceptionistUser):
         # Create Appointment
         with tab1:
             st.subheader("➕ Create New Appointment")
-            patient_id = st.selectbox("Select Patient", [p.p_id for p in ScheduleManager.patients])
-            doctor_id = st.selectbox("Select Doctor", [d.d_id for d in ScheduleManager.doctors])
+            patient_id = st.selectbox("Select Patient", [p.p_id for p in sc.patients])
+            doctor_id = st.selectbox("Select Doctor", [d.d_id for d in sc.doctors])
             date = st.date_input("Appointment Date")
             time_ = st.time_input("Appointment Time")
 
@@ -111,8 +112,8 @@ def receptionist_page(receptionist: ReceptionistUser):
         # View Appointment
         with tab2:
             st.subheader("📋 All Appointments")
-            if ScheduleManager.appointments:
-                for a in ScheduleManager.appointments:
+            if sc.appointments:
+                for a in sc.appointments:
                     st.write(f"**{a['appt_id']}** - {a['patient_id']} with {a['doctor_id']} on {a['date']} at {a['time']} ({a['status']})")
             else:
                 st.info("No appointments found.")

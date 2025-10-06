@@ -14,7 +14,8 @@ def dashboard():
         time.sleep(1)
 
 def admin_page(manager):
-    from app.schedule import ScheduleManager as sc
+    from app.schedule import ScheduleManager
+    sc = ScheduleManager()
     tabs = ["Dashboard", "Profile", "Management", "Records"]
 
     # guard for username/session

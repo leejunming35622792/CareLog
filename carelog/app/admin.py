@@ -48,8 +48,9 @@ class AdminUser(User):
     def remove_user(self, role, user_id):
         """Remove user by role and id"""
         from app.schedule import ScheduleManager
+        sc = ScheduleManager()
 
-        user_list = getattr(ScheduleManager, f"{role}s")
+        user_list = getattr(sc, f"{role}s")
 
         # Search by ID
         user_to_remove = None
@@ -64,7 +65,7 @@ class AdminUser(User):
 
         # Remove user
         user_list.remove(user_to_remove)
-        ScheduleManager.save()
+        sc.save()
         utils.log_event(f"Admin removed {role} '{user_to_remove.user_id}' ({user_id})", "INFO")
 
         return True, f"{role.capitalize()} '{user_to_remove.user_id}' removed successfully."
