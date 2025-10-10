@@ -1,0 +1,5 @@
+# Ignore all files ending with .log
+*.log
+
+# Ignore the 'cache' directory
+cache/
