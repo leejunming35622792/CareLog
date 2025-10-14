@@ -1,5 +1,6 @@
 # Super class for other user classes
 # Common fields as below
+import datetime
 from manager.auth_manager import AuthManager
 import app.utils as utils
 
@@ -33,11 +34,15 @@ class User:
         else:
             raise ValueError(f"Invalid role: {role}")
     
-    def create_user(self, manager, role, username, password, user_id, date):
+    @staticmethod
+    def create_user(self, manager, role, username, password, user_id):
         """Register new user"""
         if not all([username, password]):
             utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
             return False, "Username and password required", None
+        
+        # Get current datetime
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         # Check username duplicates
         all_usernames = [u.username for group in [
