@@ -1,95 +1,195 @@
 {
     "students": [
         {
-            "id": 1,
-            "name": "Alice Johnson",
+            "id": "S0001",
+            "name": "Alice Tan",
+            "username": "alice_tan",
+            "password": "password123",
+            "instrument": "Piano",
             "enrolled_course_ids": [
-                101,
-                103
+                "C1001",
+                "C1003"
             ]
         },
         {
-            "id": 2,
-            "name": "Bob Williams",
+            "id": "S0002",
+            "name": "Benjamin Lee",
+            "username": "ben_lee",
+            "password": "leePass!",
+            "instrument": "Guitar",
             "enrolled_course_ids": [
-                102
+                "C1002"
+            ]
+        },
+        {
+            "id": "S0003",
+            "name": "Carmen Lim",
+            "username": "carmen_l",
+            "password": "musicislife",
+            "instrument": "Violin",
+            "enrolled_course_ids": [
+                "C1004"
+            ]
+        },
+        {
+            "id": "S0004",
+            "name": "Bob Tolmer",
+            "username": "new_user",
+            "password": "new_user",
+            "instrument": "NEW INSTRUMENT",
+            "enrolled_course_ids": [
+                "C1001",
+                "C1003"
             ]
         }
     ],
     "teachers": [
         {
-            "id": 1,
-            "name": "Dr. Evelyn Keys",
+            "id": "T0001",
+            "name": "Mr. Wong",
+            "username": "wong_t",
+            "password": "teachPiano",
             "speciality": "Piano"
         },
         {
-            "id": 2,
-            "name": "Mr. David Fret",
+            "id": "T0002",
+            "name": "Ms. Tan",
+            "username": "tan_g",
+            "password": "teachGuitar",
             "speciality": "Guitar"
+        },
+        {
+            "id": "T0003",
+            "name": "Mr. Nathan",
+            "username": "nathan_v",
+            "password": "violinMaster",
+            "speciality": "Violin"
         }
     ],
+    "admin": [],
     "courses": [
         {
-            "id": 101,
+            "id": "C1001",
             "name": "Beginner Piano",
             "instrument": "Piano",
-            "teacher_id": 1,
+            "teacher_id": "T0001",
             "enrolled_student_ids": [
-                1
+                "S0001",
+                "S0004",
+                "None"
             ],
             "lessons": [
                 {
-                    "lesson_id": 1,
+                    "lesson-id": "L0009",
                     "day": "Monday",
-                    "start_time": "16:00",
-                    "room": "Room A"
-                },
-                {
-                    "lesson_id": 2,
-                    "day": "Wednesday",
-                    "start_time": "16:00",
-                    "room": "Room A"
+                    "start_time": "14:15:00",
+                    "room": "NE-3-2",
+                    "remark": "C1001 - Beginner Piano"
                 }
             ]
         },
         {
-            "id": 102,
-            "name": "Acoustic Guitar Fundamentals",
+            "id": "C1002",
+            "name": "Intermediate Guitar",
             "instrument": "Guitar",
-            "teacher_id": 2,
+            "teacher_id": "T0002",
             "enrolled_student_ids": [
-                2
+                "S0002"
+            ],
+            "lessons": []
+        },
+        {
+            "id": "C1003",
+            "name": "Music Theory (All Instruments)",
+            "instrument": "Theory",
+            "teacher_id": "T0001",
+            "enrolled_student_ids": [
+                "S0001",
+                "S0002",
+                "S0003",
+                "S0004",
+                "None"
             ],
             "lessons": [
                 {
-                    "lesson_id": 3,
-                    "day": "Tuesday",
-                    "start_time": "17:00",
-                    "room": "Room C"
+                    "lesson-id": "L0010",
+                    "day": "Wednesday",
+                    "start_time": "18:30:00",
+                    "room": "SE-1-2",
+                    "remark": "C1003 - Music Theory (All Instruments)"
                 }
             ]
         },
         {
-            "id": 103,
-            "name": "Intermediate Piano",
-            "instrument": "Piano",
-            "teacher_id": 1,
+            "id": "C1004",
+            "name": "Beginner Violin",
+            "instrument": "Violin",
+            "teacher_id": "T0003",
             "enrolled_student_ids": [
-                1
+                "S0003"
             ],
             "lessons": []
         }
     ],
     "attendance": [
         {
-            "student_id": 1,
-            "course_id": 101,
-            "timestamp": "2025-07-14T15:58:30.123456"
+            "student_id": "S0001",
+            "course_id": "C1001",
+            "timestamp": "2025-10-01T14:05:00"
         },
         {
-            "student_id": 2,
-            "course_id": 102,
-            "timestamp": "2025-07-14T16:02:45.654321"
+            "student_id": "S0002",
+            "course_id": "C1002",
+            "timestamp": "2025-10-03T10:10:00"
+        },
+        {
+            "student_id": "S0003",
+            "course_id": "C1004",
+            "timestamp": "2025-10-05T13:00:00"
+        },
+        {
+            "student_id": "S0001",
+            "course_id": "C1003",
+            "timestamp": "2025-10-06T11:00:00"
         }
-    ]
+    ],
+    "payment": [
+        {
+            "payment_id": "PID0004",
+            "student_id": "S0001",
+            "amount": "100",
+            "method": "Bank Transfer",
+            "receipt": "receipts\\PID0004.jpeg",
+            "timestamp": "2025-8-12 16:38:53"
+        },
+        {
+            "payment_id": "PID0005",
+            "student_id": "S0001",
+            "amount": "250",
+            "method": "Cash",
+            "receipt": "receipts\\PID0004.jpeg",
+            "timestamp": "2025-9-11 16:38:53"
+        },
+        {
+            "payment_id": "PID0006",
+            "student_id": "S0001",
+            "amount": "170",
+            "method": "Cash",
+            "receipt": "receipts\\PID0004.jpeg",
+            "timestamp": "2025-10-13 16:38:53"
+        },
+        {
+            "payment_id": "PID0007",
+            "student_id": "S0001",
+            "amount": "500",
+            "method": "Bank Transfer",
+            "receipt": "receipts\\PID0007.jpg",
+            "timestamp": "2025-10-13 10:50:33"
+        }
+    ],
+    "next_student_id": 4,
+    "next_teacher_id": 4,
+    "next_course_id": 5,
+    "next_lesson_id": 11,
+    "next_payment_id": 8
 }
