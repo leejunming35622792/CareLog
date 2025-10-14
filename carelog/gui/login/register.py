@@ -28,14 +28,13 @@ def register(manager):
             # Credentials
             username = st.text_input("Username:")
             password = st.text_input("Password:", type="password")
-            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
             # Submit
             submit = st.form_submit_button("Register")
             if submit:
                 with st.spinner("Processing..."):
                     time.sleep(1)
-                success, message, user_obj = user.create_user(manager, role, username, password, user_id, date)
+                success, message, user_obj = user.create_user(manager, role, username, password, user_id)
 
                 if success:
                     manager.save()
