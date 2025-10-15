@@ -18,37 +18,18 @@ class AuthManager:
         if user:
             return True, "Logging in...", user
         return False, "Incorrect credentials", None
-        
-        # Map each role to its user-password dict
-        # accounts = {
-        #     "Patient": {p.username: p.password for p in self.patients},
-        #     "Doctor": {d.username: d.password for d in self.doctors},
-        #     "Nurse": {n.username: n.password for n in self.nurses},
-        #     "Receptionist": {r.username: r.password for r in self.receptionists},
-        #     "Admin": {a.username: a.password for a in self.admins},
-        # }
 
-        # # Check if role exists
-        # if staff not in accounts:
-        #     return False
-
-        # acc = accounts[staff]
-
-        # # Verify username and password
-        # if username in acc and acc[username].strip() == password:
-        #     return staff
-        # else:
-        #     return False
-
-    def create_account(self, role, user_id, username, password, date):
-        user_obj = self._user(role, user_id, username, password, date)
+    def create_account(self, manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
+        # Create object
         role = role.lower()
-        
+
+        user_obj = self._user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+
         # Delegate adding user to ScheduleManager
         self.system.add_user(role, user_obj)
         return True, f"{role.capitalize()} account created successfully!", user_obj
 
-    def _user(self, role, user_id, username, password, date):
+    def _user(self, manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Create correct role object"""
         role = role.lower()
         if role == "patient":
@@ -95,6 +76,7 @@ class AuthManager:
                 return True, "Valid email format", None
 
         return False, f"Invalid top-level domain: {domain}", None
+        
 
 # def login_doctor(self,username,password):
 #         doctor=next((d for d in self.doctors if d.username==username))
