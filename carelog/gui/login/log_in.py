@@ -6,6 +6,7 @@ def log_in(manager):
     user_list = ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"]
 
     # Page design
+    st.title("CareLog")
     col1, col2 = st.columns(2)
 
     with col1:
@@ -13,7 +14,7 @@ def log_in(manager):
     with col2:
         with st.form("register-form"):
             st.subheader("Login")
-            user = st.selectbox("User", user_list)
+            user = st.selectbox("Select User: ", user_list)
             username = st.text_input("Username: ", placeholder="")
             password = st.text_input("Password: ", placeholder="", type="password")
             button = st.form_submit_button("Login")

@@ -1,49 +1,61 @@
 import streamlit as st
-import time, datetime
 import app.utils as utils
+from gui.login.get_detail import get_detail
 from app.user import User
 
 def register(manager):
-    # --- Variable ---
-    user = User("","","","","","","","")
+    if "register_phase" not in st.session_state:
+        st.session_state.register_phase = "basic"
 
-    # --- Page design ---    
-    col1, col2 = st.columns(2)
+    if st.session_state.register_phase == "details":
+        get_detail(
+            st.session_state.role,
+            st.session_state.username_temp,
+            st.session_state.password_temp,
+            st.session_state.user_id_temp
+        )
 
-    with col1:
-        st.image("img/wallpaper.jpg", use_container_width=True)
+    else:
+        st.title("CareLog")
+        col1, col2 = st.columns(2)
 
-    with col2:
-        with st.form("register_form"):
-            st.subheader("Create Account")
+        with col1:
+            st.image("img/wallpaper.jpg", use_container_width=True)
 
-            # Select role
-            role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist"])
+        with col2:
+            if "register_phase" not in st.session_state:
+                st.session_state.register_phase = "basic"
 
-            # Generate ID
-            user_id = user.get_next_id(role)
-            
-            # st.text_input("Assigned ID:", value=user_id, disabled=True)
+            if st.session_state.register_phase == "basic":
+                with st.form("register-form"):
+                    st.subheader("Create Account")
 
-            # Credentials
-            username = st.text_input("Username:")
-            password = st.text_input("Password:", type="password")
+                    role = st.selectbox("Select User:", ["Patient", "Doctor", "Nurse", "Receptionist"])
+                    user_id = User.get_next_id(manager, role)
 
-            # Submit
-            submit = st.form_submit_button("Register")
-            if submit:
-                with st.spinner("Processing..."):
-                    time.sleep(1)
-                success, message, user_obj = user.create_user(manager, role, username, password, user_id)
+                    username = st.text_input("Username:")
+                    password = st.text_input("Password:", type="password")
 
-                if success:
-                    manager.save()
-                    utils.log_event(f"{role} {username} registered successfully.", "INFO")
-                    st.success(message)
-                    st.toast(f"Welcome, {username}!")
-                    st.session_state.username = username
-                    st.session_state.page = role.lower()
-                    st.rerun()
-                else:
-                    utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
-                    st.error(message)
+                    submit = st.form_submit_button("Register")
+
+                    if submit:
+                        errors = []
+
+                        if not username:
+                            errors.append("Username cannot be empty")
+                        all_usernames = [u.username for group in [
+                            manager.patients,
+                            manager.doctors,
+                            manager.nurses,
+                            manager.receptionists,
+                            manager.admins
+                        ] for u in group]
+                        if not password:
+                            errors.append("Password cannot be empty")
+                        st.session_state.role = role
+                        st.session_state.username_temp = username
+                        st.session_state.password_temp = password
+                        st.session_state.user_id_temp = user_id
+                        st.session_state.register_phase = "details"
+                        st.rerun()
+

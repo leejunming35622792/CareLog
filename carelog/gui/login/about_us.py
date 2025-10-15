@@ -1,6 +1,9 @@
 import streamlit as st
 
 def about_us(manager):
+    
+    st.title("CareLog - About Us")
+
     st.image("img\\wallpaper.jpg")
 
     st.markdown(

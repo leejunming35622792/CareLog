@@ -2,7 +2,8 @@ import streamlit as st
 
 def dashboard(manager, username):
     # Page design
-    st.title("Welcome to CareLog!")
+    st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
+
     st.balloons()
 
     st.image("img/dashboard.png")

@@ -14,22 +14,22 @@ def login_page():
     if "username" not in st.session_state:
         st.session_state.username = ""
 
+    if "get_user_detail" not in st.session_state:
+        st.session_state.get_user_detail = ""
+
     # --- Default Display ---
     if st.session_state.get("page") == "login":
-        # Page Design
-        st.title("CareLog")
-
-        # Sidebar
         st.sidebar.title("Navigation")
         option = st.sidebar.selectbox("", ["Log In", "Create Account", "About Us"])
 
-        # Logic
         if option == "Log In":
             from gui.login.log_in import log_in
             log_in(st.session_state.manager)
+
         elif option == "Create Account":
             from gui.login.register import register
             register(st.session_state.manager)
+
         elif option == "About Us":
             from gui.login.about_us import about_us
             about_us(st.session_state.manager)

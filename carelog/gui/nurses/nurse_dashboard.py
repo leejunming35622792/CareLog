@@ -16,7 +16,28 @@ def dashboard(manager, username):
 
     st.divider()
 
-    st.header("Quick Search")
-    st.info("TODO: Filter button, appt, remark")
+    st.header("🔍Quick Search")
+    with st.enpander("Filter Patients"):
+        search_type = st.radio("Search By:", ["Patient ID", "Name"], horizontal=True)
+        query = st.text_input("Enter search value")
+        if st.button("Search", user_container_width=True):
+            if not query.strip():
+                st.warning("Please enter a value to search")
+            else:
+                if search_type == "Patient ID" and query.isdigit():
+                    success, msg, info = manager.view_patient_details_by_nurse(int(query))
+                else:
+                    success, msg, info = manager.search_patient_by_name(query)
+
+                if success:
+                    st.success(msg)
+                    st.json(info)
+                else:
+                    st.error(msg)
+    
+    st.divider()
+
+    st.header("📆Today's Appointments")
 
     st.divider()
+
