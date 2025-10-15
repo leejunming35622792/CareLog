@@ -23,7 +23,11 @@ class AuthManager:
         # Create object
         role = role.lower()
 
-        user_obj = self._user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+        # Try-except to handle self._user from returning none
+        try:
+            user_obj = self._user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+        except Exception as e:
+            return False, f"User creation failed: {e}", None
 
         # Delegate adding user to ScheduleManager
         self.system.add_user(role, user_obj)
@@ -34,19 +38,19 @@ class AuthManager:
         role = role.lower()
         if role == "patient":
             from app.patient import PatientUser
-            return PatientUser(user_id, username, password, "", "", "", "", "", date, [], "")
+            return PatientUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, [], "")
         elif role == "doctor":
             from app.doctor import DoctorUser
-            return DoctorUser(user_id, username, password, "", "", "", "", "", date, "", "")
+            return DoctorUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, "", "")
         elif role == "nurse":
             from app.nurse import NurseUser
-            return NurseUser(user_id, username, password, "", "", "", "", "", date, "", "", "")
+            return NurseUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, "", "", "")
         elif role == "receptionist":
             from app.receptionist import ReceptionistUser
-            return ReceptionistUser(user_id, username, password, "", "", "", "", "", date)
+            return ReceptionistUser(user_id, username, password, name, gender, address, email, contact_num, date_joined)
         elif role == "admin":
             from app.admin import AdminUser
-            return AdminUser(user_id, username, password, "", "", "", "", "", date)
+            return AdminUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, [], "")
         else:
             raise ValueError(f"Invalid role type: {role}")
 

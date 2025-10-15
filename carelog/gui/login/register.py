@@ -18,11 +18,7 @@ def register(manager):
     else:
         st.title("CareLog")
         col1, col2 = st.columns(2)
-
         with col1:
-            st.image("img/wallpaper.jpg", use_container_width=True)
-
-        with col2:
             if "register_phase" not in st.session_state:
                 st.session_state.register_phase = "basic"
 
@@ -43,6 +39,8 @@ def register(manager):
 
                         if not username:
                             errors.append("Username cannot be empty")
+
+                        # Username Validation
                         all_usernames = [u.username for group in [
                             manager.patients,
                             manager.doctors,
@@ -50,8 +48,13 @@ def register(manager):
                             manager.receptionists,
                             manager.admins
                         ] for u in group]
+                                
+                        if username in all_usernames:
+                            return False, "Username already in used", None
+                        
                         if not password:
                             errors.append("Password cannot be empty")
+                            
                         st.session_state.role = role
                         st.session_state.username_temp = username
                         st.session_state.password_temp = password
@@ -59,3 +62,5 @@ def register(manager):
                         st.session_state.register_phase = "details"
                         st.rerun()
 
+        with col2:
+            st.image("img/wallpaper.jpg", use_container_width=True)

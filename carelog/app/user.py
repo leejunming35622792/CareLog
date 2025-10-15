@@ -38,12 +38,6 @@ class User:
             utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
             return False, "Username and password required", None
         
-        # Username Validation
-
-
-        if username in all_usernames:
-            return False, "Username already in used", None
-        
         # Password Validation
         if len(password) < 8:
             return False, "Password must be at least 8 characters", None
@@ -52,7 +46,7 @@ class User:
         if not any(c.isdigit() for c in password):
             return False, "Password must contain at least one number", None
         
-        # Check if blank
+        # Check if any fields are blank
         fields = {
             "Name": name,
             "Gender": gender,
@@ -74,11 +68,18 @@ class User:
                 return False, "'with_doctor' cannot be empty", None
 
         # create account in auth_manager
-        AuthManager.create_account(role, user_id, username, password, date)
+        auth = AuthManager(manager)
+        success, msg, user_obj = auth.create_account(
+            manager, 
+            role, 
+            user_id, username, password, 
+            name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor
+        )
 
         # Capitalize turns the first letter to upper, remaining be lower
         utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
-        return True, f"{role.capitalize()} created successfully! ID: {user_id}", None
+        return True, msg, user_obj
+        # return True, f"{role.capitalize()} created successfully! ID: {user_id}", None
     
     # Update detail
     def update_profile(self, user_id, role, password, name, gender, address, email, contact_num, date_of_birth, department, speciality):

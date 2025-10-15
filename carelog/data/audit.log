@@ -4207,3 +4207,40 @@
 2025-10-15 13:38:04,444 - INFO - System startup complete
 2025-10-15 13:39:46,776 - INFO - System startup complete
 2025-10-15 13:52:03,489 - INFO - System startup complete
+2025-10-15 15:27:18,177 - INFO - System startup complete
+2025-10-15 15:35:25,645 - INFO - System startup complete
+2025-10-15 15:37:29,944 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:38:29,677 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:40:08,879 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:40:28,243 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:40:42,388 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:42:31,178 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:42:41,570 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:42:50,602 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:43:12,156 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:43:56,065 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:43:58,818 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:44:08,376 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:44:58,104 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:45:02,490 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:45:43,499 - INFO - System startup complete
+2025-10-15 15:46:45,695 - INFO - System startup complete
+2025-10-15 15:46:56,047 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 15:57:10,001 - INFO - System startup complete
+2025-10-15 15:57:44,501 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 16:20:54,385 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 16:20:57,124 - INFO - System startup complete
+2025-10-15 16:21:24,278 - ERROR - Failed registration for Patient (dickson): 
+2025-10-15 17:02:03,741 - INFO - System startup complete
+2025-10-15 17:05:06,553 - INFO - System startup complete
+2025-10-15 17:07:20,792 - INFO - System startup complete
+2025-10-15 17:08:39,762 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:22:18,416 - INFO - System startup complete
+2025-10-15 17:23:00,258 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:23:12,855 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:24:26,915 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:24:58,937 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:26:12,566 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:26:26,554 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:26:44,553 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-15 17:38:12,332 - INFO - System startup complete

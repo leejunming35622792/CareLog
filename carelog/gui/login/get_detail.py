@@ -4,21 +4,34 @@ import app.utils as utils
 
 def get_detail(role, username, password, user_id):
     from app.user import User
+    
+    # Variable
     manager = st.session_state.manager
+    success, message = "", ""
+
     st.title("CareLog Sign Up")
+
     with st.form("get-detail-form"):
         st.subheader("Personal Details")
         st.info("You are almost there! 😉")
+
         col1, col2 = st.columns(2)
         with col1:
-            name = st.text_input("Enter Name: ")
+            username = st.text_input("Username: ", value=f"@{username}", disabled=True)
         with col2:
-            gender = st.selectbox("Select Gender: ", ["Male", "Female", "Prefer Not to Say"])
+            password = st.text_input("Password", value=password, disabled=True)
 
+        st.divider()
         col3, col4 = st.columns(2)
         with col3:
-            address = st.text_area("Enter Home Address: ")
+            name = st.text_input("Enter Name: ")
         with col4:
+            gender = st.selectbox("Select Gender: ", ["Male", "Female", "Prefer Not to Say"])
+
+        col5, col6 = st.columns(2)
+        with col5:
+            address = st.text_area("Enter Home Address: ")
+        with col6:
             email = st.text_input("Enter Email Address:")
             contact_num = st.text_input("Enter Contact Number: ", placeholder="+601X-XXXXXXX")
 
@@ -39,7 +52,7 @@ def get_detail(role, username, password, user_id):
             with st.spinner("Processing..."):
                 time.sleep(1.5)
                 
-                if role == "patient":
+                if role == "patient": 
                     success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, None, None, None)
                 elif role == "doctor":
                     success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, None)
@@ -49,7 +62,6 @@ def get_detail(role, username, password, user_id):
                     success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, None, None, None)
                 
                 st.session_state.get_user_detail = ""
-                success, message, user_obj = User.create_user(manager, role, username, password, user_id)
 
                 if success:
                     manager.save()
@@ -58,8 +70,10 @@ def get_detail(role, username, password, user_id):
                     st.toast(f"Welcome, {username}!")
                     st.session_state.username = username
                     st.session_state.page = role.lower()
+                    print("Ready for rerun")
                     st.rerun()
                 else:
+                    print(message)
                     utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
                     st.error(message)
         
