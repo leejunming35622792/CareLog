@@ -16,42 +16,30 @@ class User:
         self.date_joined = date_joined
 
     @staticmethod
-    def get_next_id(role):
-        from app.schedule import ScheduleManager
-        sc = ScheduleManager()
-
+    def get_next_id(manager, role):
         role = role.lower()
         if role == "patient":
-            return f"P{sc.next_patient_id:04d}"
+            return f"P{manager.next_patient_id:04d}"
         elif role == "doctor":
-            return f"D{sc.next_doctor_id:04d}"
+            return f"D{manager.next_doctor_id:04d}"
         elif role == "nurse":
-            return f"N{sc.next_nurse_id:04d}"
+            return f"N{manager.next_nurse_id:04d}"
         elif role == "receptionist":
-            return f"R{sc.next_receptionist_id:04d}"
+            return f"R{manager.next_receptionist_id:04d}"
         elif role == "admin":
-            return f"A{sc.next_admin_id:04d}"
+            return f"A{manager.next_admin_id:04d}"
         else:
             raise ValueError(f"Invalid role: {role}")
     
     @staticmethod
-    def create_user(self, manager, role, username, password, user_id):
+    def create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Register new user"""
         if not all([username, password]):
             utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
             return False, "Username and password required", None
         
-        # Get current datetime
-        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        
-        # Check username duplicates
-        all_usernames = [u.username for group in [
-            manager.patients,
-            manager.doctors,
-            manager.nurses,
-            manager.receptionists,
-            manager.admins
-        ] for u in group]
+        # Username Validation
+
 
         if username in all_usernames:
             return False, "Username already in used", None
@@ -63,6 +51,27 @@ class User:
             return False, "Password must contain at least one uppercase letter", None
         if not any(c.isdigit() for c in password):
             return False, "Password must contain at least one number", None
+        
+        # Check if blank
+        fields = {
+            "Name": name,
+            "Gender": gender,
+            "Address": address,
+            "Email": email,
+            "Contact Number": contact_num,
+        }
+
+        for field, value in fields.items():
+            if not value.strip():
+                return False, f"{field} cannot be empty", None
+            
+        if role in ["doctor", "nurse"]:
+            if not speciality:
+                return False, "Speciality cannot be empty", None
+            if not department:
+                return False, "Department cannot be empty", None
+            if role == "nurse" and not with_doctor:
+                return False, "'with_doctor' cannot be empty", None
 
         # create account in auth_manager
         AuthManager.create_account(role, user_id, username, password, date)
@@ -161,94 +170,4 @@ class User:
 
         return True, f"{role.capitalize()} profile updated successfully", user
 
-    # def update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark):
-    #     from app.schedule import ScheduleManager
-    #     manager = ScheduleManager()
-    #     patient = next((p for p in manager.patients if p.username == username), None)
-    #     if patient is None: #Check if patient list empty or no
-    #         return False
-        
-    #     if new_password:
-    #         patient.password = new_password
-    #     if new_name:
-    #         patient.name = new_name
-    #     if new_gender:
-    #         patient.gender = new_gender
-    #     if new_address:
-    #         patient.address = new_address
-    #     if new_email:
-    #         patient.email = new_email
-    #     if new_contact_num:
-    #         patient.contact_num = new_contact_num
-    #     if new_remark:
-    #         patient.p_remark = new_remark
-        
-    #     manager._save_data()
-    #     return True
     
-    # def add_doctor_personal_info(self,username,password,name,staff_id,contact_num,address,gender,date_of_birth):
-    #     doctor=next((d for d in self.doctors if d.username==username), None)
-    #     if doctor is None:
-    #         return False, "Doctor Not Found", None 
-    #     if doctor.password != password:
-    #         return False, "Incorrect Password", None
-    #     if name:
-    #         doctor.name = name
-    #     if contact_num:
-    #         doctor.contact_num = contact_num
-    #     if address:
-    #         doctor.address = address
-    #     if gender:
-    #         doctor.gender = gender
-    #     if date_of_birth:
-    #             doctor.date_of_birth = date_of_birth
-    #     self._save_data()
-    #     return True, "Personal information added successfully"
-
-    # def update_doctor_details(self,username,new_password,new_name,new_gender,new_address,new_email, new_contact_num,new_department,new_speciality):
-    #     doctor=next((d for d in self.doctors if d.username==username),None)
-    #     if doctor is None:
-    #         return False
-    #     if new_password:
-    #         doctor.password = new_password
-    #     if new_name:
-    #         doctor.name = new_name
-    #     if new_gender:
-    #         doctor.gender = new_gender
-    #     if new_address:
-    #         doctor.address = new_address
-    #     if new_email:
-    #         doctor.email = new_email
-    #     if new_contact_num:
-    #         doctor.contact_num = new_contact_num
-    #     if new_speciality:
-    #         doctor.speciality = new_speciality
-    #     if new_department:
-    #         doctor.department = new_department
-
-    #     self._save_data()
-    #     return True
-    
-    # def update_doctor_limited_info(self, username: str, new_contact_num: str | None = None, new_address: str | None = None):
-    #     doc = self.get_doctor_by_username(username)
-    #     if doc is None:
-    #         return False, "Doctor not found"
-    #     if not doc.update_contact(contact=new_contact_num, address=new_address):
-    #         return False, "No fields to update"
-    #     self._save_data()
-    #     return True, "Updated successfully"
-    
-    # def update_nurse_details(self, username, new_password=None, new_name=None, new_gender=None, new_address=None, new_email=None, new_contact_num=None, new_department=None, new_speciality=None):
-    #     nurse = next((n for n in self.nurses if n.username == username), None)
-    #     if nurse is None:
-    #         return False
-    #     if new_password: nurse.password = new_password
-    #     if new_name: nurse.name = new_name
-    #     if new_gender: nurse.gender = new_gender
-    #     if new_address: nurse.address = new_address
-    #     if new_email: nurse.email = new_email
-    #     if new_contact_num: nurse.contact_num = new_contact_num
-    #     if new_department: nurse.department = new_department
-    #     if new_speciality: nurse.speciality = new_speciality
-    #     self._save_data()
-    #     return True
