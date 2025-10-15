@@ -7,6 +7,10 @@ class PatientUser(User):
         self.p_record = p_record or []
         self.p_remark = p_remark
 
+    @staticmethod
+    def create_patient_object():
+        pass
+
 class PatientRecord():
     def __init__(self, pr_record_id, p_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score, pr_remark):
         self.pr_record_id = pr_record_id
