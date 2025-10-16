@@ -176,7 +176,9 @@ class ScheduleManager():
         return remark
 
     def find_appointment_by_id(self,appointment_id):
-        appt = next((a for a in self.add_appointments if a.appt_id == appointment_id),None)
+        appt = next((a for a in self.appointments if a.appt_id == appointment_id),None)
         if appt is None:
             return False, "No appointment found", None
         return appt
+    
+   

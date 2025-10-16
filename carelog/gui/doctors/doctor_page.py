@@ -1,7 +1,8 @@
 import streamlit as st
 import datetime
+import pandas as pd
 
-def dashboard():
+def dashboard(username):
     """Main dashboard showing overview and quick stats"""
     manager = st.session_state.manager
 
@@ -11,7 +12,7 @@ def dashboard():
     
     # Get doctor details
     password = st.session_state.get('password', '')
-    profile, message = manager.view_doctor_details(username)
+    success, message, profile = manager.view_doctor_details(username)
     
     if profile:
         col1, col2, col3 = st.columns(3)
@@ -47,9 +48,9 @@ def profile_page(manager, username):
     st.header("My Profile")
     
     password = st.session_state.get('password', '')
-    profile, message = manager.view_doctor_details(username)
+    success, message, profile = manager.view_doctor_details(username)
     
-    if message:
+    if profile:
         # Display current profile
         st.subheader("Current Profile Information")
         col1, col2 = st.columns(2)
@@ -100,7 +101,6 @@ def profile_page(manager, username):
                     new_department=new_department if new_department else None,
                     new_speciality=new_speciality if new_speciality else None
                 )
-                
                 if success:
                     st.success("✅ Profile updated successfully!")
                     st.rerun()
@@ -109,6 +109,67 @@ def profile_page(manager, username):
     else:
         st.error(message)
 
+def search_and_select_profile_ui(manager):
+    role_map = {
+        "patient":      (manager.patients,      "p_id"),
+        "doctor":       (manager.doctors,       "d_id"),
+        "nurse":        (manager.nurses,        "n_id"),
+        "receptionist": (manager.receptionists, "r_id"),
+    }
+
+    st.subheader("Search Profiles")
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col1:
+        role = st.selectbox("Role", list(role_map.keys()))
+    with col2:
+        name_query = st.text_input("Name (partial ok)")
+    with col3:
+        trigger = st.button("Search", use_container_width=True)
+
+    if not trigger:
+        return False, None, None  # (found, selected_obj, selected_role)
+
+    items, id_attr = role_map[role]
+    matches = [o for o in items if name_query.strip().lower() in getattr(o, "name", "").lower()]
+
+    if not matches:
+        st.warning(f"No {role} found matching '{name_query}'.")
+        return False, None, None
+
+    # Build table
+    rows = []
+    idx = {}
+    for o in matches:
+        oid = getattr(o, id_attr)
+        rows.append({
+            "ID": oid,
+            "Name": getattr(o, "name", ""),
+            "Gender": getattr(o, "gender", ""),
+            "Email": getattr(o, "email", ""),
+            "Contact": getattr(o, "contact_num", ""),
+            "Department": getattr(o, "department", ""),
+            "Speciality": getattr(o, "speciality", ""),
+            "Joined": getattr(o, "date_joined", ""),
+        })
+        idx[oid] = o
+
+    df = pd.DataFrame(rows)
+    st.dataframe(df, use_container_width=True)
+
+    sel_id = st.selectbox(f"Select {role.capitalize()} ID", df["ID"].tolist())
+    view = st.button("View profile", use_container_width=True)
+
+    if view and sel_id:
+        selected = idx.get(sel_id)
+        if selected:
+            st.subheader(f"{role.capitalize()} Profile: {sel_id}")
+            for k, v in selected.__dict__.items():
+                if k == "password":
+                    continue
+                st.write(f"**{k}**: {v}")
+            return True, selected, role
+
+    return False, None, None
 
 def patient_records_page(manager, username):
     """View patient details and manage remarks"""
@@ -117,22 +178,48 @@ def patient_records_page(manager, username):
     tab1, tab2, tab3 = st.tabs(["View Patient Details", "Add Remark", "View Remarks"])
     
     with tab1:
-        st.subheader("Search Patient")
-        patient_id = st.number_input("Enter Patient ID", min_value=1, step=1, key="patient_search")
-        
-        if st.button("Search Patient", key="search_btn"):
-            success, message, info = manager.view_patient_details_by_doctor(patient_id)
-            
-            if success:
-                st.success(message)
+        st.markdown("#### Search by Name")
+        found, selected, role = search_and_select_profile_ui(manager)
+        if found and selected and role == "patient":
+            st.success("Patient selected from search.")
+            info_ok, info_msg, info = manager.view_patient_details_by_doctor(selected.p_id)
+            if info_ok:
                 col1, col2 = st.columns(2)
-                
                 with col1:
                     st.metric("Patient ID", info['patient_id'])
                     st.metric("Name", info['name'])
                     st.metric("Gender", info['gender'])
                     st.metric("Date of Birth", info.get('date_of_birth', 'N/A'))
-                
+                with col2:
+                    st.write("**Previous Conditions:**")
+                    if info['previous_conditions']:
+                        for c in info['previous_conditions']:
+                            st.write(f"• {c}")
+                    else:
+                        st.info("No previous conditions recorded")
+
+                    st.write("**Medication History:**")
+                    if info['medication_history']:
+                        for m in info['medication_history']:
+                            st.write(f"• {m}")
+                    else:
+                        st.info("No medication history recorded")
+            else:
+                st.error(info_msg)
+
+        st.divider()
+        st.markdown("#### Search by ID")
+        patient_id = st.number_input("Enter Patient ID", min_value=1, step=1, key="patient_search")
+        if st.button("Search Patient", key="search_btn"):
+            success, message, info = manager.view_patient_details_by_doctor(patient_id)
+            if success:
+                st.success(message)
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.metric("Patient ID", info['patient_id'])
+                    st.metric("Name", info['name'])
+                    st.metric("Gender", info['gender'])
+                    st.metric("Date of Birth", info.get('date_of_birth', 'N/A'))
                 with col2:
                     st.write("**Previous Conditions:**")
                     if info['previous_conditions']:
@@ -140,7 +227,6 @@ def patient_records_page(manager, username):
                             st.write(f"• {condition}")
                     else:
                         st.info("No previous conditions recorded")
-                    
                     st.write("**Medication History:**")
                     if info['medication_history']:
                         for med in info['medication_history']:
@@ -332,7 +418,7 @@ def doctor_page(Manager):
     
     # Store password in session state if not already there
     if 'password' not in st.session_state:
-        st.session_state.password = st.session_state.get('password', '')
+        st.session_state.password = ''
     
     tabs = ["Dashboard", "Profile", "Patient Records", "Appointments"]
 
@@ -351,7 +437,7 @@ def doctor_page(Manager):
 
     # Route to appropriate page
     if option == "Dashboard":
-        dashboard()
+        dashboard(username)
     elif option == "Profile":
         profile_page(manager, username)
     elif option == "Patient Records":

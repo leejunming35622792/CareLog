@@ -2,7 +2,7 @@ def view_doctor_details(self, username):
         doctor = next((d for d in self.doctors if d.username == username), None)
 
         if doctor is None:
-            return None, "Doctor Not Found"
+            return False, "Doctor Not Found", None
         
         # if doctor.password != password:
         #     return False, "Doctor Not Found", None
@@ -19,19 +19,19 @@ def view_doctor_details(self, username):
             "speciality": doctor.speciality,
             "date_joined": doctor.date_joined,
         }
-        return profile, "Profile Successfully Retrieved"
+        return True, "Profile Successfully Retrieved", profile
 
 def view_patient_details_by_doctor(self,patient_id :int):
         patient=next((p for p in self.patients if p.p_id ==patient_id),None)
         if patient is None:
             return False,"Patient Not Found", None
         patient_records=[r for r in self.records if r.patient==patient_id]
-        previous_conditions: list[str]=[]
-        medication_history: list[str]=[]
+        previous_conditions: list[str]= []
+        medication_history: list[str]= []
         for record in patient_records:
             if getattr(record,"pr_conditions",None):
                 previous_conditions.extend(record.pr_conditions)
-            if hasattr(record,"pr_medications") and record.pr_medications:
+            if hasattr(record,"pr_medications",None) and record.pr_medications:
                 medication_history.extend(record.pr_medications)
         previous_conditions = list(set(previous_conditions))
         info = {
@@ -78,3 +78,43 @@ def view_patient_details_by_nurse(self, patient_id: int):
             "remarks": getattr(patient, "p_remark", [])
         }
         return True, "Patient details retrieved successfully", info
+
+def search_and_select_profile(self):
+        role = input("Search for (patient/doctor/nurse/receptionist): ").strip().lower()
+        role_map = {
+        "patient": (self.patients, "p_id"),
+        "doctor": (self.doctors, "d_id"),
+        "nurse": (self.nurses, "n_id"),
+        "receptionist": (self.receptionists, "r_id"),
+        }
+        if role not in role_map:
+            print("Invalid role. Please enter patient/doctor/nurse/receptionist.")
+            return False, None
+
+        items, id_attr = role_map[role]
+        name_query = input("Enter name (partial is okay): ").strip().lower()
+        matches = [obj for obj in items if name_query in getattr(obj, "name", "").lower()]
+
+        if not matches:
+            print(f"No {role} found matching '{name_query}'.")
+            return False, None
+
+        print(f"\nFound {len(matches)} {role}(s):")
+        for obj in matches:
+            pid = getattr(obj, id_attr)
+            print(f"- {pid}: {obj.name}")
+
+        selected_id = input(f"\nEnter the exact {role.capitalize()} ID to view (e.g., P0001/N0003): ").strip().upper()
+        selected = next((o for o in matches if getattr(o, id_attr).upper() == selected_id), None)
+
+        if not selected:
+            print("No profile found with that ID in the above results.")
+            return False, None
+
+        print("\n--- Profile ---")
+        for k, v in selected.__dict__.items():
+            if k == "password":
+                continue
+            print(f"{k}: {v}")
+
+        return True, selected
