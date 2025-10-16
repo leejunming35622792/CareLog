@@ -55,12 +55,16 @@ def register(manager):
                         if not password:
                             errors.append("Password cannot be empty")
                             
-                        st.session_state.role = role
-                        st.session_state.username_temp = username
-                        st.session_state.password_temp = password
-                        st.session_state.user_id_temp = user_id
-                        st.session_state.register_phase = "details"
-                        st.rerun()
+                        if errors:
+                            for e in errors:
+                                st.error(e)
+                        else:
+                            st.session_state.role = role
+                            st.session_state.username_temp = username
+                            st.session_state.password_temp = password
+                            st.session_state.user_id_temp = user_id
+                            st.session_state.register_phase = "details"
+                            st.rerun()
 
         with col2:
             st.image("img/wallpaper.jpg", use_container_width=True)

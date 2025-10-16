@@ -39,3 +39,5 @@ def logout():
     st.session_state.page = "login"
     st.session_state.username = None
     st.session_state.logout_triggered = True
+    st.session_state.username = ""
+    st.session_state.get_user_detail = ""

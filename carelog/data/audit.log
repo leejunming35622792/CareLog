@@ -4244,3 +4244,26 @@
 2025-10-15 17:26:26,554 - ERROR - Failed registration for Patient (@dickson): 
 2025-10-15 17:26:44,553 - ERROR - Failed registration for Patient (@dickson): 
 2025-10-15 17:38:12,332 - INFO - System startup complete
+2025-10-16 16:59:23,789 - INFO - System startup complete
+2025-10-16 17:04:42,305 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-16 17:06:35,571 - INFO - System startup complete
+2025-10-16 17:09:28,048 - INFO - System startup complete
+2025-10-16 17:17:05,559 - INFO - System startup complete
+2025-10-16 17:17:51,602 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-16 17:17:59,169 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-16 17:18:07,370 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-16 17:18:23,826 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-16 17:19:46,921 - ERROR - Failed registration for Patient (@dickson): 
+2025-10-16 17:22:13,242 - INFO - System startup complete
+2025-10-16 17:23:32,152 - INFO - System startup complete
+2025-10-16 17:24:19,650 - INFO - System startup complete
+2025-10-16 17:24:48,194 - INFO - System startup complete
+2025-10-16 17:25:04,836 - INFO - System startup complete
+2025-10-16 17:25:15,942 - INFO - System startup complete
+2025-10-16 17:26:29,330 - ERROR - Failed registration for Patient (@asd): 
+2025-10-16 17:26:44,366 - ERROR - Failed registration for Patient (@asd): 
+2025-10-16 17:35:00,552 - INFO - System startup complete
+2025-10-16 17:35:23,266 - INFO - Patient @dickson registered with ID P0006
+2025-10-16 17:35:23,274 - INFO - patient @dickson registered successfully.
+2025-10-16 17:37:21,150 - ERROR - Failed registration for patient (@dickson): Name cannot be empty
+2025-10-16 17:39:18,746 - INFO - System startup complete

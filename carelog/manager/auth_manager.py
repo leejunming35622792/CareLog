@@ -41,10 +41,10 @@ class AuthManager:
             return PatientUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, [], "")
         elif role == "doctor":
             from app.doctor import DoctorUser
-            return DoctorUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, "", "")
+            return DoctorUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department)
         elif role == "nurse":
             from app.nurse import NurseUser
-            return NurseUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, "", "", "")
+            return NurseUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
         elif role == "receptionist":
             from app.receptionist import ReceptionistUser
             return ReceptionistUser(user_id, username, password, name, gender, address, email, contact_num, date_joined)
@@ -59,7 +59,8 @@ class AuthManager:
         role = role.lower()
         return getattr(self.system, f"next_{role}_id")
 
-    def check_email_validation(self, email):
+    @staticmethod
+    def check_email_validation(email):
         if not email:
             return False, "Email cannot be empty", None
         if "@" not in email:

@@ -4,6 +4,7 @@ import app.utils as utils
 
 def get_detail(role, username, password, user_id):
     from app.user import User
+    user = User("","","","","","","","")
     
     # Variable
     manager = st.session_state.manager
@@ -43,7 +44,7 @@ def get_detail(role, username, password, user_id):
             department = st.text_input("Enter Department: ")
             if role == "Nurse":
                 doctor_disp = {f"{d.d_id} - {d.name}": d.id for d in manager.doctors}
-                with_doctor_input = st.select_box("With Doctor: ", doctor_disp.keys())
+                with_doctor_input = st.selectbox("With Doctor: ", doctor_disp.keys())
                 with_doctor = doctor_disp[with_doctor_input]
 
         continue_button = st.form_submit_button("Continue")
@@ -51,15 +52,15 @@ def get_detail(role, username, password, user_id):
         if continue_button:
             with st.spinner("Processing..."):
                 time.sleep(1.5)
-                
+                role = role.lower()                
                 if role == "patient": 
-                    success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, None, None, None)
+                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, None, None, None)
                 elif role == "doctor":
-                    success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, None)
+                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, None)
                 elif role == "nurse":
-                    success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
                 elif role == "receptionist":
-                    success, message, user_obj = User.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, None, None, None)
+                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, None, None, None)
                 
                 st.session_state.get_user_detail = ""
 
@@ -70,10 +71,8 @@ def get_detail(role, username, password, user_id):
                     st.toast(f"Welcome, {username}!")
                     st.session_state.username = username
                     st.session_state.page = role.lower()
-                    print("Ready for rerun")
                     st.rerun()
                 else:
                     print(message)
                     utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
                     st.error(message)
-        
