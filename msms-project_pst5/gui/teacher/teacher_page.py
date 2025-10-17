@@ -28,6 +28,7 @@ def teacher_launch(manager):
         st.session_state.start_log = "Logs started"
         init_logger(st.session_state.username)
 
+    st.title("Music School Management System")
     st.sidebar.title("MSMS Navigation")
     st.sidebar.write(f"@{st.session_state.username}")
 

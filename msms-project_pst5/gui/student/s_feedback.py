@@ -19,9 +19,14 @@ def feedback():
         
         like = st.feedback()
 
-        st.text_area("Anything You Wish to Say:")
+        comment = st.text_area("Anything You Wish to Say:")
 
         submit = st.form_submit_button("Submit Feedback")
         
         if submit:
+            new_feedback = {choose_course: f"{like}, {comment}"}
+            manager.save_feedback(new_feedback)
+            
             st.success("Thanks for your valuable feedback! 😊")
+
+

@@ -11,8 +11,11 @@ def attendance():
     current_course = current_student.enrolled_course_ids
 
     # --- Student Check-in Section ---
-    st.subheader("Check-In Attendance")
     with st.form("check_in-form"):
+        st.header("Check-In Attendance")
+        st.info("Select the course ID to check-in attendance.")
+        st.divider()
+        
         course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses if c.id in current_course}
         if course_disp:
             choosen_course = st.selectbox("Select Course", course_disp.keys())

@@ -19,7 +19,7 @@ class Course:
         self.instrument = instrument
         self.teacher_id = teacher_id
         self.enrolled_student_ids = enrolled_student_ids or []
-        self.lessons = lessons = []
+        self.lessons = lessons or []
 
     @staticmethod
     def create_course_object(course_id, name, instrument, teacher_id):

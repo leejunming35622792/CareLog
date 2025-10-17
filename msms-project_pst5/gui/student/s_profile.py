@@ -12,8 +12,10 @@ def profile():
     current_course = current_student.enrolled_course_ids
 
     with st.form("update-student"):
-        st.subheader("It's time to update... 🤔")
+        st.header("Student Profile")
+        st.write("It's time to update... 🤔")
         st.info("To update a field, enter the new value and click 'Update'")
+        st.divider()
 
         # Update ID, name
         name = st.text_input("Update Name: ", placeholder=current_student.name)

@@ -8,7 +8,6 @@ import time
 import logging
 
 def payment(manager):
-    st.title("Payment & Finance")
     tab1, tab2 = st.tabs(["Make Payment", "View Payments"])
 
     with tab1:
@@ -23,7 +22,7 @@ def make_payment():
     all_student = {f"{s.id} - {s.name}":s.id for s in manager.students}
 
     with st.form("pay_form"):
-        st.header("Finance & Payment")
+        st.header("Make Payment")
         student = st.selectbox("Select Student:", all_student.keys())
         amount = st.text_input("Enter Amount:")
         method = st.selectbox("Select Payment Method", ["Cash", "Bank Transfer", "E-Wallet"])
@@ -72,6 +71,7 @@ def view_payment():
     import datetime
     import streamlit as st
 
+    st.header("View Past Payment Records")
     manager = st.session_state.manager
     username = st.session_state.username
     current_student = next((s for s in manager.students if s.username == username), None)

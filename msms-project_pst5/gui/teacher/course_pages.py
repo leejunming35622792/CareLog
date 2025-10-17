@@ -5,7 +5,7 @@ import pandas as pd
 import logging
 
 def show_course_management_page(manager):
-    st.header("Course Management")
+    st.title("Course Management")
     
     if "success_msg" in st.session_state:
         st.balloons()
@@ -31,22 +31,23 @@ def show_course_management_page(manager):
 
         st.divider()
 
-    with st.container():
-            st.subheader("Search Lessons by Course")
-            course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses}
-            lesson_list = st.selectbox("Select Course: ", course_disp.keys())
-            if lesson_list:
-                choose_course = course_disp[lesson_list]
-            else:
-                st.error("⚠️ Database is empty, no courses found")
-            
-            all_lessons = []
-            for c in manager.courses:
-                if c.id == choose_course:
-                    for l in c.lessons:
-                        all_lessons.append(l)
-            lesson_df = pd.DataFrame(all_lessons)
-            lesson_pd_st = st.dataframe(lesson_df, hide_index=True)
+        with st.container():
+                st.subheader("Search Lessons by Course")
+
+                course_disp = {f"{c.id} - {c.name}": c.id for c in manager.courses}
+                lesson_list = st.selectbox("Select Course: ", course_disp.keys())
+                if course_disp:
+                    choose_course = course_disp[lesson_list]
+                else:
+                    st.error("⚠️ Database is empty, no courses found")
+                        
+                all_lessons = manager.get_all_lessons(choose_course)
+
+                if all_lessons:
+                    lesson_df = pd.DataFrame(all_lessons)
+                    lesson_pd_st = st.dataframe(lesson_df, hide_index=True)
+                else:
+                    st.error("⚠️ Database is empty, no lessons found")
 
     # --- Add Course Section ---
     with add_course:

@@ -23,7 +23,7 @@ def make_payment():
     current_student = next((s for s in manager.students if s.username == username), None)
 
     with st.form("pay_form"):
-        st.header("Finance & Payment")
+        st.header("Make Payment")
         amount = st.text_input("Enter Amount:")
         method = st.selectbox("Select Payment Method", ["Cash", "Bank Transfer", "E-Wallet"])
         upload_file = st.file_uploader("Upload Receipt", type=["jpg", "jpeg", "png"])
@@ -70,6 +70,8 @@ def view_payment():
     manager = st.session_state.manager
     username = st.session_state.username
     current_student = next((s for s in manager.students if s.username == username), None)
+
+    st.header("View Past Payment Records")
 
     # Filter payments for this student
     student_payments = manager.get_payment_history(current_student.id)

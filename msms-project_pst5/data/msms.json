@@ -3,8 +3,8 @@
         {
             "id": "S0001",
             "name": "Alice Tan",
-            "username": "alice_tan",
-            "password": "password123",
+            "username": "user",
+            "password": "user",
             "instrument": "Piano",
             "enrolled_course_ids": [
                 "C1001",
@@ -18,7 +18,8 @@
             "password": "leePass!",
             "instrument": "Guitar",
             "enrolled_course_ids": [
-                "C1002"
+                "C1002",
+                "C1005"
             ]
         },
         {
@@ -36,10 +37,19 @@
             "name": "Bob Tolmer",
             "username": "new_user",
             "password": "new_user",
-            "instrument": "NEW INSTRUMENT",
+            "instrument": "Drums",
             "enrolled_course_ids": [
-                "C1001",
-                "C1003"
+                "C1006"
+            ]
+        },
+        {
+            "id": "S0005",
+            "name": "Daphne Khoo",
+            "username": "daphne_k",
+            "password": "mypassword",
+            "instrument": "Flute",
+            "enrolled_course_ids": [
+                "C1007"
             ]
         }
     ],
@@ -47,8 +57,8 @@
         {
             "id": "T0001",
             "name": "Mr. Wong",
-            "username": "wong_t",
-            "password": "teachPiano",
+            "username": "user",
+            "password": "user",
             "speciality": "Piano"
         },
         {
@@ -64,9 +74,30 @@
             "username": "nathan_v",
             "password": "violinMaster",
             "speciality": "Violin"
+        },
+        {
+            "id": "T0004",
+            "name": "Ms. Julia",
+            "username": "julia_d",
+            "password": "beatdrums",
+            "speciality": "Drums"
+        },
+        {
+            "id": "T0005",
+            "name": "Mr. Adrian",
+            "username": "adrian_f",
+            "password": "flutePro",
+            "speciality": "Flute"
         }
     ],
-    "admin": [],
+    "admin": [
+        {
+            "id": "A0001",
+            "name": "System Admin",
+            "username": "user",
+            "password": "user"
+        }
+    ],
     "courses": [
         {
             "id": "C1001",
@@ -75,14 +106,20 @@
             "teacher_id": "T0001",
             "enrolled_student_ids": [
                 "S0001",
-                "S0004",
-                "None"
+                "S0004"
             ],
             "lessons": [
                 {
                     "lesson-id": "L0009",
                     "day": "Monday",
-                    "start_time": "14:15:00",
+                    "start_time": "09:00:00",
+                    "room": "NE-3-2",
+                    "remark": "C1001 - Beginner Piano"
+                },
+                {
+                    "lesson-id": "L0013",
+                    "day": "Thursday",
+                    "start_time": "14:00:00",
                     "room": "NE-3-2",
                     "remark": "C1001 - Beginner Piano"
                 }
@@ -96,7 +133,22 @@
             "enrolled_student_ids": [
                 "S0002"
             ],
-            "lessons": []
+            "lessons": [
+                {
+                    "lesson-id": "L0011",
+                    "day": "Monday",
+                    "start_time": "11:00:00",
+                    "room": "SE-1-2",
+                    "remark": "C1002 - Intermediate Guitar"
+                },
+                {
+                    "lesson-id": "L0012",
+                    "day": "Wednesday",
+                    "start_time": "15:00:00",
+                    "room": "SE-1-4",
+                    "remark": "C1002 - Intermediate Guitar"
+                }
+            ]
         },
         {
             "id": "C1003",
@@ -107,14 +159,13 @@
                 "S0001",
                 "S0002",
                 "S0003",
-                "S0004",
-                "None"
+                "S0004"
             ],
             "lessons": [
                 {
                     "lesson-id": "L0010",
                     "day": "Wednesday",
-                    "start_time": "18:30:00",
+                    "start_time": "13:00:00",
                     "room": "SE-1-2",
                     "remark": "C1003 - Music Theory (All Instruments)"
                 }
@@ -128,29 +179,108 @@
             "enrolled_student_ids": [
                 "S0003"
             ],
-            "lessons": []
+            "lessons": [
+                {
+                    "lesson-id": "L0014",
+                    "day": "Tuesday",
+                    "start_time": "10:00:00",
+                    "room": "NE-2-1",
+                    "remark": "C1004 - Beginner Violin"
+                }
+            ]
+        },
+        {
+            "id": "C1005",
+            "name": "Advanced Guitar Ensemble",
+            "instrument": "Guitar",
+            "teacher_id": "T0002",
+            "enrolled_student_ids": [
+                "S0002"
+            ],
+            "lessons": [
+                {
+                    "lesson-id": "L0015",
+                    "day": "Thursday",
+                    "start_time": "11:00:00",
+                    "room": "SE-2-3",
+                    "remark": "C1005 - Advanced Guitar Ensemble"
+                }
+            ]
+        },
+        {
+            "id": "C1006",
+            "name": "Drumming for Beginners",
+            "instrument": "Drums",
+            "teacher_id": "T0004",
+            "enrolled_student_ids": [
+                "S0004"
+            ],
+            "lessons": [
+                {
+                    "lesson-id": "L0016",
+                    "day": "Friday",
+                    "start_time": "10:00:00",
+                    "room": "DR-1-1",
+                    "remark": "C1006 - Drumming for Beginners"
+                },
+                {
+                    "lesson-id": "L0017",
+                    "day": "Friday",
+                    "start_time": "15:00:00",
+                    "room": "DR-1-1",
+                    "remark": "C1006 - Drumming for Beginners"
+                }
+            ]
+        },
+        {
+            "id": "C1007",
+            "name": "Flute Fundamentals",
+            "instrument": "Flute",
+            "teacher_id": "T0005",
+            "enrolled_student_ids": [
+                "S0005"
+            ],
+            "lessons": [
+                {
+                    "lesson-id": "L0018",
+                    "day": "Tuesday",
+                    "start_time": "14:00:00",
+                    "room": "NE-1-5",
+                    "remark": "C1007 - Flute Fundamentals"
+                }
+            ]
         }
     ],
     "attendance": [
         {
             "student_id": "S0001",
             "course_id": "C1001",
-            "timestamp": "2025-10-01T14:05:00"
+            "timestamp": "2025-10-01T09:05:00"
         },
         {
             "student_id": "S0002",
             "course_id": "C1002",
-            "timestamp": "2025-10-03T10:10:00"
+            "timestamp": "2025-10-03T11:10:00"
         },
         {
             "student_id": "S0003",
             "course_id": "C1004",
-            "timestamp": "2025-10-05T13:00:00"
+            "timestamp": "2025-10-05T10:00:00"
         },
         {
             "student_id": "S0001",
             "course_id": "C1003",
-            "timestamp": "2025-10-06T11:00:00"
+            "timestamp": "2025-10-06T13:00:00"
+        },
+        {
+            "student_id": "S0004",
+            "course_id": "C1006",
+            "timestamp": "2025-10-07T10:00:00"
+        },
+        {
+            "student_id": "S0005",
+            "course_id": "C1007",
+            "timestamp": "2025-10-08T14:05:00"
         }
     ],
     "payment": [
@@ -160,7 +290,7 @@
             "amount": "100",
             "method": "Bank Transfer",
             "receipt": "receipts\\PID0004.jpeg",
-            "timestamp": "2025-8-12 16:38:53"
+            "timestamp": "2025-08-12 16:38:53"
         },
         {
             "payment_id": "PID0005",
@@ -168,7 +298,7 @@
             "amount": "250",
             "method": "Cash",
             "receipt": "receipts\\PID0004.jpeg",
-            "timestamp": "2025-9-11 16:38:53"
+            "timestamp": "2025-09-11 16:38:53"
         },
         {
             "payment_id": "PID0006",
@@ -185,11 +315,27 @@
             "method": "Bank Transfer",
             "receipt": "receipts\\PID0007.jpg",
             "timestamp": "2025-10-13 10:50:33"
+        },
+        {
+            "payment_id": "PID0008",
+            "student_id": "S0002",
+            "amount": "300",
+            "method": "Cash",
+            "receipt": "receipts\\PID0007.jpeg",
+            "timestamp": "2025-10-14 14:30:10"
+        },
+        {
+            "payment_id": "PID0009",
+            "student_id": "S0004",
+            "amount": "200",
+            "method": "Bank Transfer",
+            "receipt": "receipts\\PID0004.jpeg",
+            "timestamp": "2025-10-15 11:10:45"
         }
     ],
-    "next_student_id": 4,
-    "next_teacher_id": 4,
-    "next_course_id": 5,
-    "next_lesson_id": 11,
-    "next_payment_id": 8
+    "next_student_id": 6,
+    "next_teacher_id": 6,
+    "next_course_id": 8,
+    "next_lesson_id": 19,
+    "next_payment_id": 10
 }
