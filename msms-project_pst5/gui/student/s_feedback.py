@@ -24,8 +24,9 @@ def feedback():
         submit = st.form_submit_button("Submit Feedback")
         
         if submit:
-            new_feedback = {choose_course: f"{like}, {comment}"}
+            new_feedback = f"{choose_course} - {comment}"
             manager.save_feedback(new_feedback)
+            manager.save()
             
             st.success("Thanks for your valuable feedback! 😊")
 

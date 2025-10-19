@@ -29,8 +29,8 @@ def profile():
         courses = [course_disp[c] for c in courses_list]
 
         # Update Credentials
-        updated_username = st.text_input("Update username: ", value=current_student.username)
-        updated_password = st.text_input("Update password: ", value=current_student.password, type="password")
+        updated_username = st.text_input("Update username: ", placeholder=current_student.username)
+        updated_password = st.text_input("Update password: ", placeholder=current_student.password, type="password")
 
         update_button = st.form_submit_button("Update Changes")
 
@@ -58,13 +58,13 @@ def profile():
                 for e in errors:
                     st.error(e)
             else:
-                result = manager.update_student(updated_username, updated_password, None, name.title(), instrument.title(), courses)
+                result = manager.update_student(updated_username, updated_password, current_student.id, name.title(), instrument.title(), courses)
                 
                 if result:
                     with st.spinner("Saving...", show_time=True):
                         time.sleep(1)
-                        manager.save()
-                    st.balloons()                  
+                        st.balloons()                  
+                    manager.save()
                     st.session_state.success_msg = f"Successfully Updated - {", ".join(success)}"
                     st.session_state.backup = "backup"
                     logging.info(f"Successfully Updated - {", ".join(success)}")

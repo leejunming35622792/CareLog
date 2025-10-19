@@ -37,7 +37,7 @@ def attendance():
                     st.success(f"Checked in '{current_student.name}' for '{choosen_course}'!")
                     manager.save()
                     st.session_state.backup = "backup"
-                    logging.info("Check in Attendance")
+                    logging.info(f"Check in Attendance - {course_id}")
                     st.balloons()
             else:
                 st.error("Seemed like you haven't signed up any course 😥")

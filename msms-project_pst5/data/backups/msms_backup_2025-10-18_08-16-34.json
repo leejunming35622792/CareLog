@@ -8,12 +8,7 @@
             "instrument": "Piano",
             "enrolled_course_ids": [
                 "C1001",
-                "C1002",
-                "C1003",
-                "C1004",
-                "C1005",
-                "C1006",
-                "C1007"
+                "C1003"
             ]
         },
         {
@@ -130,8 +125,7 @@
             "instrument": "Guitar",
             "teacher_id": "T0002",
             "enrolled_student_ids": [
-                "S0002",
-                "S0001"
+                "S0002"
             ],
             "lessons": [
                 {
@@ -178,8 +172,7 @@
             "instrument": "Violin",
             "teacher_id": "T0003",
             "enrolled_student_ids": [
-                "S0003",
-                "S0001"
+                "S0003"
             ],
             "lessons": [
                 {
@@ -197,8 +190,7 @@
             "instrument": "Guitar",
             "teacher_id": "T0002",
             "enrolled_student_ids": [
-                "S0002",
-                "S0001"
+                "S0002"
             ],
             "lessons": [
                 {
@@ -216,8 +208,7 @@
             "instrument": "Drums",
             "teacher_id": "T0004",
             "enrolled_student_ids": [
-                "S0004",
-                "S0001"
+                "S0004"
             ],
             "lessons": [
                 {
@@ -242,8 +233,7 @@
             "instrument": "Flute",
             "teacher_id": "T0005",
             "enrolled_student_ids": [
-                "S0005",
-                "S0001"
+                "S0005"
             ],
             "lessons": [
                 {
@@ -286,11 +276,6 @@
             "student_id": "S0005",
             "course_id": "C1007",
             "timestamp": "2025-10-08T14:05:00"
-        },
-        {
-            "student_id": "S0001",
-            "course_id": "C1001",
-            "timestamp": "2025-10-18 08:21:44"
         }
     ],
     "payment": [
