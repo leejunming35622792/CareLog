@@ -181,4 +181,205 @@ class ScheduleManager():
             return False, "No appointment found", None
         return appt
     
-   
+
+    #view patient details for nurse
+    def view_patient_details_by_nurse(self, patient_id):
+        "View patient details"
+        patient = self.find_patient_by_id(patient_id)
+        if not patient:
+            return False, "Patient not found", None
+        patient_records = [r for r in self.records if r.p_id == patient_id]
+        patient_remarks = [r for r in self.remarks if r.patient_id == patient_id and r.is_active]
+        
+        patient_info = {
+            "patient_id": patient.p_id,
+            "name": patient.name,
+            "gender": patient.gender,
+            "email": patient.email,
+            "contact": patient.contact_num,
+            "address": patient.address,
+            "records_count": len(patient_records),
+            "remark_count": len(patient_remarks),
+            "records": [
+                {
+                    "record_id": r.pr_record_id,
+                    "timestamp": r.pr_timestamp,
+                    "conditions": r.pr_conditions,
+                    "medications": r.pr_medications,
+                    "remark": r.pr_remark
+                } for r in patient_records
+            ],
+            "remarks": [
+                {
+                    "remark_id": r.remark_id,
+                    "doctor_id": r.doctor_id,
+                    "timestamp": r.timestamp,
+                    "type": r.remark_type,
+                    "content": r.content
+                } for r in patient_remarks
+            ]
+        }
+        utils.log_event(f"Nurse viewed patient {patient_id} details", "INFO")
+        return True, "Patient details retrieved successfully", patient_info
+
+    def view_patient_records_nurse(self, patient_id):
+        """View all records for a patient"""
+        patient = self.find_patient_by_id(patient_id)
+        if not patient:
+            return False, "Patient not found", None
+        
+        records = [r for r in self.records if r.p_id == patient_id]
+        
+        if not records:
+            return False, f"No records found for patient {patient_id}", None
+        
+        results = [
+            {
+                "record_id": r.pr_record_id,
+                "timestamp": r.pr_timestamp,
+                "conditions": r.pr_conditions,
+                "medications": r.pr_medications,
+                "remark": r.pr_remark
+            } for r in records
+        ]
+        
+        return True, f"Found {len(results)} record(s)", results
+
+    def update_patient_record_nurse(self, record_id, conditions=None, medications=None, remark=None):
+        """Update patient record (conditions and medications only)"""
+        record = next((r for r in self.records if r.pr_record_id == record_id), None)
+        if not record:
+            return False, "Record not found", None
+        
+        if conditions is not None:
+            record.pr_conditions = conditions
+        if medications is not None:
+            record.pr_medications = medications
+        if remark is not None:
+            record.pr_remark = remark
+        
+        self.save()
+        utils.log_event(f"Nurse updated record {record_id}", "INFO")
+        return True, "Record updated successfully", record_id
+
+    def delete_patient_record_nurse(self, record_id):
+        """Delete patient record"""
+        record = next((r for r in self.records if r.pr_record_id == record_id), None)
+        if not record:
+            return False, "Record not found", None
+        
+        self.records.remove(record)
+        self.save()
+        
+        utils.log_event(f"Nurse deleted record {record_id}", "INFO")
+        return True, "Record deleted successfully", record_id
+
+    def add_patient_remark_nurse(self, patient_id, nurse_username, remark_type, content):
+        """Add remark to patient (Nurse perspective)"""
+        import datetime
+        
+        # Find nurse by username
+        nurse = next((n for n in self.nurses if n.username == nurse_username), None)
+        if not nurse:
+            return False, "Nurse not found", None
+        
+        # Validate the patient
+        patient = self.find_patient_by_id(patient_id)
+        if not patient:
+            return False, "Patient not found", None
+        
+        # Get doctor the nurse is working with
+        doctor_id = nurse.with_doctor
+        
+        remark_id = self.next_remark_id
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        new_remark = PatientRemark(
+            remark_id=remark_id,
+            patient_id=patient_id,
+            doctor_id=doctor_id,
+            timestamp=timestamp,
+            remark_type=remark_type,
+            content=f"[Nurse {nurse.name}] {content}",
+            is_active=True
+        )
+        
+        self.remarks.append(new_remark)
+        self.next_remark_id += 1
+        self.save()
+        
+        utils.log_event(f"Nurse {nurse_username} added remark {remark_id} for patient {patient_id}", "INFO")
+        return True, "Remark added successfully", remark_id
+
+    def view_patient_remarks_nurse(self, patient_id):
+        """View all remarks for a patient"""
+        patient = self.find_patient_by_id(patient_id)
+        if not patient:
+            return False, "Patient not found", None
+        
+        remarks = [r for r in self.remarks if r.patient_id == patient_id and r.is_active]
+        
+        if not remarks:
+            return False, f"No remarks found for patient {patient_id}", None
+        
+        results = [
+            {
+                "remark_id": r.remark_id,
+                "doctor_id": r.doctor_id,
+                "timestamp": r.timestamp,
+                "type": r.remark_type,
+                "content": r.content,
+                "last_modified": r.last_modified
+            } for r in remarks
+        ]
+        
+        return True, f"Found {len(results)} remark(s)", results
+
+    def update_patient_remark_nurse(self, remark_id, new_content):
+        """Update a remark"""
+        remark = self.find_remark_by_id(remark_id)
+        if not remark:
+            return False, "Remark not found", None
+        
+        remark.update_content(new_content)
+        self.save()
+        
+        utils.log_event(f"Nurse updated remark {remark_id}", "INFO")
+        return True, "Remark updated successfully", remark_id
+
+    def delete_patient_remark_nurse(self, remark_id):
+        """Soft delete a remark"""
+        remark = self.find_remark_by_id(remark_id)
+        if not remark:
+            return False, "Remark not found", None
+        
+        remark.deactivate()
+        self.save()
+        
+        utils.log_event(f"Nurse deleted remark {remark_id}", "INFO")
+        return True, "Remark deleted successfully", remark_id
+
+    def search_appointments_by_date(self, date):
+        """Search appointments by date"""
+        appts = [a for a in self.appointments if a.date == date]
+        
+        if not appts:
+            return False, f"No appointments found for {date}", None
+        
+        results = [
+            {
+                "appt_id": a.appt_id,
+                "patient_id": a.p_id,
+                "doctor_id": a.d_id,
+                "time": a.time,
+                "status": a.status
+            } for a in appts
+        ]
+        
+        return True, f"Found {len(results)} appointment(s)", results
+
+    def get_todays_appointments(self):
+        """Get today's appointments"""
+        import datetime
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        return self.search_appointments_by_date(today)

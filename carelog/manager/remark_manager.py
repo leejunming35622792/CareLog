@@ -80,30 +80,36 @@ def edit_patient_remark(self, remark_id: str, doctor_username: str, new_content:
 
 
 def view_patient_remarks(self, patient_id: int, remark_type: str | None = None, limit: int | None = None):
-        patient = self.get_patient_by_id(patient_id)
-        if patient is None:
-            return False, "Patient not found", []
-        items = [rm for rm in self.remarks if rm.patient_id == patient_id and rm.is_active]
-        if remark_type:
-            items = [rm for rm in items if rm.remark_type == remark_type]
-        items.sort(key=lambda x: x.timestamp, reverse=True)
-        if limit:
-            items = items[:limit]
-        out = []
-        for rm in items:
-            doc = self.get_doctor_by_id(rm.doctor_id)
-            out.append(
-                {
-                    "remark_id": rm.remark_id,
-                    "doctor_id": rm.doctor_id,
-                    "doctor_name": (doc.name if doc else "Unknown Doctor"),
-                    "timestamp": rm.timestamp,
-                    "remark_type": rm.remark_type,
-                    "content": rm.content,
-                    "last_modified": rm.last_modified,
-                }
-            )
-        return True, f"Found {len(out)} remarks", out
+    patient = self.get_patient_by_id(patient_id)
+    if patient is None:
+        return False, "Patient not found", []
+
+    items = [rm for rm in self.remarks if rm.patient_id == patient_id and rm.is_active]
+    if remark_type:
+        items = [rm for rm in items if rm.remark_type == remark_type]
+
+    def _key(rm):
+        try:
+            return datetime.datetime.strptime(rm.timestamp, "%Y-%m-%d %H:%M:%S")
+        except Exception:
+            return rm.timestamp
+    items.sort(key=_key, reverse=True)
+
+    if limit:
+        items = items[:limit]
+    out = []
+    for rm in items:
+        doc = self.get_doctor_by_id(rm.doctor_id) if getattr(rm, "doctor_id", None) else None
+        out.append({
+            "remark_id": rm.remark_id,
+            "doctor_id": getattr(rm, "doctor_id", None),
+            "doctor_name": (doc.name if doc else ("Nurse" if getattr(rm, "doctor_id", None) is None else "Unknown Doctor")),
+            "timestamp": rm.timestamp,
+            "remark_type": rm.remark_type,
+            "content": rm.content,
+            "last_modified": getattr(rm, "last_modified", rm.timestamp),
+        })
+    return True, f"Found {len(out)} remarks", out
 
 def get_remarks_by_type(self, patient_id: int, remark_type: str):
         return self.view_patient_remarks(patient_id, remark_type=remark_type)
@@ -121,15 +127,22 @@ def get_recent_patient_remarks(self, patient_id: int, days: int = 7):
             except ValueError:
                 continue
             if dt >= cutoff:
-                doc = self.get_doctor_by_id(rm.doctor_id)
-                recent.append(
-                    {
-                        "remark_id": rm.remark_id,
-                        "doctor_name": (doc.name if doc else "Unknown"),
-                        "timestamp": rm.timestamp,
-                        "remark_type": rm.remark_type,
-                        "content": rm.content,
-                    }
-                )
-    recent.sort(key=lambda x: x["timestamp"], reverse=True)
-    return True, f"Found {len(recent)} remarks from last {days} days ", recent
+                if getattr(rm, "doctor_id", None):
+                    doc = self.get_doctor_by_id(rm.doctor_id)
+                    doctor_name = doc.name if doc else "Unknown Doctor"
+                else:
+                    doctor_name = "Nurse"
+                recent.append({
+                    "remark_id": rm.remark_id,
+                    "doctor_name": doctor_name,
+                    "timestamp": rm.timestamp,
+                    "remark_type": rm.remark_type,
+                    "content": rm.content,
+                })
+    def _k(x):
+        try:
+            return datetime.datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S")
+        except Exception:
+            return x["timestamp"]
+    recent.sort(key=_k, reverse=True)
+    return True, f"Found {len(recent)} remarks from last {days} days", recent

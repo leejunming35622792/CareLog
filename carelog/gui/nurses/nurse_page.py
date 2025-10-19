@@ -64,6 +64,12 @@ def nurse_page(nurse: NurseUser):
         profile_page(manager, username)
     elif option == "Patient Records":
         patient_records_page()
+    elif option == "Appointments":
+        appointments_page(manager, username)
+
+def appointments_page(manager, username): 
+    st.header("Appointments Page")
+    st.info("NOT YET IMPLEMENT, NEED TO DO")
     
 def logout():
     st.session_state.page = "login"

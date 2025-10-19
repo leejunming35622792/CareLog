@@ -31,7 +31,7 @@ def view_patient_details_by_doctor(self,patient_id :int):
         for record in patient_records:
             if getattr(record,"pr_conditions",None):
                 previous_conditions.extend(record.pr_conditions)
-            if hasattr(record,"pr_medications",None) and record.pr_medications:
+            if hasattr(record,"pr_medications") and record.pr_medications:
                 medication_history.extend(record.pr_medications)
         previous_conditions = list(set(previous_conditions))
         info = {

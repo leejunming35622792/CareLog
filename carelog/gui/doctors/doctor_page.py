@@ -2,6 +2,7 @@ import streamlit as st
 import datetime
 import pandas as pd
 
+
 def dashboard(username):
     """Main dashboard showing overview and quick stats"""
     manager = st.session_state.manager
@@ -364,7 +365,8 @@ def appointments_page(manager, username):
             # Filter options
             col1, col2 = st.columns(2)
             with col1:
-                filter_date = st.date_input("Filter by Date (optional)", value=None)
+                enable_date_filter = st.checkbox("Filter by Date (optional)")
+                filter_date = st.date_input("Pick a Date") if enable_date_filter else None
             with col2:
                 filter_status = st.selectbox("Filter by Status", ["All", "Pending", "Confirmed", "Completed", "Cancelled"])
             
