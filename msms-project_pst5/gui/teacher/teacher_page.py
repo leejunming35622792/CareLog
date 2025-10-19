@@ -23,7 +23,6 @@ def teacher_launch(manager):
         st.session_state.logout_triggered = False
         st.rerun()
 
-    
     if "start_log" not in st.session_state and st.session_state != "":
         st.session_state.start_log = "Logs started"
         init_logger(st.session_state.username)

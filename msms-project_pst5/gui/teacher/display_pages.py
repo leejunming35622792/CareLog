@@ -79,6 +79,22 @@ def display_all_page(manager):
 
         st.divider()
 
+        # ---------------- FEEDBACK SECTION ----------------
+        st.title("🎶 Student Feedback")
+
+        st.subheader("Previous Feedback")
+        feedback_entries = manager.load_feedback()
+
+        if not feedback_entries:
+            st.info("No feedback available yet.")
+        else:
+            for entry in feedback_entries:
+                with st.container():
+                    st.markdown(f"**🕒 {entry['timestamp']}**")
+                    st.markdown(f"**📘 {entry['course_id']} - {entry['course_name']}**")
+                    st.markdown(f"💭 *{entry['message']}*")
+                    st.markdown("---")        
+
     # ---------------------------- TAB 2: LOG VIEWER ----------------------------
     with tab2:
         st.subheader("Download Logs")

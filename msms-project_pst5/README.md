@@ -1,4 +1,4 @@
-# 🎵 Music School Management System (MSMS.v5)
+# Music School Management System (MSMS.v5)
 
 **MSMS.v5** is a **Streamlit-based web application** designed for managing a music school.  
 It supports **multi-user roles (Student, Teacher, Staff)**, provides **CRUD operations**, **data dashboards**, and **report generation**.

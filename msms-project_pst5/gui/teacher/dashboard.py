@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 
 def dashboard(manager):
-    st.title("Music School Management System")
     st.snow()
 
     st.info("This is MSMS, greeting you from the best Music Class Center, come and chat with us!")

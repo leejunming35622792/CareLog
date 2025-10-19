@@ -414,21 +414,48 @@ class ScheduleManager:
 
     def save_feedback(self, feedback):
         """Placeholder for feedback submission logic."""
-        base_dir = "data/feedback.txt"
+        base_dir = "data/feedback"
         os.makedirs(base_dir, exist_ok=True)
 
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
         message = f"{timestamp} - {feedback}"
 
-        with open(base_dir, 'a', encoding='utf-8') as f:
+        file_dir = os.path.join(base_dir, "feedback.txt")
+
+        with open(file_dir, 'a', encoding='utf-8') as f:
             f.write(message)
 
     def load_feedback(self):
-        """To load all feedback from students"""
-        base_dir = "data/feedback.txt"
+        """Load and parse all feedback entries from file."""
 
-        with open(base_dir, 'r', encoding="utf-8") as f:
-            feedback = f.read()
-            print(feedback)        
+        base_dir = os.path.dirname(self.data_path)
+        file_path = os.path.join(base_dir, "feedback.txt")
+
+        if not os.path.exists(file_path):
+            return []
+
+        feedback_list = []
+
+        with open(file_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+
+                # Expected format: timestamp - course_id - course_name - message
+                parts = line.split(" - ", 3)
+                if len(parts) == 4:
+                    timestamp, course_id, course_name, message = parts
+                    feedback_list.append({
+                        "timestamp": line[0:19],
+                        "course_id": line[22:27],
+                        "course_name": course_name,
+                        "message": message
+                    })
+                else:
+                    feedback_list.append({"timestamp": "Unknown", "course_id": "N/A", "course_name": "N/A", "message": line})
+
+        return feedback_list
+
 
