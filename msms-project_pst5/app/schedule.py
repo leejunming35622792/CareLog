@@ -265,7 +265,6 @@ class ScheduleManager:
         return False
 
     # ---------- Delete Operations ----------
-
     def remove_student(self, s_id):
         """Delete student record."""
         student = next((s for s in self.students if str(s.id) == str(s_id)), None)
@@ -364,7 +363,7 @@ class ScheduleManager:
         """Record a check-in entry (same as attendance)."""
         timestamp = timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         record = {"student_id": student_id, "course_id": course_id, "timestamp": timestamp}
-        self.attendance_log.append(record)
+        self.attendance.append(record)
         return True
 
     def search_function(self, staff, search_keyword):
@@ -415,4 +414,21 @@ class ScheduleManager:
 
     def save_feedback(self, feedback):
         """Placeholder for feedback submission logic."""
-        pass
+        base_dir = "data/feedback.txt"
+        os.makedirs(base_dir, exist_ok=True)
+
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        message = f"{timestamp} - {feedback}"
+
+        with open(base_dir, 'a', encoding='utf-8') as f:
+            f.write(message)
+
+    def load_feedback(self):
+        """To load all feedback from students"""
+        base_dir = "data/feedback.txt"
+
+        with open(base_dir, 'r', encoding="utf-8") as f:
+            feedback = f.read()
+            print(feedback)        
+
