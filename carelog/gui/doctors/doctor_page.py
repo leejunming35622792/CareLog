@@ -1,19 +1,21 @@
 import streamlit as st
 import datetime
 import pandas as pd
+from helper_manager.profile_manager import view_doctor_details 
+from helper_manager.appointment_manager import view_upcoming_appointments
 
 
 def dashboard(username):
     """Main dashboard showing overview and quick stats"""
     manager = st.session_state.manager
-
+    
     # Page design
     st.divider()
     st.header("Dashboard Overview")
     
     # Get doctor details
     password = st.session_state.get('password', '')
-    success, message, profile = manager.view_doctor_details(username)
+    success, message, profile = view_doctor_details(username)
     
     if profile:
         col1, col2, col3 = st.columns(3)
@@ -29,7 +31,7 @@ def dashboard(username):
 
         # Upcoming appointments preview
         st.header("Today's Appointments")
-        success, msg, appointments = manager.view_upcoming_appointments(username)
+        success, msg, appointments = view_upcoming_appointments(username)
         if success and appointments:
             today = datetime.datetime.now().strftime("%Y-%m-%d")
             today_appts = [a for a in appointments if a['date'] == today]

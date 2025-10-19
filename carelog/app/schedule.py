@@ -181,7 +181,6 @@ class ScheduleManager():
             return False, "No appointment found", None
         return appt
     
-
     #view patient details for nurse
     def view_patient_details_by_nurse(self, patient_id):
         "View patient details"

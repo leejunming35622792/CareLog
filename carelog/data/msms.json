@@ -126,6 +126,19 @@
             "date_joined": "2025-03-20T09:00:00",
             "speciality": "Dermatology",
             "department": "Skin"
+        },
+        {
+            "d_id": "D0005",
+            "username": "@Rryanhew",
+            "password": "Ryanhewka12",
+            "name": "Ryan Hew Ka Shing ",
+            "gender": "Male",
+            "address": "52, Jalan USJ 3a/7",
+            "email": "hewryan75@gmail.com",
+            "contact_num": "60102220368",
+            "date_joined": "2025-10-19 23:00:44",
+            "speciality": "Heart",
+            "department": "Cardiology"
         }
     ],
     "nurses": [
@@ -448,7 +461,7 @@
         }
     ],
     "next_patient_id": 7,
-    "next_doctor_id": 5,
+    "next_doctor_id": 6,
     "next_nurse_id": 7,
     "next_receptionist_id": 5,
     "next_admin_id": 3,

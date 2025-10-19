@@ -4270,3 +4270,22 @@
 2025-10-19 21:02:37,517 - INFO - System startup complete
 2025-10-19 21:20:11,452 - INFO - System startup complete
 2025-10-19 21:52:35,235 - INFO - System startup complete
+2025-10-19 22:57:23,714 - INFO - System startup complete
+2025-10-19 22:58:56,020 - ERROR - Failed registration for doctor (@Rryanhew): Password must contain at least one uppercase letter
+2025-10-19 22:59:09,342 - ERROR - Failed registration for doctor (@Rryanhew): Password must contain at least one uppercase letter
+2025-10-19 22:59:48,248 - INFO - System startup complete
+2025-10-19 23:00:45,768 - INFO - Doctor @Rryanhew registered with ID D0005
+2025-10-19 23:00:45,770 - INFO - doctor @Rryanhew registered successfully.
+2025-10-19 23:15:41,183 - INFO - System startup complete
+2025-10-19 23:19:36,068 - INFO - System startup complete
+2025-10-19 23:22:43,728 - INFO - System startup complete
+2025-10-19 23:26:35,999 - INFO - System startup complete
+2025-10-19 23:29:00,551 - INFO - System startup complete
+2025-10-19 23:33:08,163 - INFO - System startup complete
+2025-10-19 23:34:27,464 - INFO - System startup complete
+2025-10-19 23:37:03,961 - INFO - System startup complete
+2025-10-19 23:37:52,974 - INFO - System startup complete
+2025-10-19 23:38:42,959 - INFO - System startup complete
+2025-10-19 23:39:28,611 - INFO - System startup complete
+2025-10-19 23:41:43,918 - INFO - System startup complete
+2025-10-19 23:43:03,563 - INFO - System startup complete
