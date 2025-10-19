@@ -2,18 +2,20 @@ import datetime
 from app.schedule import ScheduleManager
 from app.remark import PatientRemark
 
-def add_patient_remark(self,patient_id :int , doctor_username: str, remark_type: str, remark_content :str):
-        patient=next((p for p in self.patients if p.p_id==patient_id), None)
+manager = ScheduleManager()
+
+def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str, remark_content :str):
+        patient=next((p for p in manager.patients if p.p_id==patient_id), None)
         if patient is None:
             return False, "Patient Not Found", None
-        doctor=next((d for d in self.doctors if d.username == doctor_username), None)
+        doctor=next((d for d in manager.doctors if d.username == doctor_username), None)
         if doctor is None:
             return False, "Doctor Not Found", None
         valid_types=["mood", "pain_level","dietary","general","observation"]
         r_type=remark_type.strip().lower()
         if r_type not in valid_types:
             return False, f" Invalid Remark Type. Must be one of : {', '.join (valid_types)}", None
-        remark_id = f"RM{self.next_remark_id:04d}"
+        remark_id = f"RM{manager.next_remark_id:04d}"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         new_remark=PatientRemark(
             remark_id=remark_id,
@@ -24,18 +26,18 @@ def add_patient_remark(self,patient_id :int , doctor_username: str, remark_type:
             content=remark_content,
             is_active=True
         )
-        self.remarks.append(new_remark)
-        rid=self.next_remark_id
-        self.next_remark_id+=1
-        self._save_data()
+        manager.remarks.append(new_remark)
+        rid=manager.next_remark_id
+        manager.next_remark_id+=1
+        manager._save_data()
         return True, "Remark added successfully", remark_id
 
-def add_patient_remark_nurse(self, patient_id: int, nurse_username: str, remark_type: str, remark_content: str):
-    patient = next((p for p in self.patients if p.p_id == patient_id), None)
+def add_patient_remark_nurse(patient_id: int, nurse_username: str, remark_type: str, remark_content: str):
+    patient = next((p for p in manager.patients if p.p_id == patient_id), None)
     if patient is None:
         return False, "Patient not found", None
 
-    nurse = next((n for n in self.nurses if n.username == nurse_username), None)
+    nurse = next((n for n in manager.nurses if n.username == nurse_username), None)
     if nurse is None:
         return False, "Nurse not found", None
 
@@ -44,7 +46,7 @@ def add_patient_remark_nurse(self, patient_id: int, nurse_username: str, remark_
     if r_type not in valid_types:
         return False, f"Invalid Remark Type. Must be one of: {', '.join(valid_types)}", None
     
-    remark_id = f"RM{self.next_remark_id:04d}"
+    remark_id = f"RM{manager.next_remark_id:04d}"
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     new_remark = PatientRemark(
@@ -56,18 +58,18 @@ def add_patient_remark_nurse(self, patient_id: int, nurse_username: str, remark_
         content=remark_content,
         is_active=True
     )
-    self.remarks.append(new_remark)
-    self.next_remark_id += 1
-    self._save_data()
+    manager.remarks.append(new_remark)
+    manager.next_remark_id += 1
+    manager._save_data()
     return True, "Remark added successfully", remark_id
 
 
-def edit_patient_remark(self, remark_id: str, doctor_username: str, new_content: str):
-    remark = next((rm for rm in self.remarks if str(rm.remark_id) == str(remark_id)), None)
+def edit_patient_remark(remark_id: str, doctor_username: str, new_content: str):
+    remark = next((rm for rm in manager.remarks if str(rm.remark_id) == str(remark_id)), None)
     if remark is None:
         return False, "Remark not found"
 
-    doc = next((d for d in self.doctors if d.username == doctor_username), None)
+    doc = next((d for d in manager.doctors if d.username == doctor_username), None)
     if doc is None:
         return False, "Doctor not found"
 
@@ -75,16 +77,16 @@ def edit_patient_remark(self, remark_id: str, doctor_username: str, new_content:
         return False, "You can only edit your own remarks"
 
     remark.update_content(new_content)
-    self._save_data()
+    manager._save_data()
     return True, "Remark updated successfully"
 
 
-def view_patient_remarks(self, patient_id: int, remark_type: str | None = None, limit: int | None = None):
-    patient = self.get_patient_by_id(patient_id)
+def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit: int | None = None):
+    patient = manager.get_patient_by_id(patient_id)
     if patient is None:
         return False, "Patient not found", []
 
-    items = [rm for rm in self.remarks if rm.patient_id == patient_id and rm.is_active]
+    items = [rm for rm in manager.remarks if rm.patient_id == patient_id and rm.is_active]
     if remark_type:
         items = [rm for rm in items if rm.remark_type == remark_type]
 
@@ -99,7 +101,7 @@ def view_patient_remarks(self, patient_id: int, remark_type: str | None = None, 
         items = items[:limit]
     out = []
     for rm in items:
-        doc = self.get_doctor_by_id(rm.doctor_id) if getattr(rm, "doctor_id", None) else None
+        doc = manager.get_doctor_by_id(rm.doctor_id) if getattr(rm, "doctor_id", None) else None
         out.append({
             "remark_id": rm.remark_id,
             "doctor_id": getattr(rm, "doctor_id", None),
@@ -111,16 +113,16 @@ def view_patient_remarks(self, patient_id: int, remark_type: str | None = None, 
         })
     return True, f"Found {len(out)} remarks", out
 
-def get_remarks_by_type(self, patient_id: int, remark_type: str):
-        return self.view_patient_remarks(patient_id, remark_type=remark_type)
+def get_remarks_by_type(patient_id: int, remark_type: str):
+        return manager.view_patient_remarks(patient_id, remark_type=remark_type)
     
-def get_recent_patient_remarks(self, patient_id: int, days: int = 7):
-    patient = self.get_patient_by_id(patient_id)
+def get_recent_patient_remarks(patient_id: int, days: int = 7):
+    patient = manager.get_patient_by_id(patient_id)
     if patient is None:
         return False, "Patient not found", []
     cutoff = datetime.datetime.now() - datetime.timedelta(days=days)
     recent = []
-    for rm in self.remarks:
+    for rm in manager.remarks:
         if rm.patient_id == patient_id and rm.is_active:
             try:
                 dt = datetime.datetime.strptime(rm.timestamp, "%Y-%m-%d %H:%M:%S")
@@ -128,7 +130,7 @@ def get_recent_patient_remarks(self, patient_id: int, days: int = 7):
                 continue
             if dt >= cutoff:
                 if getattr(rm, "doctor_id", None):
-                    doc = self.get_doctor_by_id(rm.doctor_id)
+                    doc = manager.get_doctor_by_id(rm.doctor_id)
                     doctor_name = doc.name if doc else "Unknown Doctor"
                 else:
                     doctor_name = "Nurse"

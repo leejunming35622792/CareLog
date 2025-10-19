@@ -1,6 +1,9 @@
 import streamlit as st
 
 def dashboard(manager, username):
+    # Variable
+    current_patient = next((p for p in manager.patients if p.username == username))
+    
     # Page design
     st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
 
@@ -15,8 +18,10 @@ def dashboard(manager, username):
     m1, m2, m3 = st.columns(3)
 
     with m1:
-        d_count = manager.get_doctor_count()
-        st.metric("Total Medical Staff", d_count)
+        # Name
+        p_name = current_patient.name
+        st.metric("Name", p_name)
     with m2:
         p_count = manager.get_patient_count()
         st.metric("Total Patient", p_count) 
+

@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import datetime
 from app.user import User
 
 def profile(Manager):
@@ -27,9 +28,38 @@ def profile(Manager):
             new_username = st.text_input("Username", value=f"@{patient.username}", disabled=True)
             new_password = st.text_input("Password", value=patient.password, type="password")
             new_name = st.text_input("Name", value=patient.name).title()
-            new_gender = st.selectbox("Gender", ["Male", "Female", "Other"], 
-                                          index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
 
+            col3, col4 = st.columns(2)
+            with col3:
+                new_gender = st.selectbox("Gender", ["Male", "Female", "Other"], 
+                                          index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
+            with col4:
+                # Get and clean birthday
+                bday = getattr(patient, "bday", None)
+
+                # Handle missing or string birthday safely
+                if not bday:
+                    bday = datetime.date(2000, 1, 1)
+                elif isinstance(bday, str):
+                    try:
+                        # ISO format (YYYY-MM-DD)
+                        bday = datetime.date.fromisoformat(bday)
+                    except ValueError:
+                        try:
+                            # Fallback for DD/MM/YYYY
+                            bday = datetime.datetime.strptime(bday, "%d/%m/%Y").date()
+                        except ValueError:
+                            bday = datetime.date(2000, 1, 1)
+
+                # Streamlit date input (safe to use)
+                new_bday = st.date_input("Birthday", value=bday)
+
+                # Calculate age based on selected date
+                today = datetime.date.today()
+                age = today.year - new_bday.year - ((today.month, today.day) < (new_bday.month, new_bday.day))
+                # Display in Streamlit
+
+        new_age = st.text_input("Age", value=str(age), disabled=True)
         with col2:
             new_address = st.text_area("Address", value=patient.address).title()
             new_email = st.text_input("Email", value=patient.email)

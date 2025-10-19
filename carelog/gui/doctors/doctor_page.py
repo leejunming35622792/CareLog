@@ -2,12 +2,13 @@ import streamlit as st
 import datetime
 import pandas as pd
 from helper_manager.profile_manager import view_doctor_details 
-from helper_manager.appointment_manager import view_upcoming_appointments
+from helper_manager.appointment_manager import AppointmentManager
 
+manager = st.session_state.manager
+appt_manager = AppointmentManager(manager)
 
 def dashboard(username):
     """Main dashboard showing overview and quick stats"""
-    manager = st.session_state.manager
     
     # Page design
     st.divider()
@@ -31,7 +32,7 @@ def dashboard(username):
 
         # Upcoming appointments preview
         st.header("Today's Appointments")
-        success, msg, appointments = view_upcoming_appointments(username)
+        success, msg, appointments = appt_manager.view_upcoming_appointments(username)
         if success and appointments:
             today = datetime.datetime.now().strftime("%Y-%m-%d")
             today_appts = [a for a in appointments if a['date'] == today]
@@ -51,7 +52,7 @@ def profile_page(manager, username):
     st.header("My Profile")
     
     password = st.session_state.get('password', '')
-    success, message, profile = manager.view_doctor_details(username)
+    success, message, profile = view_doctor_details(username)
     
     if profile:
         # Display current profile
@@ -354,75 +355,73 @@ def patient_records_page(manager, username):
 
 
 def appointments_page(manager, username):
-    """View and manage appointments"""
-    st.header("Appointments")
+    pass
+    # """View and manage appointments"""
+    # st.header("Appointments")
     
-    password = st.session_state.get('password', '')
-    success, message, appointments = manager.view_upcoming_appointments(username)
+    # success, message, appointments = appt_manager.view_upcoming_appointments(username)
     
-    if success:
-        st.success(message)
+    # if success:
+    #     st.success(message)
         
-        if appointments:
-            # Filter options
-            col1, col2 = st.columns(2)
-            with col1:
-                enable_date_filter = st.checkbox("Filter by Date (optional)")
-                filter_date = st.date_input("Pick a Date") if enable_date_filter else None
-            with col2:
-                filter_status = st.selectbox("Filter by Status", ["All", "Pending", "Confirmed", "Completed", "Cancelled"])
+    #     if appointments:
+    #         # Filter options
+    #         col1, col2 = st.columns(2)
+    #         with col1:
+    #             enable_date_filter = st.checkbox("Filter by Date (optional)")
+    #             filter_date = st.date_input("Pick a Date") if enable_date_filter else None
+    #         with col2:
+    #             filter_status = st.selectbox("Filter by Status", ["All", "Pending", "Confirmed", "Completed", "Cancelled"])
             
-            # Apply filters
-            filtered_appts = appointments
-            if filter_date:
-                filtered_appts = [a for a in filtered_appts if a['date'] == filter_date.strftime("%Y-%m-%d")]
-            if filter_status != "All":
-                filtered_appts = [a for a in filtered_appts if a['status'] == filter_status]
+    #         # Apply filters
+    #         filtered_appts = appointments
+    #         if filter_date:
+    #             filtered_appts = [a for a in filtered_appts if a['date'] == filter_date.strftime("%Y-%m-%d")]
+    #         if filter_status != "All":
+    #             filtered_appts = [a for a in filtered_appts if a['status'] == filter_status]
             
-            st.divider()
+    #         st.divider()
             
-            if filtered_appts:
-                for appt in filtered_appts:
-                    with st.container():
-                        col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
+    #         if filtered_appts:
+    #             for appt in filtered_appts:
+    #                 with st.container():
+    #                     col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
                         
-                        with col1:
-                            st.write(f"**📅 {appt['date']}**")
-                        with col2:
-                            st.write(f"**🕐 {appt['time']}**")
-                        with col3:
-                            st.write(f"**👤 {appt['patient_name']}** (ID: {appt['patient_id']})")
-                        with col4:
-                            status_color = {
-                                "Pending": "🟡",
-                                "Confirmed": "🟢",
-                                "Completed": "🔵",
-                                "Cancelled": "🔴"
-                            }
-                            st.write(f"{status_color.get(appt['status'], '⚪')} {appt['status']}")
+    #                     with col1:
+    #                         st.write(f"**📅 {appt['date']}**")
+    #                     with col2:
+    #                         st.write(f"**🕐 {appt['time']}**")
+    #                     with col3:
+    #                         st.write(f"**👤 {appt['patient_name']}** (ID: {appt['patient_id']})")
+    #                     with col4:
+    #                         status_color = {
+    #                             "Pending": "🟡",
+    #                             "Confirmed": "🟢",
+    #                             "Completed": "🔵",
+    #                             "Cancelled": "🔴"
+    #                         }
+    #                         st.write(f"{status_color.get(appt['status'], '⚪')} {appt['status']}")
                         
-                        if appt['remark']:
-                            st.caption(f"Note: {appt['remark']}")
+    #                     if appt['remark']:
+    #                         st.caption(f"Note: {appt['remark']}")
                         
-                        st.divider()
-            else:
-                st.info("No appointments match the selected filters")
-        else:
-            st.info("No upcoming appointments scheduled")
-    else:
-        st.error(message)
+    #                     st.divider()
+    #         else:
+    #             st.info("No appointments match the selected filters")
+    #     else:
+    #         st.info("No upcoming appointments scheduled")
+    # else:
+    #     st.error(message)
 
 
 def doctor_page(Manager):
     """Main doctor page with navigation"""
-    global manager
     manager = st.session_state.manager
-    global username
     username = st.session_state.username
     
     # Store password in session state if not already there
-    if 'password' not in st.session_state:
-        st.session_state.password = ''
+    #if 'password' not in st.session_state:
+       # st.session_state.password = ''
     
     tabs = ["Dashboard", "Profile", "Patient Records", "Appointments"]
 

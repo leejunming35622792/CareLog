@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from helper_manager.record_manager import search_record
 
 def record(manager):
     # --- Setup ---
@@ -21,7 +22,7 @@ def record(manager):
     record_id = st.selectbox("Select Record ID", p_record_id)
 
     # --- Display selected record ---
-    current_record = manager.search_record(patient.p_id, record_id)
+    current_record = search_record(patient.p_id, record_id)
 
     # Convert object to readable table
     record_df = pd.Series(current_record).to_frame("Details")

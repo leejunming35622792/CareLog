@@ -3,10 +3,10 @@ import app.utils as utils
 from app.user import User
 
 class AdminUser(User):
-    def __init__(self, a_id, username, password, name, gender, address, email, contact_num, date_joined):
+    def __init__(self, a_id, username, password, name, bday, gender, address, email, contact_num, date_joined):
         self.admin_password = "admin"
         self.a_id = a_id
-        super().__init__(username, password, name, gender, address, email, contact_num, date_joined)
+        super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
 
     """Account Management"""
     def register_user(self, role, username, password):

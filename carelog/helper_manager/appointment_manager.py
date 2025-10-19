@@ -1,6 +1,6 @@
 import datetime
-from app.patient import PatientAppointment
 import app.utils as utils
+from app.patient import PatientAppointment
 
 class AppointmentManager:
     def __init__(self, schedule_manager):

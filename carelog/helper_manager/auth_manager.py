@@ -19,13 +19,13 @@ class AuthManager:
             return True, "Logging in...", user
         return False, "Incorrect credentials", None
 
-    def create_account(self, manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
+    def create_account(self, manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         # Create object
         role = role.lower()
 
         # Try-except to handle self._user from returning none
         try:
-            user_obj = self._user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+            user_obj = self._user(manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
         except Exception as e:
             return False, f"User creation failed: {e}", None
 
@@ -33,24 +33,24 @@ class AuthManager:
         self.system.add_user(role, user_obj)
         return True, f"{role.capitalize()} account created successfully!", user_obj
 
-    def _user(self, manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
+    def _user(self, manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Create correct role object"""
         role = role.lower()
         if role == "patient":
             from app.patient import PatientUser
-            return PatientUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, [], "")
+            return PatientUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, [], "")
         elif role == "doctor":
             from app.doctor import DoctorUser
-            return DoctorUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department)
+            return DoctorUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department)
         elif role == "nurse":
             from app.nurse import NurseUser
-            return NurseUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+            return NurseUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
         elif role == "receptionist":
             from app.receptionist import ReceptionistUser
-            return ReceptionistUser(user_id, username, password, name, gender, address, email, contact_num, date_joined)
+            return ReceptionistUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined)
         elif role == "admin":
             from app.admin import AdminUser
-            return AdminUser(user_id, username, password, name, gender, address, email, contact_num, date_joined, [], "")
+            return AdminUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, [], "")
         else:
             raise ValueError(f"Invalid role type: {role}")
 

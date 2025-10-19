@@ -1,14 +1,15 @@
 # Super class for other user classes
 # Common fields as below
 import datetime
-from manager.auth_manager import AuthManager
+from helper_manager.auth_manager import AuthManager
 import app.utils as utils
 
 class User:
-    def __init__(self, username, password, name, gender, address, email, contact_num, date_joined):
+    def __init__(self, username, password, name, bday, gender, address, email, contact_num, date_joined):
         self.username = username
         self.password = password
         self.name = name
+        self.bday = bday
         self.gender = gender
         self.address = address
         self.email = email
@@ -32,7 +33,7 @@ class User:
             raise ValueError(f"Invalid role: {role}")
     
     @staticmethod
-    def create_user(manager, role, user_id, username, password, name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
+    def create_user(manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Register new user & Check Blank"""
 
         errors = []
@@ -77,7 +78,7 @@ class User:
             manager, 
             role, 
             user_id, username, password, 
-            name, gender, address, email, contact_num, date_joined, speciality, department, with_doctor
+            name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor
         )
 
         if not success:

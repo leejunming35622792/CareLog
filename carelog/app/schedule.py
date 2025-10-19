@@ -39,23 +39,23 @@ class ScheduleManager():
 
     def _load_data(self):
         try:
-            with open(self.data_path, "r") as f:
+            with open(self.data_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
                 # Patient objects
-                self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"], p["p_remark"]) for p in data.get("patients", [])]
+                self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["bday"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"], p["p_remark"]) for p in data.get("patients", [])]
 
                 # Doctor objects
-                self.doctors = [DoctorUser(d["d_id"], d["username"], d["password"], d["name"], d["gender"], d["address"], d["email"], d["contact_num"], d["date_joined"], d["speciality"], d["department"]) for d in data.get("doctors", [])]
+                self.doctors = [DoctorUser(d["d_id"], d["username"], d["password"], d["name"], d["bday"], d["gender"], d["address"], d["email"], d["contact_num"], d["date_joined"], d["speciality"], d["department"]) for d in data.get("doctors", [])]
 
                 # Nurse objects
-                self.nurses = [NurseUser(n["n_id"], n["username"], n["password"], n["name"], n["gender"], n["address"], n["email"], n["contact_num"], n["date_joined"], n["speciality"], n["department"], n["with_doctor"]) for n in data.get("nurses", [])]
+                self.nurses = [NurseUser(n["n_id"], n["username"], n["password"], n["name"], n["bday"], n["gender"], n["address"], n["email"], n["contact_num"], n["date_joined"], n["speciality"], n["department"], n["with_doctor"]) for n in data.get("nurses", [])]
 
                 # Receptionist objects
-                self.receptionists = [ReceptionistUser(r["r_id"], r["username"], r["password"], r["name"], r["gender"], r["address"], r["email"], r["contact_num"], r["date_joined"]) for r in data.get("receptionists", [])]
+                self.receptionists = [ReceptionistUser(r["r_id"], r["username"], r["password"], r["name"], r["bday"], r["gender"], r["address"], r["email"], r["contact_num"], r["date_joined"]) for r in data.get("receptionists", [])]
 
                 # Admin objects
-                self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
+                self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["bday"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
 
                 # Patient records
                 self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_medications"], pr["pr_billings"], pr["pr_prediction_result"], pr["pr_confidence_score"], pr["pr_remark"]) for pr in data.get("records", [])]

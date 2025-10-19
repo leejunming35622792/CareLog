@@ -54,6 +54,11 @@ def register(manager):
                         
                         if not password:
                             errors.append("Password cannot be empty")
+                        else:
+                            if len(password) < 8:
+                                errors.append("Password must be at least 8 characters")
+                            if not any(char.isdigit() for char in password):
+                                errors.append("Password must contain at least one number")
                             
                         if errors:
                             for e in errors:

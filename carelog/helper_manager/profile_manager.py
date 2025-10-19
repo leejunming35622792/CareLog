@@ -1,5 +1,4 @@
 from app.schedule import ScheduleManager
-
 manager = ScheduleManager()
 
 def view_doctor_details(username):

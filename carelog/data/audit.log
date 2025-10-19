@@ -4290,3 +4290,44 @@
 2025-10-19 23:41:43,918 - INFO - System startup complete
 2025-10-19 23:43:03,563 - INFO - System startup complete
 2025-10-19 23:44:21,255 - INFO - System startup complete
+2025-10-19 23:51:27,817 - INFO - System startup complete
+2025-10-19 23:54:24,354 - INFO - System startup complete
+2025-10-20 00:01:08,588 - INFO - System startup complete
+2025-10-20 00:05:52,999 - INFO - System startup complete
+2025-10-20 00:15:10,529 - INFO - System startup complete
+2025-10-20 00:22:12,049 - INFO - System startup complete
+2025-10-20 00:30:51,224 - INFO - System startup complete
+2025-10-20 00:32:23,804 - INFO - System startup complete
+2025-10-20 00:37:09,229 - INFO - System startup complete
+2025-10-20 00:42:23,403 - INFO - System startup complete
+2025-10-20 00:43:51,026 - INFO - System startup complete
+2025-10-20 00:44:35,603 - INFO - System startup complete
+2025-10-20 00:45:54,440 - INFO - System startup complete
+2025-10-20 00:51:13,236 - INFO - System startup complete
+2025-10-20 00:52:12,678 - INFO - System startup complete
+2025-10-20 00:52:12,679 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:00:40,958 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:00:40,960 - ERROR - Failed registration for patient (@pat): Password must be at least 8 characters
+2025-10-20 01:01:37,556 - INFO - System startup complete
+2025-10-20 01:01:37,557 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:02:04,929 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:02:04,931 - ERROR - Failed registration for patient (@dickson): Password must contain at least one number
+2025-10-20 01:03:15,802 - INFO - System startup complete
+2025-10-20 01:03:15,803 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:03:58,365 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:06:01,904 - INFO - System startup complete
+2025-10-20 01:06:01,904 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:06:23,355 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:06:23,357 - ERROR - Failed registration for patient (@aalex): Address cannot be empty
+2025-10-20 01:06:31,854 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:06:31,856 - ERROR - Failed registration for patient (@aalex): Email cannot be empty
+2025-10-20 01:06:37,911 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:06:37,914 - ERROR - Failed registration for patient (@aalex): Contact Number cannot be empty
+2025-10-20 01:06:46,094 - WARNING - Data file not found, Starting with a clean state.
+2025-10-20 01:10:01,398 - INFO - System startup complete
+2025-10-20 01:10:27,560 - INFO - System startup complete
+2025-10-20 01:11:19,601 - INFO - System startup complete
+2025-10-20 01:11:35,041 - INFO - System startup complete
+2025-10-20 01:12:01,591 - INFO - System startup complete
+2025-10-20 01:12:33,537 - INFO - System startup complete
+2025-10-20 01:15:41,411 - INFO - System startup complete

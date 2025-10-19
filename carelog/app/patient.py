@@ -1,9 +1,9 @@
 from app.user import User
 
 class PatientUser(User):
-    def __init__(self, p_id, username, password, name, gender, address, email, contact_num, date_joined, p_record, p_remark):
+    def __init__(self, p_id, username, password, name, bday, gender, address, email, contact_num, date_joined, p_record, p_remark):
         self.p_id = p_id
-        super().__init__(username, password, name, gender, address, email, contact_num, date_joined)
+        super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
         self.p_record = p_record or []
         self.p_remark = p_remark
 

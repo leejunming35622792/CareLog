@@ -1,6 +1,10 @@
-def search_record(self, p_id, record_id):
+from app.schedule import ScheduleManager
+
+manager = ScheduleManager()
+
+def search_record(p_id, record_id):
         record_dict = {}
-        for record in self.records:
+        for record in manager.records:
             if record_id == record.pr_record_id:
                 record_dict = {
                     "Record ID": record.pr_record_id,
