@@ -1,4 +1,5 @@
-import os, shutil, datetime, logging, bcrypt
+import os, shutil, datetime, logging
+import bcrypt
 
 # Global list to hold structured logs
 systemlogs = []
