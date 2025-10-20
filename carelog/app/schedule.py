@@ -38,52 +38,77 @@ class ScheduleManager():
         self._load_data()
 
     def _load_data(self):
+        with open(self.data_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+            # Patient objects
+            self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["bday"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"], p["p_remark"]) for p in data.get("patients", [])]
+
+            # Doctor objects
+            self.doctors = [DoctorUser(d["d_id"], d["username"], d["password"], d["name"], d["bday"], d["gender"], d["address"], d["email"], d["contact_num"], d["date_joined"], d["speciality"], d["department"]) for d in data.get("doctors", [])]
+
+            # Nurse objects
+            self.nurses = [NurseUser(n["n_id"], n["username"], n["password"], n["name"], n["bday"], n["gender"], n["address"], n["email"], n["contact_num"], n["date_joined"], n["speciality"], n["department"], n["with_doctor"]) for n in data.get("nurses", [])]
+
+            # Receptionist objects
+            self.receptionists = [ReceptionistUser(r["r_id"], r["username"], r["password"], r["name"], r["bday"], r["gender"], r["address"], r["email"], r["contact_num"], r["date_joined"]) for r in data.get("receptionists", [])]
+
+            # Admin objects
+            self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["bday"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
+
+            # Patient records
+            self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_medications"], pr["pr_billings"], pr["pr_prediction_result"], pr["pr_confidence_score"], pr["pr_remark"]) for pr in data.get("records", [])]
+
+            # Patient appointments
+            self.appointments = [PatientAppointment(appt["appt_id"], appt["p_id"], appt["d_id"], appt["date"], appt["time"], appt["status"], appt["remark"]) for appt in data.get("appointments", [])]
+
+            # Shift objects
+            self.shifts = [Shift(s["shift_id"], s["staff_id"], s["day"], s["start_time"], s["end_time"], s["remark"]) for s in data.get("shifts", [])]
+
+            # Patient Remark Objects
+            self.remarks = [PatientRemark(rm["remark_id"], rm["patient_id"], rm["doctor_id"], rm["timestamp"], rm["remark_type"], rm["content"], rm["is_active"]) for rm in data.get("remarks", [])]
+            # TODO: self.remarks= [PatientRemark.from_dict(rm) for rm in data.get("remarks",[])]
+
+            self.next_patient_id = data.get("next_patient_id", 1)
+            self.next_doctor_id = data.get("next_doctor_id", 1)
+            self.next_nurse_id = data.get("next_nurse_id", 1)
+            self.next_receptionist_id = data.get("next_receptionist_id", 1)
+            self.next_admin_id = data.get("next_admin_id", 1)
+            self.next_record_id = data.get("next_record_id", 1)
+            self.next_appt_id = data.get("next_appt_id", 1)
+            self.next_shift_id = data.get("next_shift_id", 1)
+            self.next_remark_id=data.get("next_remark_id",1)
+            return data
+
+        # if file doesn't exist
+        if not os.path.exists(self.data_path):
+            utils.log_event("Data file not found. Creating default data file.", "WARNING")
+            with open(self.data_path, "w", encoding="utf-8") as f:
+                json.dump(default_data, f, indent=2)
+            return default_data
+
+        # if file exists
         try:
             with open(self.data_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
+                content = f.read().strip()
 
-                # Patient objects
-                self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["bday"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"], p["p_remark"]) for p in data.get("patients", [])]
+                # if file is empty
+                if not content:
+                    utils.log_event("Data file empty. Resetting to default data.", "WARNING")
+                    with open(self.data_path, "w", encoding="utf-8") as f2:
+                        json.dump(default_data, f2, indent=2)
+                    return default_data
 
-                # Doctor objects
-                self.doctors = [DoctorUser(d["d_id"], d["username"], d["password"], d["name"], d["bday"], d["gender"], d["address"], d["email"], d["contact_num"], d["date_joined"], d["speciality"], d["department"]) for d in data.get("doctors", [])]
-
-                # Nurse objects
-                self.nurses = [NurseUser(n["n_id"], n["username"], n["password"], n["name"], n["bday"], n["gender"], n["address"], n["email"], n["contact_num"], n["date_joined"], n["speciality"], n["department"], n["with_doctor"]) for n in data.get("nurses", [])]
-
-                # Receptionist objects
-                self.receptionists = [ReceptionistUser(r["r_id"], r["username"], r["password"], r["name"], r["bday"], r["gender"], r["address"], r["email"], r["contact_num"], r["date_joined"]) for r in data.get("receptionists", [])]
-
-                # Admin objects
-                self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["bday"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
-
-                # Patient records
-                self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_medications"], pr["pr_billings"], pr["pr_prediction_result"], pr["pr_confidence_score"], pr["pr_remark"]) for pr in data.get("records", [])]
-
-                # Patient appointments
-                self.appointments = [PatientAppointment(appt["appt_id"], appt["p_id"], appt["d_id"], appt["date"], appt["time"], appt["status"], appt["remark"]) for appt in data.get("appointments", [])]
-
-                # Shift objects
-                self.shifts = [Shift(s["shift_id"], s["staff_id"], s["day"], s["start_time"], s["end_time"], s["remark"]) for s in data.get("shifts", [])]
-
-                # Patient Remark Objects
-                self.remarks = [PatientRemark(rm["remark_id"], rm["patient_id"], rm["doctor_id"], rm["timestamp"], rm["remark_type"], rm["content"], rm["is_active"]) for rm in data.get("remarks", [])]
-                # TODO: self.remarks= [PatientRemark.from_dict(rm) for rm in data.get("remarks",[])]
-
-                self.next_patient_id = data.get("next_patient_id", 1)
-                self.next_doctor_id = data.get("next_doctor_id", 1)
-                self.next_nurse_id = data.get("next_nurse_id", 1)
-                self.next_receptionist_id = data.get("next_receptionist_id", 1)
-                self.next_admin_id = data.get("next_admin_id", 1)
-                self.next_record_id = data.get("next_record_id", 1)
-                self.next_appt_id = data.get("next_appt_id", 1)
-                self.next_shift_id = data.get("next_shift_id", 1)
-                self.next_remark_id=data.get("next_remark_id",1)
+                # if file has valid JSON
+                data = json.loads(content)
                 return data
-        
-        except FileNotFoundError:
-            utils.log_event("Data file not found, Starting with a clean state.", "WARNING")
-            return {}
+
+        except json.JSONDecodeError:
+            utils.log_event("Data file invalid JSON. Resetting to default data.", "ERROR")
+            with open(self.data_path, "w", encoding="utf-8") as f:
+                json.dump(default_data, f, indent=2)
+            return default_data
+
 
     def _save_data(self):
         os.makedirs(os.path.dirname(self.data_path), exist_ok=True)
