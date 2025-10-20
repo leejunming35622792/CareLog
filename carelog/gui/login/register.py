@@ -52,12 +52,15 @@ def register(manager):
                         if username in all_usernames:
                             return False, "Username already in used", None
                         
+                        # Password Validation
                         if not password:
                             errors.append("Password cannot be empty")
                         else:
                             if len(password) < 8:
                                 errors.append("Password must be at least 8 characters")
-                            if not any(char.isdigit() for char in password):
+                            if not any(c.isupper() for c in password):
+                                errors.append("Password must contain at least one uppercase letter")
+                            if not any(c.isdigit() for c in password):
                                 errors.append("Password must contain at least one number")
                             
                         if errors:

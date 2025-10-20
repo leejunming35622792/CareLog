@@ -14,8 +14,8 @@ def login_page():
     if "username" not in st.session_state:
         st.session_state.username = ""
 
-    if "get_user_detail" not in st.session_state:
-        st.session_state.get_user_detail = ""
+    if "register_phase" not in st.session_state:
+        st.session_state.get_user_detail = "basic"
 
     # --- Default Display ---
     if st.session_state.get("page") == "login":
@@ -23,10 +23,13 @@ def login_page():
         option = st.sidebar.selectbox("", ["Log In", "Create Account", "About Us"])
 
         if option == "Log In":
+            st.session_state.username = ""
+            st.session_state.register_phase = "basic"
             from gui.login.log_in import log_in
             log_in(st.session_state.manager)
 
         elif option == "Create Account":
+            st.session_state.username = ""
             from gui.login.register import register
             register(st.session_state.manager)
 

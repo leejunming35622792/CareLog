@@ -18,9 +18,9 @@ def get_detail(role, username, password, user_id):
 
         col1, col2 = st.columns(2)
         with col1:
-            username = st.text_input("Username: ", value=f"@{username}", disabled=True)
+            input_username = st.text_input("Username: ", placeholder=f"@{username}", value=username)
         with col2:
-            password = st.text_input("Password", value=password, disabled=True)
+            input_password = st.text_input("Password", value=password, type="password")
 
         st.divider()
         col3, col4 = st.columns(2)
@@ -34,7 +34,7 @@ def get_detail(role, username, password, user_id):
             address = st.text_area("Enter Home Address: ")
         with col6:
             email = st.text_input("Enter Email Address:")
-            contact_num = st.text_input("Enter Contact Number: ", placeholder="+601X-XXXXXXX")
+            contact_num = st.text_input("Enter Contact Number: ", placeholder="+6012-3456789")
 
         col7, col8 = st.columns(2)
         with col7:
@@ -57,27 +57,27 @@ def get_detail(role, username, password, user_id):
             with st.spinner("Processing..."):
                 time.sleep(1.5)
                 role = role.lower()     
-                birthday = str(birthday)           
+                birthday = birthday.isoformat()         
                 if role == "patient": 
-                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)
+                    success, message, user_obj = user.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)
                 elif role == "doctor":
-                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, birthday, gender, address, email, contact_num, date_joined, speciality, department, None)
+                    success, message, user_obj = user.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, speciality, department, None)
                 elif role == "nurse":
-                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, birthday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
+                    success, message, user_obj = user.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor)
                 elif role == "receptionist":
-                    success, message, user_obj = user.create_user(manager, role, user_id, username, password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)
+                    success, message, user_obj = user.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)
                 
                 st.session_state.get_user_detail = ""
 
                 if success:
                     manager.save()
-                    utils.log_event(f"{role} {username} registered successfully.", "INFO")
+                    utils.log_event(f"{role} {input_username} registered successfully.", "INFO")
                     st.success(message)
-                    st.toast(f"Welcome, {username}!")
-                    st.session_state.username = username
+                    st.toast(f"Welcome, {input_username}!")
+                    st.session_state.username = input_username
                     st.session_state.page = role.lower()
                     st.rerun()
                 else:
-                    print(message)
+                    for m in message:
+                        st.error(m)
                     utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
-                    st.error(message)

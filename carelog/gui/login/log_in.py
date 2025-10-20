@@ -35,6 +35,7 @@ def log_in(manager):
                 else:
                     from helper_manager.auth_manager import AuthManager
                     am = AuthManager(manager) # Pass in schedule manager
+                    
                     # Add login delay
                     with st.spinner("Logging In..."):
                         time.sleep(2)
