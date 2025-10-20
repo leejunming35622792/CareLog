@@ -35,31 +35,34 @@ def profile(Manager):
                                           index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
             with col4:
                 # Get and clean birthday
-                bday = getattr(patient, "bday", None)
+                bday = patient.bday
+                st.info(bday)
 
                 # Handle missing or string birthday safely
                 if not bday:
                     bday = datetime.date(2000, 1, 1)
+                    st.info(bday)
+                    st.info(datetime.date.today())
+                    new_bday = st.date_input("Birthday", value=birthday)
                 elif isinstance(bday, str):
-                    try:
-                        # ISO format (YYYY-MM-DD)
-                        bday = datetime.date.fromisoformat(bday)
-                    except ValueError:
-                        try:
-                            # Fallback for DD/MM/YYYY
-                            bday = datetime.datetime.strptime(bday, "%d/%m/%Y").date()
-                        except ValueError:
-                            bday = datetime.date(2000, 1, 1)
+                    birthday = patient.bday[10]
 
-                # Streamlit date input (safe to use)
-                new_bday = st.date_input("Birthday", value=bday)
+                    # try:
+                    #     # bday = datetime.date.fromisoformat(bday)
+                    # except ValueError:
+                    #     try:
+                    #         # Fallback for DD/MM/YYYY
+                    #         bday = datetime.datetime.strptime(bday, "%d/%m/%Y").date()
+                    #     except ValueError:
+                    #         bday = datetime.date(2000, 1, 1)
 
-                # Calculate age based on selected date
-                today = datetime.date.today()
-                age = today.year - new_bday.year - ((today.month, today.day) < (new_bday.month, new_bday.day))
-                # Display in Streamlit
+                    # Streamlit date input (safe to use)
 
-        new_age = st.text_input("Age", value=str(age), disabled=True)
+                    # Calculate age based on selected date
+                    today = datetime.date.today()
+                    age = today.year - new_bday[4]
+                    new_age = st.text_input("Age", value=str(age), disabled=True)
+
         with col2:
             new_address = st.text_area("Address", value=patient.address).title()
             new_email = st.text_input("Email", value=patient.email)
