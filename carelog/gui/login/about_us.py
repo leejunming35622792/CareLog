@@ -23,3 +23,11 @@ def about_us(manager):
     )
 
     st.divider()
+
+    with st.form("test-form"):
+        choose_date = st.date_input("Choose Date")
+        button = st.form_submit_button("Output")
+        if button:
+            choose_date = str(choose_date).
+            st.info(choose_date)
+            st.info(type(choose_date))
