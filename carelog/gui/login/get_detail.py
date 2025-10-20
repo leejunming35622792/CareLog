@@ -56,8 +56,10 @@ def get_detail(role, username, password, user_id):
         if continue_button:
             with st.spinner("Processing..."):
                 time.sleep(1.5)
+                
                 role = role.lower()     
-                birthday = birthday.isoformat()         
+                birthday = birthday.isoformat() 
+
                 if role == "patient": 
                     success, message, user_obj = user.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)
                 elif role == "doctor":
