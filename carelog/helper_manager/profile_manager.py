@@ -1,5 +1,16 @@
+import datetime
 from app.schedule import ScheduleManager
 manager = ScheduleManager()
+
+def find_age(bday):
+    # Get current year
+    today = datetime.datetime.now().year
+    # Get birth year
+    birth_year = datetime.datetime.fromisoformat(bday)
+    # Find age
+    age = today - birth_year.year
+    # Return age
+    return age
 
 def view_doctor_details(username):
         doctor = next((d for d in manager.doctors if d.username == username), None)
