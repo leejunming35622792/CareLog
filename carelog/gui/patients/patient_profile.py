@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import datetime
 from app.user import User
+from helper_manager.profile_manager import find_age
 
 def profile(Manager):
     # Variables
@@ -9,17 +10,24 @@ def profile(Manager):
     username = st.session_state.username
 
     # Page design
-    st.title("CareLog - About You")
+    st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
 
     with st.form("profile-form"):
         # Find patient by username
         patient = next((p for p in manager.patients if p.username == username), None)
-
         if not patient:
             st.error("Unexpected Error!")
             return
+        
+        # Page design
+        if patient.gender == "Male":
+            disp = "Your Profile 👨"
+        elif patient.gender == "Female":
+            disp = "Your Profile 👧"
+        else:
+            disp = "Your Profile 👥"
+        st.markdown(f"<h1 style='text-align: center; font-size: 200%'>{disp}</h1>", unsafe_allow_html=True)
 
-        st.subheader("Patient Profile")
 
         # Layout with columns
         col1, col2 = st.columns(2)
@@ -34,34 +42,11 @@ def profile(Manager):
                 new_gender = st.selectbox("Gender", ["Male", "Female", "Other"], 
                                           index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
             with col4:
-                # Get and clean birthday
-                bday = patient.bday
-                st.info(bday)
-
-                # Handle missing or string birthday safely
-                if not bday:
-                    bday = datetime.date(2000, 1, 1)
-                    st.info(bday)
-                    st.info(datetime.date.today())
-                    new_bday = st.date_input("Birthday", value=birthday)
-                elif isinstance(bday, str):
-                    birthday = patient.bday[10]
-
-                    # try:
-                    #     # bday = datetime.date.fromisoformat(bday)
-                    # except ValueError:
-                    #     try:
-                    #         # Fallback for DD/MM/YYYY
-                    #         bday = datetime.datetime.strptime(bday, "%d/%m/%Y").date()
-                    #     except ValueError:
-                    #         bday = datetime.date(2000, 1, 1)
-
-                    # Streamlit date input (safe to use)
-
-                    # Calculate age based on selected date
-                    today = datetime.date.today()
-                    age = today.year - new_bday[4]
-                    new_age = st.text_input("Age", value=str(age), disabled=True)
+                new_bday = st.date_input("Birthday", value=patient.bday)
+                # Find age
+                age = find_age(patient.bday)
+                # Display age
+                new_age = st.text_input("Age", value=str(age), disabled=True)
 
         with col2:
             new_address = st.text_area("Address", value=patient.address).title()
@@ -107,7 +92,9 @@ def profile(Manager):
                 for e in errors:
                     st.error(e)
             else:
-                result = User.update_patient_detail(manager, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_remark)
+                new_bday = new_bday.isoformat()
+
+                result = User.update_profile(manager, username, new_password, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None, None)
                 with st.spinner("Saving changes..."):
                     time.sleep(1)
                 if result:
