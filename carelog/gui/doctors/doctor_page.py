@@ -1,44 +1,55 @@
 import streamlit as st
-import datetime
+from datetime import datetime, timedelta
 import pandas as pd
-from helper_manager.profile_manager import view_doctor_details 
+
+# Treat these as free functions (helper utilities)
+from helper_manager.profile_manager import (
+    view_doctor_details,
+    view_patient_details_by_doctor,
+)
+
+# Appointment manager is a class that uses your manager
 from helper_manager.appointment_manager import AppointmentManager
 
-manager = st.session_state.manager
-appt_manager = AppointmentManager(manager)
 
-def dashboard(username):
+# =========================
+# DASHBOARD
+# =========================
+def dashboard(manager, username):
     """Main dashboard showing overview and quick stats"""
-    
-    # Page design
+
     st.divider()
     st.header("Dashboard Overview")
-    
-    # Get doctor details
-    password = st.session_state.get('password', '')
+
+    # Doctor details (free function)
     success, message, profile = view_doctor_details(username)
-    
+
     if profile:
         col1, col2, col3 = st.columns(3)
-        
         with col1:
-            st.metric("Doctor ID", profile.get('staff_id', 'N/A'))
+            st.metric("Doctor ID", profile.get("staff_id", "N/A"))
         with col2:
-            st.metric("Department", profile.get('department', 'Not Set'))
+            st.metric("Department", profile.get("department", "Not Set"))
         with col3:
-            st.metric("Speciality", profile.get('speciality', 'Not Set'))
-        
+            st.metric("Speciality", profile.get("speciality", "Not Set"))
+
         st.divider()
 
         # Upcoming appointments preview
         st.header("Today's Appointments")
+
+        # Build AppointmentManager here (safe for Streamlit reruns)
+        appt_manager = AppointmentManager(manager)
+
         success, msg, appointments = appt_manager.view_upcoming_appointments(username)
         if success and appointments:
             today = datetime.datetime.now().strftime("%Y-%m-%d")
-            today_appts = [a for a in appointments if a['date'] == today]
+            today_appts = [a for a in appointments if a.get("date") == today]
             if today_appts:
                 for appt in today_appts[:3]:  # Show first 3
-                    st.info(f"🕐 {appt['time']} - {appt['patient_name']} ({appt['status']})")
+                    st.info(
+                        f"🕐 {appt.get('time','--:--')} - {appt.get('patient_name','Unknown')} ({appt.get('status','—')})"
+                    )
             else:
                 st.success("No appointments scheduled for today")
         else:
@@ -47,77 +58,84 @@ def dashboard(username):
         st.error(message)
 
 
+# =========================
+# PROFILE
+# =========================
 def profile_page(manager, username):
     """View and update doctor profile"""
     st.header("My Profile")
-    
-    password = st.session_state.get('password', '')
-    success, message, profile = view_doctor_details(username)
-    
-    if profile:
-        # Display current profile
-        st.subheader("Current Profile Information")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.text_input("Name", value=profile.get('name',''), disabled=True)
-            st.text_input("Email", value=profile.get('email', ''), disabled=True)
-            st.text_input("Gender", value=profile.get('gender', ''), disabled=True)
-            st.text_input("Date of Birth", value=profile.get('date_of_birth', ''), disabled=True)
-        
-        with col2:
-            st.text_input("Contact Number", value=profile.get('contact_num', ''), disabled=True)
-            st.text_area("Address", value=profile.get('address', ''), disabled=True)
-            st.text_input("Department", value=profile.get('department', ''), disabled=True)
-            st.text_input("Speciality", value=profile.get('speciality', ''), disabled=True)
-        
-        st.divider()
-        
-        # Update profile section
-        st.subheader("Update Profile")
-        
-        with st.form("update_profile_form"):
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                new_name = st.text_input("New Name (optional)")
-                new_email = st.text_input("New Email (optional)")
-                new_gender = st.selectbox("New Gender (optional)", ["", "Male", "Female", "Other"])
-                new_password = st.text_input("New Password (optional)", type="password")
-            
-            with col2:
-                new_contact = st.text_input("New Contact Number (optional)")
-                new_address = st.text_area("New Address (optional)")
-                new_department = st.text_input("New Department (optional)")
-                new_speciality = st.text_input("New Speciality (optional)")
-            
-            submitted = st.form_submit_button("Update Profile")
-            
-            if submitted:
-                success = manager.update_doctor_details(
-                    username=username,
-                    new_password=new_password if new_password else None,
-                    new_name=new_name if new_name else None,
-                    new_gender=new_gender if new_gender else None,
-                    new_address=new_address if new_address else None,
-                    new_email=new_email if new_email else None,
-                    new_contact_num=new_contact if new_contact else None,
-                    new_department=new_department if new_department else None,
-                    new_speciality=new_speciality if new_speciality else None
-                )
-                if success:
-                    st.success("✅ Profile updated successfully!")
-                    st.rerun()
-                else:
-                    st.error("Failed to update profile")
-    else:
-        st.error(message)
 
+    success, message, profile = view_doctor_details(username)
+
+    if not profile:
+        st.error(message)
+        return
+
+    # Display current profile
+    st.subheader("Current Profile Information")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.text_input("Name", value=profile.get("name", ""), disabled=True)
+        st.text_input("Email", value=profile.get("email", ""), disabled=True)
+        st.text_input("Gender", value=profile.get("gender", ""), disabled=True)
+        st.text_input(
+            "Date of Birth", value=profile.get("date_of_birth", ""), disabled=True
+        )
+
+    with col2:
+        st.text_input("Contact Number", value=profile.get("contact_num", ""), disabled=True)
+        st.text_area("Address", value=profile.get("address", ""), disabled=True)
+        st.text_input("Department", value=profile.get("department", ""), disabled=True)
+        st.text_input("Speciality", value=profile.get("speciality", ""), disabled=True)
+
+    st.divider()
+
+    # Update profile section
+    st.subheader("Update Profile")
+
+    with st.form("update_profile_form"):
+        c1, c2 = st.columns(2)
+        with c1:
+            new_name = st.text_input("New Name (optional)")
+            new_email = st.text_input("New Email (optional)")
+            new_gender = st.selectbox("New Gender (optional)", ["", "Male", "Female", "Other"])
+            new_password = st.text_input("New Password (optional)", type="password")
+        with c2:
+            new_contact = st.text_input("New Contact Number (optional)")
+            new_address = st.text_area("New Address (optional)")
+            new_department = st.text_input("New Department (optional)")
+            new_speciality = st.text_input("New Speciality (optional)")
+
+        submitted = st.form_submit_button("Update Profile")
+
+        if submitted:
+            ok = manager.update_doctor_details(
+                username=username,
+                new_password=new_password or None,
+                new_name=new_name or None,
+                new_gender=new_gender or None,
+                new_address=new_address or None,
+                new_email=new_email or None,
+                new_contact_num=new_contact or None,
+                new_department=new_department or None,
+                new_speciality=new_speciality or None,
+            )
+            if ok:
+                st.success("✅ Profile updated successfully!")
+                st.rerun()
+            else:
+                st.error("Failed to update profile")
+
+
+# =========================
+# SEARCH UI (shared)
+# =========================
 def search_and_select_profile_ui(manager):
     role_map = {
-        "patient":      (manager.patients,      "p_id"),
-        "doctor":       (manager.doctors,       "d_id"),
-        "nurse":        (manager.nurses,        "n_id"),
+        "patient": (manager.patients, "p_id"),
+        "doctor": (manager.doctors, "d_id"),
+        "nurse": (manager.nurses, "n_id"),
         "receptionist": (manager.receptionists, "r_id"),
     }
 
@@ -134,27 +152,29 @@ def search_and_select_profile_ui(manager):
         return False, None, None  # (found, selected_obj, selected_role)
 
     items, id_attr = role_map[role]
-    matches = [o for o in items if name_query.strip().lower() in getattr(o, "name", "").lower()]
+    nq = name_query.strip().lower()
+    matches = [o for o in items if nq in getattr(o, "name", "").lower()]
 
     if not matches:
         st.warning(f"No {role} found matching '{name_query}'.")
         return False, None, None
 
     # Build table
-    rows = []
-    idx = {}
+    rows, idx = [], {}
     for o in matches:
         oid = getattr(o, id_attr)
-        rows.append({
-            "ID": oid,
-            "Name": getattr(o, "name", ""),
-            "Gender": getattr(o, "gender", ""),
-            "Email": getattr(o, "email", ""),
-            "Contact": getattr(o, "contact_num", ""),
-            "Department": getattr(o, "department", ""),
-            "Speciality": getattr(o, "speciality", ""),
-            "Joined": getattr(o, "date_joined", ""),
-        })
+        rows.append(
+            {
+                "ID": oid,
+                "Name": getattr(o, "name", ""),
+                "Gender": getattr(o, "gender", ""),
+                "Email": getattr(o, "email", ""),
+                "Contact": getattr(o, "contact_num", ""),
+                "Department": getattr(o, "department", ""),
+                "Speciality": getattr(o, "speciality", ""),
+                "Joined": getattr(o, "date_joined", ""),
+            }
+        )
         idx[oid] = o
 
     df = pd.DataFrame(rows)
@@ -175,36 +195,41 @@ def search_and_select_profile_ui(manager):
 
     return False, None, None
 
+
+# =========================
+# PATIENT RECORDS
+# =========================
 def patient_records_page(manager, username):
     """View patient details and manage remarks"""
     st.header("Patient Records & Remarks")
-    
+
     tab1, tab2, tab3 = st.tabs(["View Patient Details", "Add Remark", "View Remarks"])
-    
+
+    # ----- Tab 1: View Patient Details
     with tab1:
         st.markdown("#### Search by Name")
         found, selected, role = search_and_select_profile_ui(manager)
         if found and selected and role == "patient":
             st.success("Patient selected from search.")
-            info_ok, info_msg, info = manager.view_patient_details_by_doctor(selected.p_id)
+            info_ok, info_msg, info = view_patient_details_by_doctor(selected.p_id)
             if info_ok:
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.metric("Patient ID", info['patient_id'])
-                    st.metric("Name", info['name'])
-                    st.metric("Gender", info['gender'])
-                    st.metric("Date of Birth", info.get('date_of_birth', 'N/A'))
+                    st.metric("Patient ID", info["patient_id"])
+                    st.metric("Name", info["name"])
+                    st.metric("Gender", info["gender"])
+                    st.metric("Date of Birth", info.get("date_of_birth", "N/A"))
                 with col2:
                     st.write("**Previous Conditions:**")
-                    if info['previous_conditions']:
-                        for c in info['previous_conditions']:
+                    if info["previous_conditions"]:
+                        for c in info["previous_conditions"]:
                             st.write(f"• {c}")
                     else:
                         st.info("No previous conditions recorded")
 
                     st.write("**Medication History:**")
-                    if info['medication_history']:
-                        for m in info['medication_history']:
+                    if info["medication_history"]:
+                        for m in info["medication_history"]:
                             st.write(f"• {m}")
                     else:
                         st.info("No medication history recorded")
@@ -213,46 +238,50 @@ def patient_records_page(manager, username):
 
         st.divider()
         st.markdown("#### Search by ID")
-        patient_id = st.number_input("Enter Patient ID", min_value=1, step=1, key="patient_search")
+        patient_id = st.number_input(
+            "Enter Patient ID", min_value=1, step=1, key="patient_search"
+        )
         if st.button("Search Patient", key="search_btn"):
-            success, message, info = manager.view_patient_details_by_doctor(patient_id)
+            success, message, info = view_patient_details_by_doctor(patient_id)
             if success:
                 st.success(message)
                 col1, col2 = st.columns(2)
                 with col1:
-                    st.metric("Patient ID", info['patient_id'])
-                    st.metric("Name", info['name'])
-                    st.metric("Gender", info['gender'])
-                    st.metric("Date of Birth", info.get('date_of_birth', 'N/A'))
+                    st.metric("Patient ID", info["patient_id"])
+                    st.metric("Name", info["name"])
+                    st.metric("Gender", info["gender"])
+                    st.metric("Date of Birth", info.get("date_of_birth", "N/A"))
                 with col2:
                     st.write("**Previous Conditions:**")
-                    if info['previous_conditions']:
-                        for condition in info['previous_conditions']:
+                    if info["previous_conditions"]:
+                        for condition in info["previous_conditions"]:
                             st.write(f"• {condition}")
                     else:
                         st.info("No previous conditions recorded")
                     st.write("**Medication History:**")
-                    if info['medication_history']:
-                        for med in info['medication_history']:
+                    if info["medication_history"]:
+                        for med in info["medication_history"]:
                             st.write(f"• {med}")
                     else:
                         st.info("No medication history recorded")
             else:
                 st.error(message)
-    
+
+    # ----- Tab 2: Add Remark
     with tab2:
         st.subheader("Add Patient Remark")
-        
+
         with st.form("add_remark_form"):
-            patient_id_remark = st.number_input("Patient ID", min_value=1, step=1, key="remark_patient_id")
+            patient_id_remark = st.number_input(
+                "Patient ID", min_value=1, step=1, key="remark_patient_id"
+            )
             remark_type = st.selectbox(
-                "Remark Type",
-                ["mood", "pain_level", "dietary", "general", "observation"]
+                "Remark Type", ["mood", "pain_level", "dietary", "general", "observation"]
             )
             remark_content = st.text_area("Remark Content", height=150)
-            
+
             submitted = st.form_submit_button("Add Remark")
-            
+
             if submitted:
                 if not remark_content.strip():
                     st.error("Please enter remark content")
@@ -261,64 +290,69 @@ def patient_records_page(manager, username):
                         patient_id=patient_id_remark,
                         doctor_username=username,
                         remark_type=remark_type,
-                        remark_content=remark_content
+                        remark_content=remark_content,
                     )
-                    
                     if success:
                         st.success(f"✅ {message} (Remark ID: {remark_id})")
                     else:
                         st.error(message)
-    
+
+    # ----- Tab 3: View/Edit Remarks
     with tab3:
         st.subheader("View Patient Remarks")
-        
+
         col1, col2, col3 = st.columns(3)
         with col1:
-            view_patient_id = st.number_input("Patient ID", min_value=1, step=1, key="view_remarks_patient_id")
+            view_patient_id = st.number_input(
+                "Patient ID", min_value=1, step=1, key="view_remarks_patient_id"
+            )
         with col2:
-            filter_type = st.selectbox("Filter by Type (optional)", 
-                                      ["All", "mood", "pain_level", "dietary", "general", "observation"])
+            filter_type = st.selectbox(
+                "Filter by Type (optional)",
+                ["All", "mood", "pain_level", "dietary", "general", "observation"],
+            )
         with col3:
             days_filter = st.number_input("Recent Days", min_value=1, max_value=365, value=7)
-        
+
         col_a, col_b = st.columns(2)
         with col_a:
             view_all = st.button("View All Remarks", key="view_all_remarks")
         with col_b:
             view_recent = st.button("View Recent Remarks", key="view_recent_remarks")
-        
+
         if view_all:
             remark_type_filter = None if filter_type == "All" else filter_type
             success, message, remarks = manager.view_patient_remarks(
-                patient_id=view_patient_id,
-                remark_type=remark_type_filter
+                patient_id=view_patient_id, remark_type=remark_type_filter
             )
-            
+
             if success:
                 st.info(message)
                 if remarks:
                     for remark in remarks:
-                        with st.expander(f"{remark['remark_type'].upper()} - {remark['timestamp']} by {remark['doctor_name']}"):
-                            st.write(remark['content'])
+                        with st.expander(
+                            f"{remark['remark_type'].upper()} - {remark['timestamp']} by {remark['doctor_name']}"
+                        ):
+                            st.write(remark["content"])
                             st.caption(f"Last Modified: {remark['last_modified']}")
-                            
+
                             # Edit remark option
                             if st.button(f"Edit", key=f"edit_{remark['remark_id']}"):
                                 st.session_state[f"editing_{remark['remark_id']}"] = True
-                            
+
                             if st.session_state.get(f"editing_{remark['remark_id']}", False):
                                 new_content = st.text_area(
                                     "New Content",
-                                    value=remark['content'],
-                                    key=f"new_content_{remark['remark_id']}"
+                                    value=remark["content"],
+                                    key=f"new_content_{remark['remark_id']}",
                                 )
-                                col_x, col_y = st.columns(2)
-                                with col_x:
+                                cx, cy = st.columns(2)
+                                with cx:
                                     if st.button("Save", key=f"save_{remark['remark_id']}"):
                                         edit_success, edit_msg = manager.edit_patient_remark(
-                                            remark_id=remark['remark_id'],
+                                            remark_id=remark["remark_id"],
                                             doctor_username=username,
-                                            new_content=new_content
+                                            new_content=new_content,
                                         )
                                         if edit_success:
                                             st.success(edit_msg)
@@ -326,7 +360,7 @@ def patient_records_page(manager, username):
                                             st.rerun()
                                         else:
                                             st.error(edit_msg)
-                                with col_y:
+                                with cy:
                                     if st.button("Cancel", key=f"cancel_{remark['remark_id']}"):
                                         st.session_state[f"editing_{remark['remark_id']}"] = False
                                         st.rerun()
@@ -334,119 +368,179 @@ def patient_records_page(manager, username):
                     st.info("No remarks found")
             else:
                 st.error(message)
-        
+
         if view_recent:
             success, message, remarks = manager.get_recent_patient_remarks(
-                patient_id=view_patient_id,
-                days=days_filter
+                patient_id=view_patient_id, days=days_filter
             )
-            
             if success:
                 st.info(message)
                 if remarks:
                     for remark in remarks:
-                        with st.expander(f"{remark['remark_type'].upper()} - {remark['timestamp']}"):
+                        with st.expander(
+                            f"{remark['remark_type'].upper()} - {remark['timestamp']}"
+                        ):
                             st.write(f"**Doctor:** {remark['doctor_name']}")
-                            st.write(remark['content'])
+                            st.write(remark["content"])
                 else:
                     st.info(f"No remarks found in the last {days_filter} days")
             else:
                 st.error(message)
 
 
+# =========================
+# APPOINTMENTS
+# =========================
 def appointments_page(manager, username):
-    pass
-    # """View and manage appointments"""
-    # st.header("Appointments")
-    
-    # success, message, appointments = appt_manager.view_upcoming_appointments(username)
-    
-    # if success:
-    #     st.success(message)
-        
-    #     if appointments:
-    #         # Filter options
-    #         col1, col2 = st.columns(2)
-    #         with col1:
-    #             enable_date_filter = st.checkbox("Filter by Date (optional)")
-    #             filter_date = st.date_input("Pick a Date") if enable_date_filter else None
-    #         with col2:
-    #             filter_status = st.selectbox("Filter by Status", ["All", "Pending", "Confirmed", "Completed", "Cancelled"])
-            
-    #         # Apply filters
-    #         filtered_appts = appointments
-    #         if filter_date:
-    #             filtered_appts = [a for a in filtered_appts if a['date'] == filter_date.strftime("%Y-%m-%d")]
-    #         if filter_status != "All":
-    #             filtered_appts = [a for a in filtered_appts if a['status'] == filter_status]
-            
-    #         st.divider()
-            
-    #         if filtered_appts:
-    #             for appt in filtered_appts:
-    #                 with st.container():
-    #                     col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
-                        
-    #                     with col1:
-    #                         st.write(f"**📅 {appt['date']}**")
-    #                     with col2:
-    #                         st.write(f"**🕐 {appt['time']}**")
-    #                     with col3:
-    #                         st.write(f"**👤 {appt['patient_name']}** (ID: {appt['patient_id']})")
-    #                     with col4:
-    #                         status_color = {
-    #                             "Pending": "🟡",
-    #                             "Confirmed": "🟢",
-    #                             "Completed": "🔵",
-    #                             "Cancelled": "🔴"
-    #                         }
-    #                         st.write(f"{status_color.get(appt['status'], '⚪')} {appt['status']}")
-                        
-    #                     if appt['remark']:
-    #                         st.caption(f"Note: {appt['remark']}")
-                        
-    #                     st.divider()
-    #         else:
-    #             st.info("No appointments match the selected filters")
-    #     else:
-    #         st.info("No upcoming appointments scheduled")
-    # else:
-    #     st.error(message)
+    """View and manage appointments"""
+    st.header("Appointments")
+
+    appt_manager = AppointmentManager(manager)
+    success, message, appointments = appt_manager.view_upcoming_appointments(username)
+
+    if not success:
+        st.error(message)
+        return
+
+    st.success(message)
+
+    if not appointments:
+        st.info("No upcoming appointments scheduled")
+        return
+
+    # Filters
+    c1, c2 = st.columns(2)
+    with c1:
+        enable_date_filter = st.checkbox("Filter by Date (optional)")
+        filter_date = st.date_input("Pick a Date") if enable_date_filter else None
+    with c2:
+        filter_status = st.selectbox(
+            "Filter by Status", ["All", "Pending", "Confirmed", "Completed", "Cancelled"]
+        )
+
+    # Apply filters
+    filtered_appts = appointments
+    if filter_date:
+        target = filter_date.strftime("%Y-%m-%d")
+        filtered_appts = [a for a in filtered_appts if a.get("date") == target]
+    if filter_status != "All":
+        filtered_appts = [a for a in filtered_appts if a.get("status") == filter_status]
+
+    st.divider()
+
+    # Render
+    if filtered_appts:
+        for appt in filtered_appts:
+            with st.container():
+                col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
+                with col1:
+                    st.write(f"**📅 {appt.get('date','—')}**")
+                with col2:
+                    st.write(f"**🕐 {appt.get('time','--:--')}**")
+                with col3:
+                    st.write(f"**👤 {appt.get('patient_name','Unknown')}** (ID: {appt.get('patient_id','—')})")
+                with col4:
+                    status_color = {
+                        "Pending": "🟡",
+                        "Confirmed": "🟢",
+                        "Completed": "🔵",
+                        "Cancelled": "🔴",
+                    }
+                    st.write(f"{status_color.get(appt.get('status'), '⚪')} {appt.get('status','—')}")
+                if appt.get("remark"):
+                    st.caption(f"Note: {appt['remark']}")
+                st.divider()
+    else:
+        st.info("No appointments match the selected filters")
 
 
-def doctor_page(Manager):
+# =========================
+# SHIFT
+# =========================
+def shift_page(manager):
+    # Variables
+    manager = st.session_state.manager
+    username = st.session_state.username
+    doctor = next((d for d in manager.doctors if d.username == username), None)
+
+    st.subheader("Shift Schedule")
+
+    if not doctor:
+        st.warning("No doctor found for this username.")
+        return
+
+    # Filter shifts for this doctor
+    all_shifts = [s.__dict__ for s in manager.shifts if s.staff_id == doctor.d_id]
+
+    if not all_shifts:
+        st.info("No shifts assigned yet.")
+        return
+
+    # Define table structure
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    times = [f"{h:02d}:00" for h in range(8, 21)]  # 8 AM–8 PM
+
+    schedule_df = pd.DataFrame(index=times, columns=days)
+    schedule_df[:] = ""
+
+    # Fill timetable
+    for shift in all_shifts:
+        day = shift["day"]
+        start = datetime.strptime(shift["start_time"], "%H:%M")
+        end = datetime.strptime(shift["end_time"], "%H:%M")
+        remark = shift["remark"]
+
+        current = start
+        while current < end:
+            time_str = current.strftime("%H:00")
+            if day in schedule_df.columns and time_str in schedule_df.index:
+                schedule_df.loc[time_str, day] = remark
+            current += timedelta(hours=1)
+
+    # Display table
+    st.dataframe(
+        schedule_df.style.set_properties(**{
+            'text-align': 'center',
+            'white-space': 'pre-wrap'
+        }),
+        use_container_width=True,
+        height=500
+    )
+
+# =========================
+# ENTRYPOINT (Doctor)
+# =========================
+def doctor_page(_Manager):
     """Main doctor page with navigation"""
     manager = st.session_state.manager
     username = st.session_state.username
-    
-    # Store password in session state if not already there
-    #if 'password' not in st.session_state:
-       # st.session_state.password = ''
-    
-    tabs = ["Dashboard", "Profile", "Patient Records", "Appointments"]
 
-    # Session state for logout
-    if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
+    tabs = ["Dashboard", "Profile", "Patient Records", "Appointments", "Shift"]
+
+    # Logout handling
+    if st.session_state.get("logout_triggered"):
         st.session_state.logout_triggered = False
         st.rerun()
 
-    # Page design
-    st.title(f"🏥 CareLog Dashboard")
+    # Layout
+    st.title("🏥 CareLog")
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.divider()
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
 
-    # Route to appropriate page
+    # Routing
     if option == "Dashboard":
-        dashboard(username)
+        dashboard(manager, username)
     elif option == "Profile":
         profile_page(manager, username)
     elif option == "Patient Records":
         patient_records_page(manager, username)
     elif option == "Appointments":
         appointments_page(manager, username)
+    elif option == "Shift":
+        shift_page(manager)
 
 
 def logout():
@@ -455,5 +549,4 @@ def logout():
     st.session_state.username = None
     st.session_state.password = None
     st.session_state.logout_triggered = True
-    st.session_state.username = ""
     st.session_state.get_user_detail = ""
