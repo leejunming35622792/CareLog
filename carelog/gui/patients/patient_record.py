@@ -3,9 +3,11 @@ import pandas as pd
 from helper_manager.record_manager import search_record
 
 def record(manager):
-    # --- Setup ---
+    # Variable
     username = st.session_state.username
-    st.title("CareLog - We Know You")
+
+    # Page design
+    st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
 
     # --- Find patient ---
     patient = next((p for p in manager.patients if p.username == username), None)

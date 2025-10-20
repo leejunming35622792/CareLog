@@ -28,9 +28,10 @@ def search_record(p_id, record_id):
                 "Patient ID": record.p_id,
                 "Date": record.pr_timestamp,
                 # Display: join keys; switch to the commented version to show severities
-                "Conditions": ", ".join(getattr(record, "pr_conditions", {}).keys()),
-                # "Conditions": ", ".join([f"{k}: {v}" for k, v in getattr(record, "pr_conditions", {}).items()]),
-                "Medications": ", ".join(getattr(record, "pr_medications", [])),
+                "Conditions": record.pr_conditions,
+                # "Conditions": ", ".join(getattr(record, "pr_conditions", {}).keys()),
+                "Medications": record.pr_medications,
+                # "Medications": ", ".join(getattr(record, "pr_medications", [])),
                 "Billings": getattr(record, "pr_billings", 0.0),
                 "Prediction Result": getattr(record, "pr_prediction_result", None),
                 "Confidence Score": getattr(record, "pr_confidence_score", None),
