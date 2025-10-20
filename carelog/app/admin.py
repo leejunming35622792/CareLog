@@ -36,8 +36,7 @@ class AdminUser(User):
         date_joined = datetime.datetime.now().isoformat()
 
         # Create new user using central factory in user_manager
-        success, message, new_user = User.create_user(
-            role, next_id, username, password, date_joined)
+        success, message, new_user = User.create_user(sc, role, next_id, username, password, name, bday, gender, address, email, contact, date_joined)
 
         if success:
             utils.log_event(f"Admin created new {role} account {username} ({next_id})", "INFO")

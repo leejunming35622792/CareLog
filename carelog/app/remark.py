@@ -1,7 +1,7 @@
 import datetime
 
 class PatientRemark:
-    def __init__ (self,remark_id: int,patient_id: int,doctor_id: int,timestamp:str, remark_type: str,content:str,is_active: bool= True): 
+    def __init__ (self,remark_id: str,patient_id: int,doctor_id: int,timestamp:str, remark_type: str,content:str,is_active: bool= True): 
         self.remark_id=remark_id
         self.patient_id=patient_id
         self.doctor_id=doctor_id

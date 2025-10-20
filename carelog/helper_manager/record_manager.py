@@ -38,7 +38,7 @@ def search_record(p_id, record_id):
             }
     return {}
 
-def edit_record_doctor(p_id, record_id, **kwargs):
+def update_record_doctor(p_id, record_id, **kwargs):
     """
     Edit an existing record by (p_id, record_id).
 
@@ -96,6 +96,18 @@ def edit_record_doctor(p_id, record_id, **kwargs):
             _persist()
             return True
     return False
+
+def delete_patient_record_doctor(self, record_id):
+    """Delete patient record"""
+    record = next((r for r in self.records if r.pr_record_id == record_id), None)
+    if not record:
+        return False, "Record not found", None
+    
+    self.records.remove(record)
+    self.save()
+    
+    utils.log_event(f"Nurse deleted record {record_id}", "INFO")
+    return True, "Record deleted successfully", record_id
 
 def view_patient_records_doctor(self,patient_id):
     "View all records for a patient"
