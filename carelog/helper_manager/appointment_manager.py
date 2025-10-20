@@ -1,6 +1,8 @@
+import os
 import datetime
 import app.utils as utils
 from app.patient import PatientAppointment
+from helper_manager.profile_manager import find_age
 
 class AppointmentManager:
     def __init__(self, schedule_manager):
@@ -153,3 +155,53 @@ class AppointmentManager:
             except ValueError:
                 continue
         return None
+    
+
+    def print_appt(self, patient, appt):
+        # Find current patient detail
+        current_patient = next((p for p in self.sc.patients if p.username == patient.username))
+        current_doctor = next((d for d in self.sc.doctors if d.d_id == appt["Doctor ID"]))
+
+        # Folder directory stores appointment report
+        folder_path = "appt_report"
+        # Make sure dir exists
+        os.makedirs(folder_path, exist_ok=True)
+        # Create text file
+        file_dir = os.path.join(folder_path, f"{appt["Doctor ID"]}.txt")
+
+        # Set limit to remark
+        remark = appt["Remark"]
+        max_length = 37
+
+        if len(remark) > max_length:
+            remark = remark[:max_length - 4].rstrip() + " ..."
+
+        # Create message
+        with open(file_dir, "w", encoding="utf-8") as f:
+            f.write("+" + "="*70 + "+\n")
+            f.write("|{:^70}|\n".format("CARELOG - APPOINTMENT REPORT"))
+            f.write("+" + "="*70 + "+\n")
+            f.write("| {:25} {:<43}|\n".format("Appointment ID", appt["Doctor ID"]))
+            f.write("+" + "="*70 + "+\n")
+            f.write("| {:25} {:<43}|\n".format("Patient ID:", patient.p_id))
+            f.write("| {:25} {:<43}|\n".format("Patient Name:", patient.name))
+            f.write("| {:25} {:<43}|\n".format("Patient Age:", find_age(patient.bday)))
+            f.write("+" + " "*70 + "+\n")
+            f.write("+" + "=" * 70 + "+\n")
+            f.write("| {:25} {:<43}|\n".format("Doctor:", current_doctor.name))
+            f.write("| {:25} {:<43}|\n".format("Speciality", current_doctor.speciality))
+            f.write("| {:25} {:<43}|\n".format("Department", current_doctor.department))
+            f.write("+" + " "*70 + "+\n")
+            f.write("+" + "=" * 70 + "+\n")
+            f.write("| {:25} {:<43}|\n".format("Date:", str(appt["Appointment Date"])))
+            f.write("| {:25} {:<43}|\n".format("Time", str(appt["Appointment Time"])))
+            f.write("+" + " "*70 + "+\n")
+            f.write("| {:25} {:<43}|\n".format("Remark", remark))
+            f.write("+" + " "*70 + "+\n")
+            f.write("+" + "=" * 70 + "+\n")
+            f.write("+" + " "*70 + "+\n")
+            f.write("| {:25} {:<43}|\n".format("Status", appt["Appointment Status"]))
+            f.write("+" + " "*70 + "+\n")
+            f.write("+" + "=" * 70 + "+\n")
+        return file_dir
+
