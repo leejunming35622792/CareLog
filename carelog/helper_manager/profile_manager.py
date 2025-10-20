@@ -39,7 +39,8 @@ def view_patient_details_by_doctor(patient_id :int):
         patient=next((p for p in manager.patients if p.p_id ==patient_id),None)
         if patient is None:
             return False,"Patient Not Found", None
-        patient_records=[r for r in manager.records if r.patient==patient_id]
+        # records use attribute `p_id` (see record_manager.py), not `patient`
+        patient_records=[r for r in manager.records if getattr(r, 'p_id', None) == patient_id]
         previous_conditions: list[str]= []
         medication_history: list[str]= []
         for record in patient_records:

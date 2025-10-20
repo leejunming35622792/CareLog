@@ -224,7 +224,7 @@ def patient_records_page(manager, username):
     # Tab 1: View Patient
     with tab1:
         st.markdown("#### Search by ID")
-        patient_id = st.number_input("Enter Patient ID", min_value=1, step=1, key="patient_search")
+        patient_id = st.text_input("Enter Patient ID", key="patient_search_records")
         if st.button("Search Patient", key="search_btn"):
             success, message, info = view_patient_details_by_doctor(patient_id)
             if success and info:
@@ -255,7 +255,7 @@ def patient_records_page(manager, username):
     with tab2:
         st.subheader("Add Patient Remark")
         with st.form("add_remark_form"):
-            patient_id_remark = st.number_input("Patient ID", min_value=1, step=1)
+            patient_id_remark = st.text_input("Enter Patient ID", key="patient_search_remark")
             remark_type = st.selectbox(
                 "Remark Type", ["mood", "pain_level", "dietary", "general", "observation"]
             )

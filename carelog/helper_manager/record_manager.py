@@ -115,7 +115,7 @@ def view_patient_records_doctor(self,patient_id):
     patient=self.find_patient_by_id(patient_id)
     if not patient:
         return False,"Patient Not Found", None
-    records=[r for r in self.records if r.p_id ==patient_id]
+    records=[r for r in manager.records if r.p_id == patient_id]
 
     if not records :
         return False, f"No records found for patient {patient_id}", None 
