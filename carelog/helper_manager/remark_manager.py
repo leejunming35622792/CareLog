@@ -148,3 +148,4 @@ def get_recent_patient_remarks(patient_id: int, days: int = 7):
             return x["timestamp"]
     recent.sort(key=_k, reverse=True)
     return True, f"Found {len(recent)} remarks from last {days} days", recent
+    
