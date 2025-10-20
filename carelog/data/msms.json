@@ -5,7 +5,7 @@
             "username": "patient",
             "password": "patientpass",
             "name": "John Doe",
-            "bday": 35,
+            "bday": "2016-10-21",
             "gender": "Male",
             "address": "123 Street A",
             "email": "john@example.com",
@@ -23,7 +23,7 @@
             "username": "alice123",
             "password": "AlicePass1",
             "name": "Alice Tan",
-            "bday": 28,
+            "bday": "2016-10-21",
             "gender": "Female",
             "address": "456 Road B",
             "email": "alice@example.com",
@@ -39,7 +39,7 @@
             "username": "mikelee",
             "password": "MikePass1",
             "name": "Mike Lee",
-            "bday": 40,
+            "bday": "2016-10-21",
             "gender": "Male",
             "address": "789 Road C",
             "email": "mike@example.com",
@@ -55,7 +55,7 @@
             "username": "sarasiva",
             "password": "SaraPass1",
             "name": "Sara Siva",
-            "bday": 31,
+            "bday": "2016-10-21",
             "gender": "Female",
             "address": "321 Road D",
             "email": "sara@example.com",
@@ -339,67 +339,145 @@
         {
             "pr_record_id": "PR0001",
             "p_id": "P0001",
-            "pr_timestamp": "2025-01-12T10:30:00",
-            "pr_conditions": {
-                "Diabetes": "Mild"
-            },
-            "pr_medications": "Metformin",
-            "pr_billings": "RM150",
-            "pr_prediction_result": "At risk",
-            "pr_confidence_score": 0.85,
-            "pr_remark": "Monitor sugar level"
+            "pr_timestamp": "2025-03-15T09:00:00",
+            "pr_condition": "Healthy",
+            "pr_medications": "None",
+            "pr_billings": 100.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.95,
+            "pr_remark": "Routine checkup"
         },
         {
             "pr_record_id": "PR0002",
             "p_id": "P0001",
-            "pr_timestamp": "2025-02-20T14:00:00",
-            "pr_conditions": {
-                "Hypertension": "Moderate"
-            },
-            "pr_medications": "Amlodipine",
-            "pr_billings": "RM200",
-            "pr_prediction_result": "Stable",
-            "pr_confidence_score": 0.9,
-            "pr_remark": "Continue medication"
+            "pr_timestamp": "2025-04-12T10:00:00",
+            "pr_condition": "Fractured arm",
+            "pr_medications": "Painkillers",
+            "pr_billings": 250.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.85,
+            "pr_remark": "Bone checkup"
         },
         {
             "pr_record_id": "PR0003",
             "p_id": "P0001",
-            "pr_timestamp": "2025-03-05T15:00:00",
-            "pr_conditions": {
-                "Flu": "Mild"
-            },
-            "pr_medications": "Paracetamol",
-            "pr_billings": "RM80",
-            "pr_prediction_result": "Recovering",
-            "pr_confidence_score": 0.95,
-            "pr_remark": "Bed rest"
+            "pr_timestamp": "2025-04-15T09:30:00",
+            "pr_condition": "Allergic reaction",
+            "pr_medications": "Antihistamines",
+            "pr_billings": 120.0,
+            "pr_prediction_result": "High risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Seasonal allergy"
         },
         {
             "pr_record_id": "PR0004",
             "p_id": "P0002",
-            "pr_timestamp": "2025-03-05T15:45:00",
-            "pr_conditions": {
-                "Asthma": "Severe"
-            },
-            "pr_medications": "Inhaler",
-            "pr_billings": "RM120",
-            "pr_prediction_result": "Critical",
-            "pr_confidence_score": 0.7,
-            "pr_remark": "Frequent attacks"
+            "pr_timestamp": "2025-04-10T11:30:00",
+            "pr_condition": "Migraine",
+            "pr_medications": "Painkillers",
+            "pr_billings": 150.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.88,
+            "pr_remark": "Follow-up visit"
         },
         {
             "pr_record_id": "PR0005",
+            "p_id": "P0002",
+            "pr_timestamp": "2025-05-05T10:00:00",
+            "pr_condition": "Cold",
+            "pr_medications": "Cough syrup",
+            "pr_billings": 80.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.92,
+            "pr_remark": "Seasonal cold"
+        },
+        {
+            "pr_record_id": "PR0006",
             "p_id": "P0003",
-            "pr_timestamp": "2025-04-01T10:30:00",
-            "pr_conditions": {
-                "Back Pain": "Moderate"
-            },
-            "pr_medications": "Painkiller",
-            "pr_billings": "RM90",
-            "pr_prediction_result": "At risk",
-            "pr_confidence_score": 0.8,
-            "pr_remark": "Needs physiotherapy"
+            "pr_timestamp": "2025-05-01T14:00:00",
+            "pr_condition": "Skin rash",
+            "pr_medications": "Topical cream",
+            "pr_billings": 130.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.92,
+            "pr_remark": "Dermatology consult"
+        },
+        {
+            "pr_record_id": "PR0007",
+            "p_id": "P0003",
+            "pr_timestamp": "2025-06-10T09:30:00",
+            "pr_condition": "Sprained ankle",
+            "pr_medications": "Painkillers",
+            "pr_billings": 200.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.87,
+            "pr_remark": "Orthopedic consult"
+        },
+        {
+            "pr_record_id": "PR0008",
+            "p_id": "P0004",
+            "pr_timestamp": "2025-07-01T10:15:00",
+            "pr_condition": "Flu",
+            "pr_medications": "Antivirals",
+            "pr_billings": 100.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Seasonal flu"
+        },
+        {
+            "pr_record_id": "PR0009",
+            "p_id": "P0004",
+            "pr_timestamp": "2025-08-05T09:00:00",
+            "pr_condition": "Allergy",
+            "pr_medications": "Antihistamines",
+            "pr_billings": 110.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.88,
+            "pr_remark": "Pollen allergy"
+        },
+        {
+            "pr_record_id": "PR0010",
+            "p_id": "P0005",
+            "pr_timestamp": "2025-09-01T11:00:00",
+            "pr_condition": "Cough",
+            "pr_medications": "Cough syrup",
+            "pr_billings": 70.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Mild cough"
+        },
+        {
+            "pr_record_id": "PR0011",
+            "p_id": "P0005",
+            "pr_timestamp": "2025-09-15T10:30:00",
+            "pr_condition": "Fever",
+            "pr_medications": "Paracetamol",
+            "pr_billings": 80.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.87,
+            "pr_remark": "Checkup for fever"
+        },
+        {
+            "pr_record_id": "PR0012",
+            "p_id": "P0007",
+            "pr_timestamp": "2025-10-10T09:30:00",
+            "pr_condition": "Headache",
+            "pr_medications": "Painkillers",
+            "pr_billings": 90.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.91,
+            "pr_remark": "Routine headache"
+        },
+        {
+            "pr_record_id": "PR0013",
+            "p_id": "P0007",
+            "pr_timestamp": "2025-10-15T14:00:00",
+            "pr_condition": "Stomachache",
+            "pr_medications": "Antacids",
+            "pr_billings": 100.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Mild discomfort"
         }
     ],
     "appointments": [
@@ -440,40 +518,7 @@
             "remark": "Skin consultation"
         }
     ],
-    "shifts": [
-        {
-            "shift_id": "SH0001",
-            "staff_id": "D0001",
-            "day": "Monday",
-            "start_time": "08:00",
-            "end_time": "16:00",
-            "remark": "Morning shift"
-        },
-        {
-            "shift_id": "SH0002",
-            "staff_id": "D0002",
-            "day": "Tuesday",
-            "start_time": "12:00",
-            "end_time": "20:00",
-            "remark": "Afternoon shift"
-        },
-        {
-            "shift_id": "SH0003",
-            "staff_id": "D0001",
-            "day": "Wednesday",
-            "start_time": "09:00",
-            "end_time": "17:00",
-            "remark": "Ward duty"
-        },
-        {
-            "shift_id": "SH0004",
-            "staff_id": "D0003",
-            "day": "Thursday",
-            "start_time": "08:30",
-            "end_time": "16:30",
-            "remark": "Clinic duty"
-        }
-    ],
+    "shifts": [],
     "remarks": [
         {
             "remark_id": "RM0001",
