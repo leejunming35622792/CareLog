@@ -89,31 +89,67 @@ class AppointmentManager:
         return True, "Appointment found", result
     
     def view_upcoming_appointments(self, doctor_username):
-        """Return upcoming appointments for a specific doctor"""
-        doctor = next((d for d in self.sc.doctors if d.username == doctor_username), None)
+        """Return upcoming (>= now) appointments for a specific doctor."""
+        # Find the doctor by username
+        doctor = next((d for d in self.sc.doctors if getattr(d, "username", None) == doctor_username), None)
         if not doctor:
             return False, "No Doctor Found", []
+
+        doctor_id = getattr(doctor, "d_id", None)
+        if not doctor_id:
+            return False, "Doctor record missing d_id", []
 
         now = datetime.datetime.now()
         upcoming = []
 
         for appt in self.appointments:
-            if appt.d_id == doctor.d_id:
-                try:
-                    appt_dt = datetime.datetime.strptime(f"{appt.date} {appt.time}", "%Y-%m-%d %H:%M")
-                    if appt_dt >= now:
-                        patient = next((p for p in self.sc.patients if p.p_id == appt.p_id), None)
-                        upcoming.append({
-                            "appt_id": appt.appt_id,
-                            "patient_id": appt.p_id,
-                            "patient_name": patient.name if patient else "Unknown",
-                            "date": appt.date,
-                            "time": appt.time,
-                            "status": appt.status,
-                            "remark": appt.remark,
-                        })
-                except ValueError:
-                    continue
+            a_did  = getattr(appt, "d_id", None)
+            a_pid  = getattr(appt, "p_id", None)
+            a_date = getattr(appt, "date", None)
+            a_time = getattr(appt, "time", None)
 
-        upcoming.sort(key=lambda x: f"{x['date']} {x['time']}")
-        return True, f"Found {len(upcoming)} upcoming appointments", upcoming
+        # Only this doctor's appointments, with basic fields present
+            if a_did != doctor_id or not (a_pid and a_date and a_time):
+                continue
+
+            appt_dt = self._parse_dt(a_date, a_time)
+            if appt_dt is None:
+                # date/time not in an accepted format; skip
+                continue
+
+            # Keep only future (>= now)
+            if appt_dt < now:
+                continue
+
+            patient = next((p for p in self.sc.patients if getattr(p, "p_id", None) == a_pid), None)
+            p_name = getattr(patient, "name", "Unknown")
+
+            upcoming.append({
+                "appt_id": getattr(appt, "appt_id", None),
+                "patient_id": a_pid,
+                "patient_name": p_name,
+                "date": a_date,
+                "time": a_time,
+                "status": getattr(appt, "status", "Pending"),
+                "remark": getattr(appt, "remark", ""),
+            })
+
+        # Sort by actual datetime
+        upcoming.sort(key=lambda x: x["_dt"])
+        for item in upcoming:
+            item.pop("_dt", None)
+        return True, f"Found {len(upcoming)} upcoming appointment(s)", upcoming
+
+    # helper: parse "YYYY-MM-DD" + "HH:MM[:SS]"
+    @staticmethod
+    def _parse_dt(date_str, time_str):
+        """Parse 'YYYY-MM-DD' + 'HH:MM[:SS]' into a datetime, or return None if invalid."""
+        if not date_str or not time_str:
+            return None
+        src = f"{date_str} {time_str}".strip()
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M"):
+            try:
+                return datetime.datetime.strptime(src, fmt)
+            except ValueError:
+                continue
+        return None
