@@ -426,8 +426,6 @@ class ScheduleManager():
         found, msg, patient = self.find_patient_by_id(patient_id)
         if not found:
             return False, msg, None
-
-
         
         record_id = f"PR{self.next_record_id:04d}"
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
