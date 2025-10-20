@@ -107,18 +107,18 @@ class User:
             return True, msg, user_obj
     
     # Update detail
-    def update_profile(self, user_id, role, password, name, gender, address, email, contact_num, date_of_birth, department, speciality):
+    def update_profile(self, user_id, role, password, name, bday, gender, address, email, contact_num, date_of_birth, department, speciality):
         from app.schedule import ScheduleManager
         sc = ScheduleManager()
         role = role.lower()
         
         # Get correct user list
-        user_list = getattr(sc, f"{role}s")
-        if user_list is None:
-            return False, f"Invalid role: {role}"
+        # user_list = getattr(sc, f"{role}s")
+        # if user_list is None:
+        #     return False, f"Invalid role: {role}"
         
         # Find target user
-        user = next((u for u in user_list if getattr(u, f"{role[0]}_id", None) == user_id), None)
+        user = next((u for u in sc.patients if getattr(u, f"{role[0]}_id", None) == user_id), None)
         if user is None:
             return False, f"No user found with ID {user_id}"
         
@@ -127,6 +127,8 @@ class User:
             user.password = password
         if name:
             user.name = name
+        if bday:
+            user.bday = bday
         if gender:
             user.gender = gender
         if address:
