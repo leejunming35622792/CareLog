@@ -7,8 +7,12 @@ manager = st.session_state.manager
 appt_manager = AppointmentManager(manager)
 
 def appointment(manager):
+    # Session states
+    if "success_msg" not in st.session_state:
+        st.session_state.success_msg = ""
+
     # Page design
-    st.title("CareLog - We are here for you!")
+    st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
 
     # Variables
     tabs = ["Book Appointment", "View Appointments", "Edit Appointments"]
@@ -19,21 +23,21 @@ def appointment(manager):
     patient = next((p for p in manager.patients if p.username == username), None)
     doctor_list = {d.d_id:d.name for d in manager.doctors}
 
-    tab1, tab2, tabs3 = st.tabs(tabs)
+    tab1, tab2, tab3 = st.tabs(tabs)
 
     with tab1:
-            # Page Design
-            # st.subheader("Book Appointment")
-            st.markdown("### 🗓️ Book a New Appointment")
-            st.markdown("Please provide the details below to schedule your hospital visit.\n")
-            st.divider()
-
             # Doctor selection
             doctor_id = {f"{d.d_id} - {d.name}": d.d_id for d in manager.doctors}
             if not doctor_id:
                 st.warning("No doctors found!")
             else:
                 with st.form("appt_form"):
+                    # Page Design
+                    st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Book a New Appointment 🗓️</h1>", unsafe_allow_html=True)
+                    st.markdown(f"<h1 style='text-align: center; font-size: 100%; text-decoration: None'>Please provide the details below to schedule your hospital visit.</h1>", unsafe_allow_html=True)
+
+                    st.divider()
+
                     # Patient info (locked)
                     p_id = st.text_input("Patient ID", value=patient.p_id, disabled=True)
 
@@ -70,17 +74,13 @@ def appointment(manager):
                             for e in errors:
                                 st.error(e)
                         else:
-                            manager.add_appointments(p_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                            appt_manager.add_appointments(p_id, d_id, str(appt_date), str(appt_time), appt_remark)
                             with st.spinner("Submitting request..."):
                                 time.sleep(1)
                             manager.save()
          
     with tab2:
-        # Page design
-        # st.subheader("View Appointments"
-        st.markdown("### 📋 View Your Appointments\nSelect one of your appointments from the list below to see the details.")
-        st.divider()
-
+        # Display appointment id with doctor
         appt_id = {f"Appointment {appt.appt_id} - {doctor_list[appt.doctor]}":appt.appt_id for appt in manager.appointments if str(appt.patient) == str(patient.p_id)}
 
         if not appt_id:
@@ -88,17 +88,64 @@ def appointment(manager):
             
         else:
             with st.form("view-appt-form", clear_on_submit=False):
+                # Page Design
+                st.markdown(f"<h1 style='text-align: center; font-size: 200%'>View Your Appointments 🗓️</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: center; font-size: 100%; text-decoration: None'> Select one of your appointments from the list below to see the details.</h1>", unsafe_allow_html=True)
+
+                st.divider()
+
+                # Input box
                 choose_appt = st.selectbox("Select Appointments", appt_id.keys())
                 appt_id = appt_id[choose_appt]
-                appt = appt_manager.search_appt(appt_id)
+
+                # Appointment in 'dict' type
+                success, msg, appt = appt_manager.search_appt(appt_id)
+
+                # Display button
                 search_button = st.form_submit_button("Search Appointment")
 
-                if search_button:
-                    appt_df = pd.Series(appt).to_frame("")
-                    st.dataframe(appt_df)
+                # Download button
+                download_button = st.form_submit_button("Download Appointment")
 
-    with tabs3:
-        st.markdown("### 🖊️ Edit Your Appointments\nEdit section in.")
+                st.divider()
+
+                if search_button:
+                    disp1, disp2, disp3 = st.columns(3)
+                    with disp1:
+                        st.metric("Appointment ID", appt.get("Appointment ID"))
+                    with disp2:
+                        st.metric("Patient ID", appt["Patient ID"], delta=patient.name, delta_color="off")
+                    with disp3:
+                        doc_id_name = {d.d_id:d.name for d in manager.doctors}
+                        appt_doc = appt["Doctor ID"]
+                        st.metric("Doctor ID", appt["Doctor ID"], delta=f"{doc_id_name[appt_doc]}", delta_color="off")
+                    disp4, disp5, disp6 = st.columns(3)
+                    with disp4:
+                        st.metric("Appointment Date", appt["Appointment Date"])
+                    with disp5:
+                        st.metric("Appointment Time", appt["Appointment Time"])
+                    with disp6:
+                        appt_status = appt["Appointment Status"]
+                        risk_color = {
+                            "Booked": "green",
+                            "Pending": "blue",
+                            "Rescheduled": "yellow",
+                            "Cancelled": "red"
+                        }
+
+                        color = risk_color.get(appt_status, "black")
+                        st.markdown(f"**Appointment Status:**<br><span style='color:{color};; font-size:200%'><b>{appt_status}</b></span>", unsafe_allow_html=True)
+                    st.text_area("Remark", value=appt["Remark"], disabled=True)
+                if download_button:
+                    success, msg, appt = appt_manager.search_appt(appt_id)
+                    result = appt_manager.print_appt(patient, appt)
+                    if result:
+                        st.session_state.success_msg = f"Successfully downloaded to {result}"
+                        st.rerun()
+
+    with tab3:
+        # Page Design
+        st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Edit Your Appointments🖊️ </h1>", unsafe_allow_html=True)
         st.divider()
 
         if "edit" not in st.session_state:
@@ -131,7 +178,7 @@ def appointment(manager):
                             st.markdown(f"""
                             ### Status: :green[{appt.status}]
                             """)
-                        if appt.status == "Reschedules":
+                        if appt.status == "Rescheduled":
                             st.markdown(f"""
                             ### Status: :yellow[{appt.status}]
                             """)
@@ -188,9 +235,14 @@ def appointment(manager):
                     submitted = st.form_submit_button("Save Changes")
 
                     if submitted:
-                        result = manager.edit_appointments(target_appt_id, d_id, str(appt_date), str(appt_time), appt_remark)
-                        st.success(f"Appointment {target_appt.appt_id} updated successfully!")
+                        result = appt_manager.edit_appointments(target_appt_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                        st.session_state.success_msg = f"Appointment {target_appt.appt_id} updated successfully!"
                         manager.save()
                         st.session_state.edit = ""  # reset
-        
+                        st.rerun()
+
         st.divider()
+        
+    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+        st.success(st.session_state.success_msg)
+        st.session_state.success_msg = ""
