@@ -1,6 +1,10 @@
 import streamlit as st
 import time
 import pandas as pd
+from helper_manager.appointment_manager import AppointmentManager
+
+manager = st.session_state.manager
+appt_manager = AppointmentManager(manager)
 
 def appointment(manager):
     # Page design
@@ -86,7 +90,7 @@ def appointment(manager):
             with st.form("view-appt-form", clear_on_submit=False):
                 choose_appt = st.selectbox("Select Appointments", appt_id.keys())
                 appt_id = appt_id[choose_appt]
-                appt = manager.search_appt(appt_id)
+                appt = appt_manager.search_appt(appt_id)
                 search_button = st.form_submit_button("Search Appointment")
 
                 if search_button:
