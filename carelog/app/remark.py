@@ -48,3 +48,4 @@ class PatientRemark:
         """Soft delete the remark"""
         self.is_active = False
         self.last_modified = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+

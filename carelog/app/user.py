@@ -132,8 +132,9 @@ class User:
         if address:
             user.address = address
         if email:
-            from manager.auth_manager import AuthManager
-            success, message, _ = AuthManager.check_email_validation(email)
+            from helper_manager.auth_manager import AuthManager
+            auth = AuthManager(sc)
+            success, message, _ = auth.check_email_validation(email)
             if success:
                 user.email = email
         if contact_num:
@@ -151,49 +152,3 @@ class User:
         utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
 
         return True, f"{role.capitalize()} profile updated successfully", user
-    
-    def update_new_profile(self, user_id, role, username, new_password, new_name, new_gender, new_address, new_email, new_contact_num, new_department, new_speciality):
-        from app.schedule import ScheduleManager
-        sc = ScheduleManager()
-        role = role.lower()
-        
-        # Get correct user list
-        user_list = getattr(sc, f"{role}s")
-        if user_list is None:
-            return False, f"Invalid role: {role}"
-        
-        # Find target user
-        user = next((u for u in user_list if getattr(u, f"{role[0]}_id", None) == user_id), None)
-        if user is None:
-            return False, f"No user found with ID {user_id}"
-        
-        # Update field
-        if new_password:
-            user.password = new_password
-        if new_name:
-            user.name = new_name
-        if new_gender:
-            user.gender = new_gender
-        if new_address:
-            user.address = new_address
-        if new_email:
-            from manager.auth_manager import AuthManager
-            success, message, _ = AuthManager.check_email_validation(new_email)
-            if success:
-                user.email = new_email
-        if new_contact_num:
-            user.contact_num = new_contact_num
-
-        # Specific details for role (Can be added more)
-        if role == "doctor":
-            if new_speciality:
-                user.speciality = new_speciality
-            if new_department:
-                user.department = new_department
-
-        sc.save()
-        utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
-
-        return True, f"{role.capitalize()} profile updated successfully", user
-
-    

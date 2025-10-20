@@ -10,6 +10,7 @@ from app.admin import AdminUser
 from app.shift_schedule import Shift
 from app.remark import PatientRemark
 import app.utils as utils
+import datetime
 
 class ScheduleManager():
     def __init__(self, data_path="data/msms.json"):
@@ -38,76 +39,99 @@ class ScheduleManager():
         self._load_data()
 
     def _load_data(self):
-        with open(self.data_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-            # Patient objects
-            self.patients = [PatientUser(p["p_id"], p["username"], p["password"], p["name"], p["bday"], p["gender"], p["address"], p["email"], p["contact_num"], p["date_joined"], p["p_record"], p["p_remark"]) for p in data.get("patients", [])]
-
-            # Doctor objects
-            self.doctors = [DoctorUser(d["d_id"], d["username"], d["password"], d["name"], d["bday"], d["gender"], d["address"], d["email"], d["contact_num"], d["date_joined"], d["speciality"], d["department"]) for d in data.get("doctors", [])]
-
-            # Nurse objects
-            self.nurses = [NurseUser(n["n_id"], n["username"], n["password"], n["name"], n["bday"], n["gender"], n["address"], n["email"], n["contact_num"], n["date_joined"], n["speciality"], n["department"], n["with_doctor"]) for n in data.get("nurses", [])]
-
-            # Receptionist objects
-            self.receptionists = [ReceptionistUser(r["r_id"], r["username"], r["password"], r["name"], r["bday"], r["gender"], r["address"], r["email"], r["contact_num"], r["date_joined"]) for r in data.get("receptionists", [])]
-
-            # Admin objects
-            self.admins = [AdminUser(a["a_id"], a["username"], a["password"], a["name"], a["bday"], a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]) for a in data.get("admins", [])]
-
-            # Patient records
-            self.records = [PatientRecord(pr["pr_record_id"], pr["p_id"], pr["pr_timestamp"], pr["pr_conditions"], pr["pr_medications"], pr["pr_billings"], pr["pr_prediction_result"], pr["pr_confidence_score"], pr["pr_remark"]) for pr in data.get("records", [])]
-
-            # Patient appointments
-            self.appointments = [PatientAppointment(appt["appt_id"], appt["p_id"], appt["d_id"], appt["date"], appt["time"], appt["status"], appt["remark"]) for appt in data.get("appointments", [])]
-
-            # Shift objects
-            self.shifts = [Shift(s["shift_id"], s["staff_id"], s["day"], s["start_time"], s["end_time"], s["remark"]) for s in data.get("shifts", [])]
-
-            # Patient Remark Objects
-            self.remarks = [PatientRemark(rm["remark_id"], rm["patient_id"], rm["doctor_id"], rm["timestamp"], rm["remark_type"], rm["content"], rm["is_active"]) for rm in data.get("remarks", [])]
-            # TODO: self.remarks= [PatientRemark.from_dict(rm) for rm in data.get("remarks",[])]
-
-            self.next_patient_id = data.get("next_patient_id", 1)
-            self.next_doctor_id = data.get("next_doctor_id", 1)
-            self.next_nurse_id = data.get("next_nurse_id", 1)
-            self.next_receptionist_id = data.get("next_receptionist_id", 1)
-            self.next_admin_id = data.get("next_admin_id", 1)
-            self.next_record_id = data.get("next_record_id", 1)
-            self.next_appt_id = data.get("next_appt_id", 1)
-            self.next_shift_id = data.get("next_shift_id", 1)
-            self.next_remark_id=data.get("next_remark_id",1)
-            return data
-
-        # if file doesn't exist
-        if not os.path.exists(self.data_path):
-            utils.log_event("Data file not found. Creating default data file.", "WARNING")
-            with open(self.data_path, "w", encoding="utf-8") as f:
-                json.dump(default_data, f, indent=2)
-            return default_data
-
-        # if file exists
         try:
-            with open(self.data_path, "r", encoding="utf-8") as f:
-                content = f.read().strip()
-
-                # if file is empty
-                if not content:
-                    utils.log_event("Data file empty. Resetting to default data.", "WARNING")
-                    with open(self.data_path, "w", encoding="utf-8") as f2:
-                        json.dump(default_data, f2, indent=2)
-                    return default_data
-
-                # if file has valid JSON
-                data = json.loads(content)
-                return data
-
+            with open(self.data_path, "r") as f:
+                data = json.load(f)
+        except FileNotFoundError:
+            utils.log_event("Data file not found, starting with a clean state.", "WARNING")
+            data = {}
         except json.JSONDecodeError:
-            utils.log_event("Data file invalid JSON. Resetting to default data.", "ERROR")
-            with open(self.data_path, "w", encoding="utf-8") as f:
-                json.dump(default_data, f, indent=2)
-            return default_data
+            utils.log_event("Data file invalid JSON, starting with a clean state.", "ERROR")
+            data = {}
+
+            return {
+                "patients": [],
+                "doctors": [],
+                "nurses": [],
+                "receptionists": [],
+                "admins": [],
+                "appointments": [],
+                "remarks": []
+            }
+
+        self.patients = [
+            PatientUser(
+                p["p_id"], p["username"], p["password"], p["name"], p["bday"],
+                p["gender"], p["address"], p["email"], p["contact_num"],
+                p["date_joined"], p.get("p_record", []), p.get("p_remark", "")
+            ) for p in data.get("patients", [])
+        ]
+
+        self.doctors = [
+            DoctorUser(
+                d["d_id"], d["username"], d["password"], d["name"], d["bday"],
+                d["gender"], d["address"], d["email"], d["contact_num"],
+                d["date_joined"], d["speciality"], d["department"]
+            ) for d in data.get("doctors", [])
+        ]
+
+        self.nurses = [
+            NurseUser(
+                n["n_id"], n["username"], n["password"], n["name"], n["bday"],
+                n["gender"], n["address"], n["email"], n["contact_num"],
+                n["date_joined"], n["speciality"], n["department"], n["with_doctor"]
+            ) for n in data.get("nurses", [])
+        ]
+
+        self.receptionists = [
+            ReceptionistUser(
+                r["r_id"], r["username"], r["password"], r["name"], r["bday"],
+                r["gender"], r["address"], r["email"], r["contact_num"], r["date_joined"]
+            ) for r in data.get("receptionists", [])
+        ]
+
+        self.admins = [
+            AdminUser(
+                a["a_id"], a["username"], a["password"], a["name"], a["bday"],
+                a["gender"], a["address"], a["email"], a["contact_num"], a["date_joined"]
+            ) for a in data.get("admins", [])
+        ]
+
+        self.appointments = [
+            PatientAppointment(
+                appt["appt_id"], 
+                appt["p_id"], 
+                appt["d_id"],
+                appt["date"],          
+                appt["time"],          
+                appt["status"],        
+                appt.get("remark", "") 
+            ) for appt in data.get("appointments", [])
+        ]
+
+
+        self.remarks = [
+            PatientRemark(
+                remark_id   = r["remark_id"],
+                patient_id  = r["patient_id"],
+                doctor_id   = r["doctor_id"],
+                timestamp   = r["timestamp"],
+                remark_type = r["remark_type"],
+                content     = r["content"],
+                is_active   = r.get("is_active", True)
+            ) for r in data.get("remarks", [])
+        ]
+
+        self.next_patient_id = data.get("next_patient_id", 1)
+        self.next_doctor_id = data.get("next_doctor_id", 1)
+        self.next_nurse_id = data.get("next_nurse_id", 1)
+        self.next_receptionist_id = data.get("next_receptionist_id", 1)
+        self.next_admin_id = data.get("next_admin_id", 1)
+        self.next_record_id = data.get("next_record_id", 1)
+        self.next_appt_id = data.get("next_appt_id", 1)
+        self.next_shift_id = data.get("next_shift_id", 1)
+        self.next_remark_id = data.get("next_remark_id", 1)
+        return data
 
 
     def _save_data(self):
@@ -180,38 +204,39 @@ class ScheduleManager():
         doctor = next((d for d in self.doctors if d.d_id == doctor_id),None)
         if doctor is None:
             return False, "No doctor found",None
-        return doctor
+        return True, "Doctor Found", doctor
     
     def find_nurse_by_id(self,nurse_id):
         nurse = next((n for n in self.nurses if n.n_id == nurse_id),None)
         if nurse is None:
             return False,"No nurse found",None
-        return nurse
+        return True, "Nurse Found", nurse
     
     def find_patient_by_id(self,patient_id):
         patient = next((p for p in self.patients if p.p_id == patient_id),None)
         if patient is None:
             return False,"No patient found",None
-        return patient
+        return True, "Patient Found", patient
     
     def find_remark_by_id(self,remark_id):
         remark = next((r for r in self.remarks if r.remark_id == remark_id),None)
         if remark is None:
             return False, "No remark found", None
-        return remark
+        return True, "Remark found", remark
 
     def find_appointment_by_id(self,appointment_id):
         appt = next((a for a in self.appointments if a.appt_id == appointment_id),None)
         if appt is None:
             return False, "No appointment found", None
-        return appt
-    
-    #view patient details for nurse
+        return True, "Appointment found", appt
+
     def view_patient_details_by_nurse(self, patient_id):
-        "View patient details"
-        patient = self.find_patient_by_id(patient_id)
-        if not patient:
-            return False, "Patient not found", None
+        """View patient details including records and remarks"""
+        found, msg, patient = self.find_patient_by_id(patient_id)
+        
+        if not found:
+            return False, msg, None
+
         patient_records = [r for r in self.records if r.p_id == patient_id]
         patient_remarks = [r for r in self.remarks if r.patient_id == patient_id and r.is_active]
         
@@ -223,7 +248,7 @@ class ScheduleManager():
             "contact": patient.contact_num,
             "address": patient.address,
             "records_count": len(patient_records),
-            "remark_count": len(patient_remarks),
+            "remarks_count": len(patient_remarks),
             "records": [
                 {
                     "record_id": r.pr_record_id,
@@ -243,37 +268,262 @@ class ScheduleManager():
                 } for r in patient_remarks
             ]
         }
+        
         utils.log_event(f"Nurse viewed patient {patient_id} details", "INFO")
-        return True, "Patient details retrieved successfully", patient_info
-    
+        return True, "Patient details retrieved", patient_info
+
+    def search_patient_by_name(self, name):
+        """Search patients by name"""
+        if not name or not name.strip():
+            return False, "Please provide a name to search", None
+        
+        matching_patients = [
+            p for p in self.patients 
+            if name.lower() in p.name.lower()
+        ]
+        
+        if not matching_patients:
+            return False, f"No patients found with name containing '{name}'", None
+        
+        results = [
+            {
+                "patient_id": p.p_id,
+                "name": p.name,
+                "gender": p.gender,
+                "contact": p.contact_num,
+                "email": p.email
+            } for p in matching_patients
+        ]
+        
+        utils.log_event(f"Nurse searched for patients with name '{name}'", "INFO")
+        return True, f"Found {len(results)} patient(s)", results
+
+    def create_appointment_nurse(self, patient_id, doctor_id, date, time, remark):
+        """Create a new appointment"""
+        found_p, msg_p, patient = self.find_patient_by_id(patient_id)
+        if not found_p:
+            return False, msg_p, None
+
+        found_d, msg_d, doctor = self.find_doctor_by_id(doctor_id)
+        if not found_d:
+            return False, msg_d, None
+
+        appt_id = f"A{self.next_appt_id:04d}"
+
+        new_appointment = PatientAppointment(
+            appt_id=appt_id,
+            p_id=patient_id,
+            d_id=doctor_id,
+            appt_date=date,
+            appt_time=time,
+            appt_status="scheduled",
+            appt_remark=remark
+        )
+
+        self.appointments.append(new_appointment)
+        self.next_appt_id += 1
+
+        utils.log_event(f"Appointment created: {appt_id}", "INFO")
+        self.save()
+
+        return True, f"Appointment {appt_id} created successfully", new_appointment
+
+
+    def view_appointment_nurse(self, appointment_id=None, patient_id=None):
+        """View appointments - all, by ID, or by patient"""
+        if appointment_id:
+            found, msg, appt = self.find_appointment_by_id(appointment_id)
+            if not found:
+                return False, msg, None
+
+            
+            return True, "Appointment found", {
+                "appt_id": appt.appt_id,
+                "patient_id": appt.p_id,
+                "doctor_id": appt.d_id,
+                "date": appt.date,
+                "time": appt.time,
+                "status": appt.status,
+                "remark": appt.remark
+            }
+
+        elif patient_id:
+            appts = [a for a in self.appointments if a.p_id == patient_id]
+            if not appts:
+                return False, f"No appointments found for patient {patient_id}", None
+            
+            results = [
+                {
+                    "appt_id": a.appt_id,
+                    "doctor_id": a.d_id,
+                    "date": a.date,
+                    "time": a.time,
+                    "status": a.status,
+                    "remark": a.remark
+                } for a in appts
+            ]
+            return True, f"Found {len(results)} appointment(s)", results
+        
+        else:
+            results = [
+                {
+                    "appt_id": a.appt_id,
+                    "patient_id": a.p_id,
+                    "doctor_id": a.d_id,
+                    "date": a.date,
+                    "time": a.time,
+                    "status": a.status
+                } for a in self.appointments
+            ]
+            return True, f"Found {len(results)} appointment(s)", results
+
+    def update_appointment_nurse(self, appt_id, date=None, time=None, status=None, remark=None):
+        """Update appointment details"""
+        found, msg, appt = self.find_appointment_by_id(appt_id)
+        if not found:
+            return False, msg, None
+
+        if date:
+            appt.date = date
+        if time:
+            appt.time = time
+        if status:
+            if status not in ["scheduled", "completed", "cancelled", "no-show"]:
+                return False, "Invalid status", None
+            appt.status = status
+        if remark is not None:
+            appt.remark = remark
+
+        utils.log_event(f"Appointment updated: {appt_id}", "INFO")
+        self.save()
+
+        return True, f"Appointment {appt_id} updated successfully", appt
+
+
+    def delete_appointment_nurse(self, appointment_id):
+        """Cancel/delete appointment"""
+        found, msg, appt = self.find_appointment_by_id(appointment_id)
+        if not found:
+            return False, msg, None
+
+        
+        appt.status = "cancelled"
+        self.save()
+        
+        utils.log_event(f"Nurse cancelled appointment {appointment_id}", "INFO")
+        return True, "Appointment cancelled successfully", appointment_id
+
+    def create_patient_record_nurse(self, patient_id, conditions, medications, remark=""):
+        """Create new patient record"""
+        import datetime
+        
+        found, msg, patient = self.find_patient_by_id(patient_id)
+        if not found:
+            return False, msg, None
+
+
+        
+        record_id = f"PR{self.next_record_id:04d}"
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        new_record = PatientRecord(
+            pr_record_id=record_id,
+            p_id=patient_id,
+            pr_timestamp=timestamp,
+            pr_conditions=conditions,
+            pr_medications=medications,
+            pr_billings="",
+            pr_prediction_result="",
+            pr_confidence_score=0.0,
+            pr_remark=remark
+        )
+        
+        self.records.append(new_record)
+        self.next_record_id += 1
+        self.save()
+        
+        utils.log_event(f"Nurse created record {record_id} for patient {patient_id}", "INFO")
+        return True, "Patient record created successfully", record_id
+
+    def view_patient_records_nurse(self, patient_id):
+        """View all records for a patient"""
+        found, msg, patient = self.find_patient_by_id(patient_id)
+        if not found:
+            return False, msg, None
+
+        
+        records = [r for r in self.records if r.p_id == patient_id]
+        
+        if not records:
+            return False, f"No records found for patient {patient_id}", None
+        
+        results = [
+            {
+                "record_id": r.pr_record_id,
+                "timestamp": r.pr_timestamp,
+                "conditions": r.pr_conditions,
+                "medications": r.pr_medications,
+                "remark": r.pr_remark
+            } for r in records
+        ]
+        
+        return True, f"Found {len(results)} record(s)", results
+
+    def update_patient_record_nurse(self, record_id, conditions=None, medications=None, remark=None):
+        """Update patient record (conditions and medications only)"""
+        record = next((r for r in self.records if r.pr_record_id == record_id), None)
+        if not record:
+            return False, "Record not found", None
+        
+        if conditions is not None:
+            record.pr_conditions = conditions
+        if medications is not None:
+            record.pr_medications = medications
+        if remark is not None:
+            record.pr_remark = remark
+        
+        self.save()
+        utils.log_event(f"Nurse updated record {record_id}", "INFO")
+        return True, "Record updated successfully", record_id
+
+    def delete_patient_record_nurse(self, record_id):
+        """Delete patient record"""
+        record = next((r for r in self.records if r.pr_record_id == record_id), None)
+        if not record:
+            return False, "Record not found", None
+        
+        self.records.remove(record)
+        self.save()
+        
+        utils.log_event(f"Nurse deleted record {record_id}", "INFO")
+        return True, "Record deleted successfully", record_id
+
     def add_patient_remark_nurse(self, patient_id, nurse_username, remark_type, content):
         """Add remark to patient (Nurse perspective)"""
         import datetime
         
-        # Find nurse by username
         nurse = next((n for n in self.nurses if n.username == nurse_username), None)
         if not nurse:
             return False, "Nurse not found", None
         
-        # Validate the patient
-        patient = self.find_patient_by_id(patient_id)
-        if not patient:
-            return False, "Patient not found", None
+        found, msg, patient = self.find_patient_by_id(patient_id)
+        if not found:
+            return False, msg, None
+
         
-        # Get doctor the nurse is working with
         doctor_id = nurse.with_doctor
         
         remark_id = self.next_remark_id
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         new_remark = PatientRemark(
-            remark_id=remark_id,
-            patient_id=patient_id,
-            doctor_id=doctor_id,
-            timestamp=timestamp,
-            remark_type=remark_type,
-            content=f"[Nurse {nurse.name}] {content}",
-            is_active=True
+            remark_id   = str(remark_id),
+            patient_id  = patient_id,
+            doctor_id   = doctor_id,
+            timestamp   = timestamp,
+            remark_type = remark_type,
+            content     = f"[Nurse {nurse.name}] {content}",
+            is_active   = True
         )
         
         self.remarks.append(new_remark)
@@ -285,9 +535,10 @@ class ScheduleManager():
 
     def view_patient_remarks_nurse(self, patient_id):
         """View all remarks for a patient"""
-        patient = self.find_patient_by_id(patient_id)
-        if not patient:
-            return False, "Patient not found", None
+        found, msg, patient = self.find_patient_by_id(patient_id)
+        if not found:
+            return False, msg, None
+
         
         remarks = [r for r in self.remarks if r.patient_id == patient_id and r.is_active]
         
@@ -309,9 +560,10 @@ class ScheduleManager():
 
     def update_patient_remark_nurse(self, remark_id, new_content):
         """Update a remark"""
-        remark = self.find_remark_by_id(remark_id)
-        if not remark:
-            return False, "Remark not found", None
+        found, msg, remark = self.find_remark_by_id(remark_id)
+        if not found:
+            return False, msg, None
+
         
         remark.update_content(new_content)
         self.save()
@@ -321,9 +573,10 @@ class ScheduleManager():
 
     def delete_patient_remark_nurse(self, remark_id):
         """Soft delete a remark"""
-        remark = self.find_remark_by_id(remark_id)
-        if not remark:
-            return False, "Remark not found", None
+        found, msg, remark = self.find_remark_by_id(remark_id)
+        if not found:
+            return False, msg, None
+
         
         remark.deactivate()
         self.save()

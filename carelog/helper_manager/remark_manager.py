@@ -82,7 +82,7 @@ def edit_patient_remark(remark_id: str, doctor_username: str, new_content: str):
 
 
 def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit: int | None = None):
-    patient = manager.get_patient_by_id(patient_id)
+    patient = manager.find_patient_by_id(patient_id)
     if patient is None:
         return False, "Patient not found", []
 
@@ -101,7 +101,7 @@ def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit:
         items = items[:limit]
     out = []
     for rm in items:
-        doc = manager.get_doctor_by_id(rm.doctor_id) if getattr(rm, "doctor_id", None) else None
+        doc = manager.find_doctor_by_id(rm.doctor_id) if getattr(rm, "doctor_id", None) else None
         out.append({
             "remark_id": rm.remark_id,
             "doctor_id": getattr(rm, "doctor_id", None),
@@ -117,7 +117,7 @@ def get_remarks_by_type(patient_id: int, remark_type: str):
         return manager.view_patient_remarks(patient_id, remark_type=remark_type)
     
 def get_recent_patient_remarks(patient_id: int, days: int = 7):
-    patient = manager.get_patient_by_id(patient_id)
+    patient = manager.find_patient_by_id(patient_id)
     if patient is None:
         return False, "Patient not found", []
     cutoff = datetime.datetime.now() - datetime.timedelta(days=days)
@@ -130,7 +130,7 @@ def get_recent_patient_remarks(patient_id: int, days: int = 7):
                 continue
             if dt >= cutoff:
                 if getattr(rm, "doctor_id", None):
-                    doc = manager.get_doctor_by_id(rm.doctor_id)
+                    doc = manager.find_doctor_by_id(rm.doctor_id)
                     doctor_name = doc.name if doc else "Unknown Doctor"
                 else:
                     doctor_name = "Nurse"

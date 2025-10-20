@@ -59,35 +59,22 @@ class AuthManager:
         role = role.lower()
         return getattr(self.system, f"next_{role}_id")
 
-    @staticmethod
-    def check_email_validation(email):
+    def check_email_validation(self, email):
         if not email:
             return False, "Email cannot be empty", None
         if "@" not in email:
             return False, "Not a valid email", None
         
         pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        match = re.match(pattern, email)
-        if not match:
+        if not re.match(pattern, email):
             return False, "Invalid email format", None
     
         # Extract the domain part after the last dot
-        domain_part = match.group(1).lower()
+        domain_part = email.split('.')[-1].lower()
         # Get the list of valid TLDs
-        valid_domain = utils.domain_list()
+        valid_domain = utils.domain_list() or []
         # Check if the email's TLD matches any in the list
         for domain in valid_domain:
-            if domain_part.endswith(domain):
+            if domain_part.endswith(domain.lstrip('.').lower()):
                 return True, "Valid email format", None
-
-        return False, f"Invalid top-level domain: {domain}", None
-        
-
-# def login_doctor(self,username,password):
-#         doctor=next((d for d in self.doctors if d.username==username))
-#         if doctor is None:
-#             return False, "Doctor Not Found ", None
-#         if doctor.password != password:
-#             return False, "Incorrect Password"
-
-#         return True, "Logic Successful", doctor
+        return False, f"Invalid top-level domain: {domain_part}", None
