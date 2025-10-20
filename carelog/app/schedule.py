@@ -97,6 +97,12 @@ class ScheduleManager():
             ) for a in data.get("admins", [])
         ]
 
+        self.records = [
+            PatientRecord(
+                r["pr_record_id"], r["p_id"], r["pr_timestamp"], r["pr_condition"], r["pr_medications"], r["pr_billings"], r["pr_prediction_result"], r["pr_confidence_score"], r["pr_remark"]
+            ) for r in data.get("records", [])
+        ]
+
         self.appointments = [
             PatientAppointment(
                 appt["appt_id"], 
