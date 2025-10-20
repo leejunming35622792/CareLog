@@ -1,6 +1,7 @@
 # Super class for other user classes
 # Common fields as below
 import datetime
+import re
 from helper_manager.auth_manager import AuthManager
 import app.utils as utils
 
@@ -38,30 +39,22 @@ class User:
 
         errors = []
 
-        if not all([username, password]):
-            utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
-            return False, "Username and password required", None
-        
-        # Password Validation
-        if len(password) < 8:
-            return False, "Password must be at least 8 characters", None
-        if not any(c.isupper() for c in password):
-            return False, "Password must contain at least one uppercase letter", None
-        if not any(c.isdigit() for c in password):
-            return False, "Password must contain at least one number", None
-        
         # Check if any fields are blank
         fields = {
             "Name": name,
             "Gender": gender,
             "Address": address,
+            "Birthday": bday,
             "Email": email,
             "Contact Number": contact_num,
         }
 
         for field, value in fields.items():
             if not value.strip():
-                return False, f"{field} cannot be empty", None
+                errors.append(f"{field} cannot be empty")
+        
+        if errors:
+            return False, errors, None
             
         if role in ["doctor", "nurse"]:
             if not speciality:
@@ -70,23 +63,48 @@ class User:
                 return False, "Department cannot be empty", None
             if role == "nurse" and not with_doctor:
                 return False, "'with_doctor' cannot be empty", None
+            
+        if not all([username, password]):
+            utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
+            errors.append("Username and password required")
+        
+        # Password Validation
+        if len(password) < 8:
+            errors.append("Password must be at least 8 characters")
+        if not any(c.isupper() for c in password):
+            errors.append("Password must contain at least one uppercase letter")
+        if not any(c.isdigit() for c in password):
+            errors.append("Password must contain at least one number")
 
-        # create account in auth_manager
-        auth = AuthManager(manager)
+        # Email Validation
+        email_format = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+        if not re.match(email_format, email):
+            errors.append("Email is invalid - please include the top-domain level")
 
-        success, msg, user_obj = auth.create_account(
-            manager, 
-            role, 
-            user_id, username, password, 
-            name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor
-        )
+        # Contact Number Validation
+        contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
+        if not re.match(contact_num_format, contact_num):
+            errors.append("Contact number is invalid - please include '+60' and '-'")
+        
+        if errors:
+            return False, errors, None
+        else:
+            # create account in auth_manager
+            auth = AuthManager(manager)
 
-        if not success:
-            # Capitalize turns the first letter to upper, remaining be lower
-            utils.log_event(f"")
-            return False, msg, None
-        utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
-        return True, msg, user_obj
+            success, msg, user_obj = auth.create_account(
+                manager, 
+                role, 
+                user_id, username, password, 
+                name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor
+            )
+
+            if not success:
+                # Capitalize turns the first letter to upper, remaining be lower
+                utils.log_event(f"")
+                return False, msg, None
+            utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
+            return True, msg, user_obj
     
     # Update detail
     def update_profile(self, user_id, role, password, name, gender, address, email, contact_num, date_of_birth, department, speciality):
