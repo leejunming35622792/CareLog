@@ -1,4 +1,6 @@
 import streamlit as st
+import datetime
+from helper_manager.profile_manager import find_age
 
 def dashboard(manager, username):
     # Variable
@@ -11,7 +13,7 @@ def dashboard(manager, username):
 
     st.image("img/dashboard.png")
 
-    st.text("🏥 At CareLog, we believe that every hospital should be more than a place of treatment — it should be a place of compassion, dignity, and respect. Our focus is on creating an environment where patients feel heard, cared for, and supported, while staff are empowered to provide not just clinical care, but also empathetic, human-centred support.")
+    # st.text("🏥 At CareLog, we believe that every hospital should be more than a place of treatment — it should be a place of compassion, dignity, and respect. Our focus is on creating an environment where patients feel heard, cared for, and supported, while staff are empowered to provide not just clinical care, but also empathetic, human-centred support.")
 
     st.divider()
 
@@ -22,6 +24,24 @@ def dashboard(manager, username):
         p_name = current_patient.name
         st.metric("Name", p_name)
     with m2:
-        p_count = manager.get_patient_count()
-        st.metric("Total Patient", p_count) 
+        # Age
+        p_age = find_age(current_patient.bday)
+        st.metric("Age", p_age)
+    with m3:
+        # get all Last record 
+        patient_records = [record for record in manager.records if record.p_id == current_patient.p_id]
+        # if got records
+        if patient_records:
+            # find last record date
+            latest_record = max(patient_records, key=lambda r: r.pr_timestamp)
+            latest_record_str = datetime.datetime.fromisoformat(latest_record.pr_timestamp).strftime("%Y-%m-%d")
+            # find days past
+            today = datetime.datetime.now()
+            last_record_dt = datetime.datetime.fromisoformat(latest_record.pr_timestamp)
+            days_difference = (today - last_record_dt).days
+            st.metric("Last Record", latest_record_str, delta=f"{days_difference} days")
+        else:
+            st.info("Book a medical check-up with us right now! 😊")
+    
+    st.divider()
 
