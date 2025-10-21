@@ -6,25 +6,29 @@ from helper_manager.profile_manager import (view_patient_details_by_nurse, searc
 appt_manager = AppointmentManager(st.session_state.manager)
 
 def dashboard(manager, username):
-    st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
-    st.image("img/dashboard.png")
-    st.divider()
-    st.header("Dashboard Overview 🎗️")
-
+    # Find current nurse user
     nurse = next((n for n in manager.nurses if n.username == username), None)
     if nurse is None:
         st.error("Nurse not found.")
         return
 
-    col1, col2, col3 = st.columns(3)
+    # Page design
+    st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
+    st.image("img/dashboard.png")
+    st.divider()
 
+    # --- Dashboard ---
+    st.header("Dashboard Overview 🎗️")
+    st.write("")
+    col1, col2, col3 = st.columns(3)
     with col1: st.metric("Nurse ID", nurse.n_id)
     with col2: st.metric("Department", nurse.department if nurse.department else "Not Set")
     with col3: st.metric("Speciality", nurse.speciality if nurse.speciality else "Not Set")
-
     st.divider()
 
+    # --- Search Patient ---
     st.header("Quick Search 🔍")
+    st.write("")
     with st.expander("Filter Patients", expanded=True):
         search_type = st.radio("Search By:", ["Patient ID", "Name"], horizontal=True)
 

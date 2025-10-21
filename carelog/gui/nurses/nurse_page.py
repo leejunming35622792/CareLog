@@ -47,7 +47,6 @@ def nurse_page(nurse: NurseUser):
     st.divider()
     st.markdown("<h6 style='text-align:center'>CareLog</h6>", unsafe_allow_html=True)
     
-
 def logout():
     st.session_state.page = "login"
     st.session_state.username = None
