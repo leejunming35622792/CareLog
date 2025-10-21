@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from helper_manager.record_manager import search_record
+from helper_manager.record_manager import print_record
 
 def record(manager):
     # Variable
@@ -26,6 +27,7 @@ def record(manager):
         with col3:
             st.markdown("")
             view_button = st.form_submit_button("View Record", use_container_width=True)
+            download_button = st.form_submit_button("Download Record", use_container_width=True)
 
         st.divider()
 
@@ -57,3 +59,9 @@ def record(manager):
             # Optional details in expander
             with st.expander("More Details"):
                 st.write("Remark:", current_record["Remark"])
+
+        if download_button:
+            record_searched = search_record(patient.p_id, record_id)
+            # print_record()
+
+        
