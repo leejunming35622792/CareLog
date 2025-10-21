@@ -97,9 +97,7 @@ def profile(Manager):
             else:
                 new_name = new_name.title()
                 new_bday = new_bday.isoformat()
-                result, msg = User.update_profile(patient.p_id, "patient", username, new_password, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None)
-                st.info(result)
-                st.info(msg)
+                result, msg = User.update_profile(manager, patient.p_id, "patient", username, new_password, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None)
                 with st.spinner("Saving changes..."):
                     time.sleep(1)
                 if result:
