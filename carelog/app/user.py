@@ -58,11 +58,14 @@ class User:
             
         if role in ["doctor", "nurse"]:
             if not speciality:
-                return False, "Speciality cannot be empty", None
+                errors.append("Speciality cannot be empty")
+                return False, errors, None
             if not department:
-                return False, "Department cannot be empty", None
+                errors.append("Department cannot be empty")
+                return False, errors, None
             if role == "nurse" and not with_doctor:
-                return False, "'with_doctor' cannot be empty", None
+                errors.append("'with_doctor' cannot be empty")
+                return False, errors, None
             
         if not all([username, password]):
             utils.log_event(f"Failed to register {role}: Details missing.", "ERROR")
@@ -107,13 +110,10 @@ class User:
             return True, msg, user_obj
     
     @staticmethod
-    def update_profile(user_id, role, username, password, name, bday, gender, address, email, contact_num, remark, department, speciality):
-            from app.schedule import ScheduleManager
-            sc = ScheduleManager()
+    def update_profile(manager, user_id, role, username, password, name, bday, gender, address, email, contact_num, remark, department, speciality):
             role = role.lower()
 
-            # Dynamically get the list (e.g., sc.doctors, sc.patients)
-            users_list = getattr(sc, f"{role}s", None)
+            users_list = getattr(manager, f"{role}s", None)
             if users_list is None:
                 return None, f"Invalid role: {role}"
 
@@ -149,7 +149,7 @@ class User:
 
             if email:
                 from helper_manager.auth_manager import AuthManager
-                auth = AuthManager(sc)
+                auth = AuthManager(manager)
                 success, message, _ = auth.check_email_validation(email)
                 if success:
                     user.email = email
@@ -166,7 +166,7 @@ class User:
                 if department: 
                     user.department = department
 
-            sc.save()
+            manager.save()
             utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
 
-            return user, f"{role.capitalize()} profile updated successfully"
+            return user, f"{role.capitalize()}'s profile updated successfully"
