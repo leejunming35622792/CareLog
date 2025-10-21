@@ -1,11 +1,11 @@
 import streamlit as st
 from datetime import datetime, timedelta
 import pandas as pd
-from doctors.doctor_dashboard import dashboard
-from doctors.doctor_profile import profile_page
-from carelog.gui.doctors.doctor_view_records_page import patient_records_page
-from doctors.doctor_appt_page import appointments_page
-from doctors.doctor_shift_page import shift_page
+from gui.doctors.doctor_dashboard import dashboard
+from gui.doctors.doctor_profile import profile_page
+from gui.doctors.doctor_view_records_page import patient_records_page
+from gui.doctors.doctor_appt_page import appointments_page
+from gui.doctors.doctor_shift_page import shift_page
 
 # SEARCH UI
 def search_and_select_profile_ui(manager):
@@ -80,7 +80,8 @@ def doctor_page(_Manager):
         st.session_state.logout_triggered = False
         st.rerun()
 
-    st.title("🏥 CareLog")
+    # Page design
+
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Select", tabs)

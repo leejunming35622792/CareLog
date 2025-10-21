@@ -1,5 +1,5 @@
 import datetime
-from streamlit import st
+import streamlit as st
 
 # details manager functions
 from helper_manager.profile_manager import (
@@ -12,10 +12,14 @@ from helper_manager.appointment_manager import AppointmentManager
 # DASHBOARD
 def dashboard(manager, username):
     """Main dashboard showing overview and quick stats"""
+    # Page design
+    st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
+    st.balloons()
+    st.image("img/dashboard.png")
     st.divider()
     st.header("Dashboard Overview")
 
-    # Doctor details
+    # --- Doctor Details ---
     success, message, profile = view_doctor_details(username)
 
     if profile:
@@ -29,12 +33,13 @@ def dashboard(manager, username):
 
         st.divider()
 
+        # --- Appointment ---
         st.header("Today's Appointments")
         appt_manager = AppointmentManager(manager)
         success, msg, appointments = appt_manager.view_upcoming_appointments(username)
 
         if success and appointments:
-            today = datetime.now().strftime("%Y-%m-%d")  # ✅ fixed
+            today = datetime.datetime.now().strftime("%Y-%m-%d")  # ✅ fixed
             today_appts = [a for a in appointments if a.get("date") == today]
             if today_appts:
                 for appt in today_appts[:3]:
