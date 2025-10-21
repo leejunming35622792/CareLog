@@ -198,11 +198,11 @@ class AppointmentManager:
 
     def create_appointment_nurse(self, patient_id, doctor_id, date, time, remark):
         """Create a new appointment"""
-        found_p, msg_p, patient = self.find_patient_by_id(patient_id)
+        found_p, msg_p, patient = self.sc.find_patient_by_id(patient_id)
         if not found_p:
             return False, msg_p, None
 
-        found_d, msg_d, doctor = self.find_doctor_by_id(doctor_id)
+        found_d, msg_d, doctor = self.sc.find_doctor_by_id(doctor_id)
         if not found_d:
             return False, msg_d, None
 
@@ -222,7 +222,7 @@ class AppointmentManager:
         self.next_appt_id += 1
 
         utils.log_event(f"Appointment created: {appt_id}", "INFO")
-        self.save()
+        self.sc.save()
 
         return True, f"Appointment {appt_id} created successfully", new_appointment
 
@@ -291,7 +291,7 @@ class AppointmentManager:
     def view_appointment_nurse(self, appointment_id=None, patient_id=None):
         """View appointments - all, by ID, or by patient"""
         if appointment_id:
-            found, msg, appt = self.find_appointment_by_id(appointment_id)
+            found, msg, appt = self.sc.find_appointment_by_id(appointment_id)
             if not found:
                 return False, msg, None
 
@@ -338,7 +338,7 @@ class AppointmentManager:
 
     def update_appointment_nurse(self, appt_id, date=None, time=None, status=None, remark=None):
         """Update appointment details"""
-        found, msg, appt = self.find_appointment_by_id(appt_id)
+        found, msg, appt = self.sc.find_appointment_by_id(appt_id)
         if not found:
             return False, msg, None
 
@@ -354,19 +354,19 @@ class AppointmentManager:
             appt.remark = remark
 
         utils.log_event(f"Appointment updated: {appt_id}", "INFO")
-        self.save()
+        self.sc.save()
 
         return True, f"Appointment {appt_id} updated successfully", appt
 
     def delete_appointment_nurse(self, appointment_id):
         """Cancel/delete appointment"""
-        found, msg, appt = self.find_appointment_by_id(appointment_id)
+        found, msg, appt = self.sc.find_appointment_by_id(appointment_id)
         if not found:
             return False, msg, None
 
         
         appt.status = "cancelled"
-        self.save()
+        self.sc.save()
         
         utils.log_event(f"Nurse cancelled appointment {appointment_id}", "INFO")
         return True, "Appointment cancelled successfully", appointment_id

@@ -1,12 +1,13 @@
 import streamlit as st
-import pandas as pd
 from helper_manager.record_manager import search_record
-from helper_manager.record_manager import print_record
 
 def record(manager):
     # Variable
     username = st.session_state.username
     patient = next((p for p in manager.patients if p.username == username), None)
+    if patient is None:
+        st.error("Patient not found!")
+        return
 
     # Page design
     st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
@@ -63,5 +64,3 @@ def record(manager):
         if download_button:
             record_searched = search_record(patient.p_id, record_id)
             # print_record()
-
-        

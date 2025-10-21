@@ -123,7 +123,8 @@ class ScheduleManager():
                 timestamp   = r["timestamp"],
                 remark_type = r["remark_type"],
                 content     = r["content"],
-                is_active   = r.get("is_active", True)
+                is_active   = r.get("is_active", True),
+                last_modified = r.get("last_modified", r["timestamp"])
             ) for r in data.get("remarks", [])
         ]
 

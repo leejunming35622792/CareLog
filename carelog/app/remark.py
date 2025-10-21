@@ -1,15 +1,15 @@
 import datetime
 
 class PatientRemark:
-    def __init__ (self,remark_id: str,patient_id: int,doctor_id: int,timestamp:str, remark_type: str,content:str,is_active: bool= True): 
-        self.remark_id=remark_id
-        self.patient_id=patient_id
-        self.doctor_id=doctor_id
-        self.timestamp=timestamp
-        self.remark_type=remark_type
-        self.content=content
-        self.is_active = is_active
-        self.last_modified=timestamp
+    def __init__ (self, remark_id:str, patient_id:int, doctor_id:int, timestamp:str, remark_type:str, content:str, last_modified:str, is_active: bool= True): 
+        self.remark_id      =   remark_id
+        self.patient_id     =   patient_id
+        self.doctor_id      =   doctor_id
+        self.timestamp      =   timestamp
+        self.remark_type    =   remark_type
+        self.content        =   content
+        self.last_modified  =   last_modified
+        self.is_active      =   is_active
     
     def __str__(self):
         return f"[{self.timestamp}]{self.remark_type.upper()}: {self.content}"
@@ -36,7 +36,7 @@ class PatientRemark:
             remark_type=data["remark_type"],
             content=data["content"],
             is_active=data.get("is_active", True),
-            last_modified=data.get("last_modified", data.get("timestamp")),
+            last_modified=str(data.get("last_modified") or data.get("timestamp") or ""),
         )
     
     def update_content(self, new_content: str):
@@ -48,4 +48,3 @@ class PatientRemark:
         """Soft delete the remark"""
         self.is_active = False
         self.last_modified = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-

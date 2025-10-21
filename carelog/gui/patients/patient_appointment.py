@@ -39,7 +39,11 @@ def appointment(manager):
                     st.divider()
 
                     # Patient info (locked)
-                    p_id = st.text_input("Patient ID", value=patient.p_id, disabled=True)
+                    if patient is not None:
+                        p_id = st.text_input("Patient ID", value=patient.p_id, disabled=True)
+                    else:
+                        st.error("Patient not found! Please log in again.")
+                        p_id = None
 
                     # Create input bow
                     doctor_disp = st.selectbox("Select Doctor", doctor_id.keys())

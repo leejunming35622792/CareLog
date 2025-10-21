@@ -118,46 +118,49 @@ def view_nurse_details(username, password):
         return True, "Profile successfully retrieved", profile
 
 def view_patient_details_by_nurse(patient_id):
-        """View patient details including records and remarks"""
-        found, msg, patient = manager.find_patient_by_id(patient_id)
-        
-        if not found:
-            return False, msg, None
+    """View patient details including records and remarks"""
+    found, msg, patient = manager.find_patient_by_id(patient_id)
+    
+    if not found:
+        return False, msg, None
 
-        patient_records = [r for r in manager.records if r.p_id == patient_id]
-        patient_remarks = [r for r in manager.remarks if r.patient_id == patient_id and r.is_active]
-        
-        patient_info = {
-            "patient_id": patient.p_id,
-            "name": patient.name,
-            "gender": patient.gender,
-            "email": patient.email,
-            "contact": patient.contact_num,
-            "address": patient.address,
-            "records_count": len(patient_records),
-            "remarks_count": len(patient_remarks),
-            "records": [
-                {
-                    "record_id": r.pr_record_id,
-                    "timestamp": r.pr_timestamp,
-                    "conditions": r.pr_conditions,
-                    "medications": r.pr_medications,
-                    "remark": r.pr_remark
-                } for r in patient_records
-            ],
-            "remarks": [
-                {
-                    "remark_id": r.remark_id,
-                    "doctor_id": r.doctor_id,
-                    "timestamp": r.timestamp,
-                    "type": r.remark_type,
-                    "content": r.content
-                } for r in patient_remarks
-            ]
-        }
-        
-        utils.log_event(f"Nurse viewed patient {patient_id} details", "INFO")
-        return True, "Patient details retrieved", patient_info
+    patient_records = [r for r in manager.records if r.p_id == patient_id]
+    patient_remarks = [r for r in manager.remarks if r.patient_id == patient_id and r.is_active]
+    
+    if patient is None:
+        return False, "Patient not found", None
+
+    patient_info = {
+        "patient_id": patient.p_id,
+        "name": patient.name,
+        "gender": patient.gender,
+        "email": getattr(patient, "email", None),
+        "contact": getattr(patient, "contact_num", None),
+        "address": getattr(patient, "address", None),
+        "records_count": len(patient_records),
+        "remarks_count": len(patient_remarks),
+        "records": [
+            {
+                "record_id": r.pr_record_id,
+                "timestamp": r.pr_timestamp,
+                "conditions": r.pr_conditions,
+                "medications": r.pr_medications,
+                "remark": r.pr_remark
+            } for r in patient_records
+        ],
+        "remarks": [
+            {
+                "remark_id": r.remark_id,
+                "doctor_id": r.doctor_id,
+                "timestamp": r.timestamp,
+                "type": r.remark_type,
+                "content": r.content
+            } for r in patient_remarks
+        ]
+    }
+    
+    utils.log_event(f"Nurse viewed patient {patient_id} details", "INFO")
+    return True, "Patient details retrieved", patient_info
 
 def search_and_select_profile(manager):
         role = input("Search for (patient/doctor/nurse/receptionist): ").strip().lower()

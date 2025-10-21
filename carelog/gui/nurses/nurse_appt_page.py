@@ -26,11 +26,14 @@ def appointments_page(manager, username):
                 success, msg, appts = appt_manager.view_appointment_nurse()
                 if success:
                     st.success(msg)
-                    for appt in appts:
-                        with st.expander(f"Appointment {appt['appt_id']} - {appt['date']} {appt['time']}"):
-                            st.write(f"**Patient:** {appt['patient_id']}")
-                            st.write(f"**Doctor:** {appt['doctor_id']}")
-                            st.write(f"**Status:** {appt['status']}")
+                    if appts:
+                        for appt in appts:
+                            with st.expander(f"Appointment {appt['appt_id']} - {appt['date']} {appt['time']}"):
+                                st.write(f"**Patient:** {appt['patient_id']}")
+                                st.write(f"**Doctor:** {appt['doctor_id']}")
+                                st.write(f"**Status:** {appt['status']}")
+                    else:
+                        st.info("No appointments found.")
                 else:
                     st.error(msg)
         
@@ -52,11 +55,12 @@ def appointments_page(manager, username):
                     success, msg, appts = appt_manager.view_appointment_nurse(patient_id=patient_id)
                     if success:
                         st.success(msg)
-                        for appt in appts:
-                            with st.expander(f"Appointment {appt['appt_id']} - {appt['date']} {appt['time']}"):
-                                st.write(f"**Doctor:** {appt['doctor_id']}")
-                                st.write(f"**Status:** {appt['status']}")
-                                st.write(f"**Remark:** {appt['remark']}")
+                        if appts:
+                            for appt in appts:
+                                with st.expander(f"Appointment {appt['appt_id']} - {appt['date']} {appt['time']}"):
+                                    st.write(f"**Doctor:** {appt['doctor_id']}")
+                                    st.write(f"**Status:** {appt['status']}")
+                                    st.write(f"**Remark:** {appt['remark']}")
                     else:
                         st.error(msg)
         
@@ -67,11 +71,13 @@ def appointments_page(manager, username):
                 success, msg, results = appt_manager.search_appointments_by_date(date_str)
                 if success:
                     st.success(msg)
-                    for appt in results:
-                        with st.expander(f"Appointment {appt['appt_id']} - {appt['time']}"):
-                            st.write(f"**Patient ID:** {appt['patient_id']}")
-                            st.write(f"**Doctor ID:** {appt['doctor_id']}")
-                            st.write(f"**Status:** {appt['status']}")
+                    if success:
+                        if results:
+                            for appt in results:
+                                with st.expander(f"Appointment {appt['appt_id']} - {appt['time']}"):
+                                    st.write(f"**Patient ID:** {appt['patient_id']}")
+                                    st.write(f"**Doctor ID:** {appt['doctor_id']}")
+                                    st.write(f"**Status:** {appt['status']}")
                 else:
                     st.error(msg)
     

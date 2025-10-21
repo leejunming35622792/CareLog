@@ -1,6 +1,7 @@
 import datetime
 from app.schedule import ScheduleManager
 from app.remark import PatientRemark
+import app.utils as utils
 
 manager = ScheduleManager()
 
@@ -24,7 +25,8 @@ def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str,
         timestamp=timestamp,
         remark_type=r_type,
         content=remark_content,
-        is_active=True
+        is_active=True,
+        last_modified=timestamp
     )
     manager.remarks.append(new_remark)
     rid=manager.next_remark_id
@@ -57,7 +59,8 @@ def add_patient_remark_nurse(self, patient_id, nurse_username, remark_type, cont
         timestamp   = timestamp,
         remark_type = remark_type,
         content     = f"[Nurse {nurse.name}] {content}",
-        is_active   = True
+        is_active   = True,
+        last_modified = timestamp
     )
     
     self.remarks.append(new_remark)

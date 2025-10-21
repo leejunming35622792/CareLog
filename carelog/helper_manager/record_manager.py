@@ -1,7 +1,7 @@
 from app.schedule import ScheduleManager
-manager = ScheduleManager()
 import app.utils as utils
 
+manager = ScheduleManager()
 
 def _persist():
     """Best-effort persistence without assuming exact method name/placement."""
@@ -38,6 +38,55 @@ def search_record(p_id, record_id):
                 "Remark": getattr(record, "pr_remark", ""),
             }
     return {}
+
+def create_patient_record_nurse(record_id, patient_id, timestamp, conditions, medications, remark):
+    from app.patient import PatientRecord
+    
+    new_record = PatientRecord(
+        pr_record_id=record_id,
+        p_id=patient_id,
+        pr_timestamp=timestamp,
+        pr_conditions=conditions,
+        pr_medications=medications,
+        pr_billings="",
+        pr_prediction_result="",
+        pr_confidence_score=0.0,
+        pr_remark=remark
+    )
+    return new_record
+
+def view_patient_records_doctor(self, patient_id):
+    "View all records for a patient"
+    patient=self.find_patient_by_id(patient_id)
+    if not patient:
+        return False,"Patient Not Found", None
+    records=[r for r in manager.records if r.p_id == patient_id]
+
+    if not records :
+        return False, f"No records found for patient {patient_id}", None 
+    
+    results = [
+        {
+            "record_id": r.pr_record_id,
+            "timestamp": r.pr_timestamp,
+            "conditions": r.pr_conditions,
+            "medications": r.pr_medications,
+            "remark": r.pr_remark
+        } for r in records
+    ]
+        
+    return True, f"Found {len(results)} record(s)", results
+
+def view_patient_records_nurse(records):
+    results = [{
+            "record_id": r.pr_record_id,
+            "timestamp": r.pr_timestamp,
+            "conditions": r.pr_conditions,
+            "medications": r.pr_medications,
+            "remark": r.pr_remark
+        } for r in records]
+    
+    return results
 
 def update_record_doctor(p_id, record_id, **kwargs):
     """
@@ -98,6 +147,15 @@ def update_record_doctor(p_id, record_id, **kwargs):
             return True
     return False
 
+def update_patient_record_nurse(sc, record_id, conditions=None, medications=None, remark=None):
+    if conditions is not None:
+        sc.record.pr_conditions = conditions
+    if medications is not None:
+        sc.record.pr_medications = medications
+    if remark is not None:
+        sc.record.pr_remark = remark
+    return True
+
 def delete_patient_record_doctor(self, record_id):
     """Delete patient record"""
     record = next((r for r in self.records if r.pr_record_id == record_id), None)
@@ -109,111 +167,3 @@ def delete_patient_record_doctor(self, record_id):
     
     utils.log_event(f"Nurse deleted record {record_id}", "INFO")
     return True, "Record deleted successfully", record_id
-
-def view_patient_records_doctor(self,patient_id):
-    "View all records for a patient"
-    patient=self.find_patient_by_id(patient_id)
-    if not patient:
-        return False,"Patient Not Found", None
-    records=[r for r in manager.records if r.p_id == patient_id]
-
-    if not records :
-        return False, f"No records found for patient {patient_id}", None 
-    
-    results = [
-        {
-            "record_id": r.pr_record_id,
-            "timestamp": r.pr_timestamp,
-            "conditions": r.pr_conditions,
-            "medications": r.pr_medications,
-            "remark": r.pr_remark
-        } for r in records
-    ]
-        
-    return True, f"Found {len(results)} record(s)", results
-
-def create_patient_record_nurse(self, patient_id, conditions, medications, remark=""):
-    """Create new patient record"""
-    import datetime
-    
-    found, msg, patient = self.find_patient_by_id(patient_id)
-    if not found:
-        return False, msg, None
-    
-    record_id = f"PR{self.next_record_id:04d}"
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    new_record = PatientRecord(
-        pr_record_id=record_id,
-        p_id=patient_id,
-        pr_timestamp=timestamp,
-        pr_conditions=conditions,
-        pr_medications=medications,
-        pr_billings="",
-        pr_prediction_result="",
-        pr_confidence_score=0.0,
-        pr_remark=remark
-    )
-    
-    self.records.append(new_record)
-    self.next_record_id += 1
-    self.save()
-    
-    utils.log_event(f"Nurse created record {record_id} for patient {patient_id}", "INFO")
-    return True, "Patient record created successfully", record_id
-
-def view_patient_records_nurse(self, patient_id):
-    """View all records for a patient"""
-    found, msg, patient = self.find_patient_by_id(patient_id)
-    if not found:
-        return False, msg, None
-
-    
-    records = [r for r in self.records if r.p_id == patient_id]
-    
-    if not records:
-        return False, f"No records found for patient {patient_id}", None
-    
-    results = [
-        {
-            "record_id": r.pr_record_id,
-            "timestamp": r.pr_timestamp,
-            "conditions": r.pr_conditions,
-            "medications": r.pr_medications,
-            "remark": r.pr_remark
-        } for r in records
-    ]
-    
-    return True, f"Found {len(results)} record(s)", results
-
-def update_patient_record_nurse(self, record_id, conditions=None, medications=None, remark=None):
-    """Update patient record (conditions and medications only)"""
-    record = next((r for r in self.records if r.pr_record_id == record_id), None)
-    if not record:
-        return False, "Record not found", None
-    
-    if conditions is not None:
-        record.pr_conditions = conditions
-    if medications is not None:
-        record.pr_medications = medications
-    if remark is not None:
-        record.pr_remark = remark
-    
-    self.save()
-    utils.log_event(f"Nurse updated record {record_id}", "INFO")
-    return True, "Record updated successfully", record_id
-
-def delete_patient_record_nurse(self, record_id):
-    """Delete patient record"""
-    record = next((r for r in self.records if r.pr_record_id == record_id), None)
-    if not record:
-        return False, "Record not found", None
-    
-    self.records.remove(record)
-    self.save()
-    
-    utils.log_event(f"Nurse deleted record {record_id}", "INFO")
-    return True, "Record deleted successfully", record_id
-
-def print_record(patient, record):
-    pass

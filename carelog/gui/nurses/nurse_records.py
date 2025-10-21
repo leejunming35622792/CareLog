@@ -1,8 +1,10 @@
 import streamlit as st
 from helper_manager.profile_manager import (search_patient_by_name, view_patient_details_by_nurse)
-from helper_manager.record_manager import (create_patient_record_nurse, update_patient_record_nurse, view_patient_records_nurse, delete_patient_record_nurse)
+from app.user import User
+from app.nurse import NurseUser
 
 def patient_records_page(manager, username):
+    nurse = NurseUser("", username, "", "", "", "", "", "", "", "", "", "", "")
     """Patient Records Management Page"""
     st.header("Patient Records Management 📋")
 
@@ -28,42 +30,44 @@ def patient_records_page(manager, username):
                     success, msg, info = view_patient_details_by_nurse(patient_id)
                     if success:
                         st.success(msg)
-                        
                         # Display patient info
-                        st.markdown("### Patient Information")
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.write(f"**Name:** {info['name']}")
-                            st.write(f"**Gender:** {info['gender']}")
-                            st.write(f"**Email:** {info['email']}")
-                        with col2:
-                            st.write(f"**Contact:** {info['contact']}")
-                            st.write(f"**Address:** {info['address']}")
-                        
-                        st.divider()
-                        
-                        # Display records
-                        st.markdown("### Medical Records")
-                        if info['records']:
-                            for record in info['records']:
-                                with st.expander(f"Record: {record['record_id']} - {record['timestamp']}"):
-                                    st.write(f"**Conditions:** {record['conditions']}")
-                                    st.write(f"**Medications:** {record['medications']}")
-                                    st.write(f"**Remark:** {record['remark']}")
+                        if info is not None:
+                            st.markdown("### Patient Information")
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.write(f"**Name:** {info['name']}")
+                                st.write(f"**Gender:** {info['gender']}")
+                                st.write(f"**Email:** {info['email']}")
+                            with col2:
+                                st.write(f"**Contact:** {info['contact']}")
+                                st.write(f"**Address:** {info['address']}")
+                            
+                            st.divider()
+                            
+                            # Display records
+                            st.markdown("### Medical Records")
+                            if info.get('records'):
+                                for record in info['records']:
+                                    with st.expander(f"Record: {record['record_id']} - {record['timestamp']}"):
+                                        st.write(f"**Conditions:** {record['conditions']}")
+                                        st.write(f"**Medications:** {record['medications']}")
+                                        st.write(f"**Remark:** {record[4]}")
+                            else:
+                                st.info("No records found")
+                            
+                            st.divider()
+                            
+                            # Display remarks
+                            st.markdown("### Patient Remarks")
+                            if info.get('remarks'):
+                                for remark in info['remarks']:
+                                    with st.expander(f"Remark: {remark['remark_id']} - {remark['type']} - {remark['timestamp']}"):
+                                        st.write(f"**Doctor ID:** {remark['doctor_id']}")
+                                        st.write(f"**Content:** {remark['content']}")
+                            else:
+                                st.info("No remarks found")
                         else:
-                            st.info("No records found")
-                        
-                        st.divider()
-                        
-                        # Display remarks
-                        st.markdown("### Patient Remarks")
-                        if info['remarks']:
-                            for remark in info['remarks']:
-                                with st.expander(f"Remark: {remark['remark_id']} - {remark['type']} - {remark['timestamp']}"):
-                                    st.write(f"**Doctor ID:** {remark['doctor_id']}")
-                                    st.write(f"**Content:** {remark['content']}")
-                        else:
-                            st.info("No remarks found")
+                            st.error("Patient information not found.")
                     else:
                         st.error(msg)
                 else:
@@ -76,14 +80,17 @@ def patient_records_page(manager, username):
                     success, msg, results = search_patient_by_name(patient_name)
                     if success:
                         st.success(msg)
-                        for patient in results:
-                            with st.container():
-                                st.markdown(f"### {patient['name']}")
-                                st.write(f"**ID:** {patient['patient_id']}")
-                                st.write(f"**Gender:** {patient['gender']}")
-                                st.write(f"**Contact:** {patient['contact']}")
-                                st.write(f"**Email:** {patient['email']}")
-                                st.divider()
+                        if results:
+                            for patient in results:
+                                with st.container():
+                                    st.markdown(f"### {patient['name']}")
+                                    st.write(f"**ID:** {patient['patient_id']}")
+                                    st.write(f"**Gender:** {patient['gender']}")
+                                    st.write(f"**Contact:** {patient['contact']}")
+                                    st.write(f"**Email:** {patient['email']}")
+                                    st.divider()
+                        else:
+                            st.info("No patients found.")
                     else:
                         st.error(msg)
                 else:
@@ -101,9 +108,8 @@ def patient_records_page(manager, username):
             submitted = st.form_submit_button("➕ Create Record", use_container_width=True)
             if submitted:
                 if patient_id_rec and conditions and medications:
-                    success, msg, record_id = create_patient_record_nurse(
-                        patient_id_rec, conditions, medications, remark
-                    )
+                    success, msg, record_id = nurse.create_patient_record(
+                        patient_id_rec, conditions, medications, remark)
                     if success:
                         st.success(f"✅ {msg} (Record ID: {record_id})")
                     else:
@@ -116,14 +122,25 @@ def patient_records_page(manager, username):
         patient_id_view = st.text_input("Enter Patient ID", key="view_rec_pid")
         if st.button("🔍 View Records", key="view_rec_btn"):
             if patient_id_view:
-                success, msg, records = view_patient_records_nurse(patient_id_view)
+                success, msg, records = nurse.view_patient_records(patient_id_view)
                 if success:
                     st.success(msg)
-                    for record in records:
-                        with st.expander(f"Record: {record['record_id']} - {record['timestamp']}"):
-                            st.write(f"**Conditions:** {record['conditions']}")
-                            st.write(f"**Medications:** {record['medications']}")
-                            st.write(f"**Remark:** {record['remark']}")
+                    if records:
+                        for record in records:
+                            # If record is a dict, use keys; if list, use indices
+                            if isinstance(record, dict):
+                                with st.expander(f"Record: {record.get('record_id', '')} - {record.get('timestamp', '')}"):
+                                    st.write(f"**Conditions:** {record.get('conditions', '')}")
+                                    st.write(f"**Medications:** {record.get('medications', '')}")
+                                    st.write(f"**Remark:** {record.get('remark', '')}")
+                            elif isinstance(record, list):
+                                # Assuming the order: [record_id, timestamp, conditions, medications, remark]
+                                with st.expander(f"Record: {record[0]} - {record[1]}"):
+                                    st.write(f"**Conditions:** {record[2]}")
+                                    st.write(f"**Medications:** {record[3]}")
+                                    st.write(f"**Remark:** {record[4]}")
+                    else:
+                        st.error("No record found")
                 else:
                     st.error(msg)
             else:
@@ -141,7 +158,7 @@ def patient_records_page(manager, username):
             submitted = st.form_submit_button("Update Record", use_container_width=True)
             if submitted:
                 if record_id_upd:
-                    success, msg, rid = update_patient_record_nurse(
+                    success, msg, rid = nurse.update_patient_record(
                         record_id_upd,
                         conditions=conditions_upd if conditions_upd else None,
                         medications=medications_upd if medications_upd else None,
@@ -164,7 +181,7 @@ def patient_records_page(manager, username):
         
         if st.button("🗑️ Delete Record", type="primary", use_container_width=True):
             if record_id_del and confirm_delete:
-                success, msg, rid = delete_patient_record_nurse(record_id_del)
+                success, msg, rid = nurse.delete_patient_record(record_id_del)
                 if success:
                     st.success(f"✅ {msg}")
                 else:
