@@ -303,7 +303,7 @@ def patient_records_page(manager, username):
     # Tab 3: View/Edit Remarks
     with tab3:
         st.subheader("View Patient Remarks")
-        view_patient_id = st.text_input("Enter Patient ID", key="patient_search_remark")
+        view_patient_id = st.text_input("Enter Patient ID", key="patient_search_remark_view")
         filter_type = st.selectbox(
             "Filter by Type (optional)",
             ["All", "mood", "pain_level", "dietary", "general", "observation"],
