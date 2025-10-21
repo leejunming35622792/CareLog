@@ -43,6 +43,10 @@ def nurse_page(nurse: NurseUser):
     elif option == "Remarks":
         remarks_page(manager, username)
 
+    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+        st.success(st.session_state.success_msg)
+        st.session_state.success_msg = ""
+
     # End of Page
     st.divider()
     st.markdown("<h6 style='text-align:center'>CareLog</h6>", unsafe_allow_html=True)
