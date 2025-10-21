@@ -47,7 +47,7 @@ def get_detail(role, username, password, user_id):
             speciality = st.text_input("Enter Speciality: ")
             department = st.text_input("Enter Department: ")
             if role == "Nurse":
-                doctor_disp = {f"{d.d_id} - {d.name}": d.id for d in manager.doctors}
+                doctor_disp = {f"{d.d_id} - {d.name}": d.d_id for d in manager.doctors}
                 with_doctor_input = st.selectbox("With Doctor: ", doctor_disp.keys())
                 with_doctor = doctor_disp[with_doctor_input]
 
