@@ -229,6 +229,7 @@ def patient_records_page(manager, username):
             success, message, info = view_patient_details_by_doctor(patient_id)
             if success and info:
                 st.success(message)
+                # Top-level metrics
                 col1, col2 = st.columns(2)
                 with col1:
                     st.metric("Patient ID", info.get("patient_id", "N/A"))
@@ -236,15 +237,37 @@ def patient_records_page(manager, username):
                     st.metric("Gender", info.get("gender", "N/A"))
                     st.metric("Date of Birth", info.get("date_of_birth", "N/A"))
                 with col2:
+                    # Normalize previous_conditions to a list of strings
+                    raw_prev = info.get("previous_conditions", [])
+                    prev_list = []
+                    if isinstance(raw_prev, dict):
+                        # dict of condition -> severity/notes
+                        prev_list = [f"{k}: {v}" for k, v in raw_prev.items()]
+                    elif isinstance(raw_prev, list):
+                        prev_list = [str(x) for x in raw_prev]
+                    elif isinstance(raw_prev, str):
+                        prev_list = [raw_prev] if raw_prev.strip() else []
+
                     st.write("**Previous Conditions:**")
-                    if info.get("previous_conditions"):
-                        for condition in info["previous_conditions"]:
+                    if prev_list:
+                        for condition in prev_list:
                             st.write(f"• {condition}")
                     else:
                         st.info("No previous conditions recorded")
+
+                    # Normalize medication_history to a list of strings
+                    raw_med = info.get("medication_history", [])
+                    med_list = []
+                    if isinstance(raw_med, dict):
+                        med_list = [f"{k}: {v}" for k, v in raw_med.items()]
+                    elif isinstance(raw_med, list):
+                        med_list = [str(x) for x in raw_med]
+                    elif isinstance(raw_med, str):
+                        med_list = [raw_med] if raw_med.strip() else []
+
                     st.write("**Medication History:**")
-                    if info.get("medication_history"):
-                        for med in info["medication_history"]:
+                    if med_list:
+                        for med in med_list:
                             st.write(f"• {med}")
                     else:
                         st.info("No medication history recorded")
@@ -280,7 +303,7 @@ def patient_records_page(manager, username):
     # Tab 3: View/Edit Remarks
     with tab3:
         st.subheader("View Patient Remarks")
-        view_patient_id = st.number_input("Patient ID", min_value=1, step=1, key="view_remarks_id")
+        view_patient_id = st.text_input("Enter Patient ID", key="patient_search_remark")
         filter_type = st.selectbox(
             "Filter by Type (optional)",
             ["All", "mood", "pain_level", "dietary", "general", "observation"],

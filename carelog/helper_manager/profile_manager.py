@@ -35,29 +35,63 @@ def view_doctor_details(username):
         }
         return True, "Profile Successfully Retrieved", profile
 
-def view_patient_details_by_doctor(patient_id :int):
-        patient=next((p for p in manager.patients if p.p_id ==patient_id),None)
-        if patient is None:
-            return False,"Patient Not Found", None
-        # records use attribute `p_id` (see record_manager.py), not `patient`
-        patient_records=[r for r in manager.records if getattr(r, 'p_id', None) == patient_id]
-        previous_conditions: list[str]= []
-        medication_history: list[str]= []
-        for record in patient_records:
-            if getattr(record,"pr_conditions",None):
-                previous_conditions.extend(record.pr_conditions)
-            if hasattr(record,"pr_medications") and record.pr_medications:
-                medication_history.extend(record.pr_medications)
-        previous_conditions = list(set(previous_conditions))
-        info = {
-            "patient_id": patient.p_id,
-            "name": patient.name,
-            "gender": patient.gender,
-            "date_of_birth": getattr(patient, "date_of_birth", ""),
-            "previous_conditions": previous_conditions,
-            "medication_history": medication_history,
-            }
-        return True, "Patient details retrieved successfully", info
+def view_patient_details_by_doctor(patient_id: int):
+    # be tolerant of caller passing int or string IDs (compare as strings)
+    patient = next((p for p in manager.patients if str(p.p_id) == str(patient_id)), None)
+    if patient is None:
+        return False, "Patient Not Found", None
+
+    # records use attribute `p_id` (see record_manager.py), not `patient`
+    patient_records = [r for r in manager.records if str(getattr(r, "p_id", "")) == str(patient_id)]
+
+    previous_conditions: list[str] = []
+    medication_history: list[str] = []
+
+    for record in patient_records:
+        # --- previous conditions ---
+        pr_conds = getattr(record, "pr_conditions", None)
+        if pr_conds:
+            if isinstance(pr_conds, (list, tuple, set)):
+                previous_conditions.extend([str(x).strip() for x in pr_conds if str(x).strip()])
+            elif isinstance(pr_conds, dict):
+                previous_conditions.extend([f"{k}: {v}" for k, v in pr_conds.items()])
+            elif isinstance(pr_conds, str):
+                # if comma-separated string, split into items; otherwise treat whole string as one item
+                if "," in pr_conds:
+                    previous_conditions.extend([p.strip() for p in pr_conds.split(",") if p.strip()])
+                else:
+                    previous_conditions.append(pr_conds.strip())
+            else:
+                previous_conditions.append(str(pr_conds))
+
+        # --- medication history ---
+        pr_meds = getattr(record, "pr_medications", None)
+        if pr_meds:
+            if isinstance(pr_meds, (list, tuple, set)):
+                medication_history.extend([str(x).strip() for x in pr_meds if str(x).strip()])
+            elif isinstance(pr_meds, dict):
+                medication_history.extend([f"{k}: {v}" for k, v in pr_meds.items()])
+            elif isinstance(pr_meds, str):
+                if "," in pr_meds:
+                    medication_history.extend([m.strip() for m in pr_meds.split(",") if m.strip()])
+                else:
+                    medication_history.append(pr_meds.strip())
+            else:
+                medication_history.append(str(pr_meds))
+
+    # remove duplicates but keep order
+    previous_conditions = list(dict.fromkeys(previous_conditions))
+    medication_history = list(dict.fromkeys(medication_history))
+
+    info = {
+        "patient_id": patient.p_id,
+        "name": patient.name,
+        "gender": patient.gender,
+        "date_of_birth": getattr(patient, "date_of_birth", ""),
+        "previous_conditions": previous_conditions,
+        "medication_history": medication_history,
+    }
+    return True, "Patient details retrieved successfully", info
 
 def view_nurse_details(username, password):
         nurse = next((n for n in manager.nurses if n.username == username), None)
