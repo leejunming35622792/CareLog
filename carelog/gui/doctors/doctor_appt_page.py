@@ -8,7 +8,7 @@ def appointments_page(manager, username):
     """View and manage appointments"""
     st.header("Appointments")
     appt_manager = AppointmentManager(manager)
-    success, message, appointments = appt_manager.view_upcoming_appointments(username)
+    success, message, appointments = appt_manager.view_all_appointments(username)
 
     if not success:
         st.error(message)
