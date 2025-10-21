@@ -14,23 +14,27 @@ def record(manager):
 
     with st.form("view-record-form"):
         st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Records 📃</h1>", unsafe_allow_html=True)
+
+        # --- Get all record IDs for patient ---
+        p_record_id = [r.pr_record_id for r in manager.records if r.pr_record_id in patient.p_record]
+
         col1, col2, col3= st.columns([3,1,3])
         with col1:
-            # --- Get all record IDs for patient ---
-            p_record_id = [r.pr_record_id for r in manager.records if r.pr_record_id in patient.p_record]
-            if not p_record_id:
-                st.warning("No records found!")
-                return
-            
             # --- Record selection ---
             record_id = st.selectbox("Select Record ID", p_record_id)
             
         with col3:
             st.markdown("")
-            view_button = st.form_submit_button("View Record", use_container_width=True)
-            download_button = st.form_submit_button("Download Record", use_container_width=True)
+            if p_record_id:
+                show = False
+            else:
+                show = True
+            view_button = st.form_submit_button("View Record", disabled = show, use_container_width=True)
+            download_button = st.form_submit_button("Download Record", disabled = show, use_container_width=True)
 
         st.divider()
+        if not p_record_id:
+            st.warning("No records found!")
 
         if view_button:
             # --- Display selected record ---
