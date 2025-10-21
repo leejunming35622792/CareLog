@@ -69,7 +69,7 @@
             "username": "Patient101",
             "password": "Patient101",
             "name": "",
-            "bday": "",
+            "bday": "2006-10-21",
             "gender": "",
             "address": "",
             "email": "",
@@ -536,8 +536,8 @@
             "timestamp": "2025-01-12T11:00:00",
             "remark_type": "Note",
             "content": "Patient advised to reduce sugar intake",
-            "is_active": true,
-            "last_modified": "2025-01-12T11:00:00"
+            "last_modified": "2025-01-12T11:00:00",
+            "is_active": true
         },
         {
             "remark_id": "RM0002",
@@ -546,8 +546,8 @@
             "timestamp": "2025-04-12T10:30:00",
             "remark_type": "Diagnosis",
             "content": "Possible bone weakness",
-            "is_active": true,
-            "last_modified": "2025-04-12T10:30:00"
+            "last_modified": "2025-04-12T10:30:00",
+            "is_active": true
         }
     ],
     "next_patient_id": 8,
