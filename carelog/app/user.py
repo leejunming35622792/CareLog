@@ -106,51 +106,67 @@ class User:
             utils.log_event(f"{role.capitalize()} {username} registered with ID {user_id}", "INFO")
             return True, msg, user_obj
     
-    # Update detail
-    def update_profile(self, user_id, role, password, name, bday, gender, address, email, contact_num, date_of_birth, department, speciality):
-        from app.schedule import ScheduleManager
-        sc = ScheduleManager()
-        role = role.lower()
-        
-        # Get correct user list
-        # user_list = getattr(sc, f"{role}s")
-        # if user_list is None:
-        #     return False, f"Invalid role: {role}"
-        
-        # Find target user
-        user = next((u for u in sc.patients if getattr(u, f"{role[0]}_id", None) == user_id), None)
-        if user is None:
-            return False, f"No user found with ID {user_id}"
-        
-        # Update field
-        if password:
-            user.password = password
-        if name:
-            user.name = name
-        if bday:
-            user.bday = bday
-        if gender:
-            user.gender = gender
-        if address:
-            user.address = address
-        if email:
-            from helper_manager.auth_manager import AuthManager
-            auth = AuthManager(sc)
-            success, message, _ = auth.check_email_validation(email)
-            if success:
-                user.email = email
-        if contact_num:
-            user.contact_num = contact_num
-        if date_of_birth:
-            user.date_of_birth = date_of_birth
+    @staticmethod
+    def update_profile(user_id, role, username, password, name, bday, gender, address, email, contact_num, remark, department, speciality):
+            from app.schedule import ScheduleManager
+            sc = ScheduleManager()
+            role = role.lower()
 
-        if role == "doctor":
-            if speciality:
-                user.speciality = speciality
-            if department:
-                user.department = department
+            # Dynamically get the list (e.g., sc.doctors, sc.patients)
+            users_list = getattr(sc, f"{role}s", None)
+            if users_list is None:
+                return None, f"Invalid role: {role}"
 
-        sc.save()
-        utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
+            # Find target user by their role-specific ID (e.g., doctor_id, patient_id)
+            role_disp = {
+                "patient": "p_id",
+                "doctor": "d_id",
+                "nurse": "n_id",
+                "receptionist": "r_id",
+                "admin": "a_id"
+            }
 
-        return True, f"{role.capitalize()} profile updated successfully", user
+            id_attr = role_disp.get(role)
+            if not id_attr:
+                return None, f"Invalid role: {role}"
+
+            user = next((u for u in users_list if getattr(u, id_attr, None) == user_id), None)
+
+            if user is None:
+                return None, f"No {role} found with ID {user_id}"
+
+            # Update fields
+            if password: 
+                user.password = password
+            if name: 
+                user.name = name
+            if bday: 
+                user.bday = bday
+            if gender: 
+                user.gender = gender
+            if address: 
+                user.address = address
+
+            if email:
+                from helper_manager.auth_manager import AuthManager
+                auth = AuthManager(sc)
+                success, message, _ = auth.check_email_validation(email)
+                if success:
+                    user.email = email
+
+            if contact_num: 
+                user.contact_num = contact_num
+            if remark: 
+                user.remark = remark
+
+            # Extra fields for doctors
+            if role == "doctor":
+                if speciality: 
+                    user.speciality = speciality
+                if department: 
+                    user.department = department
+
+            sc.save()
+            utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
+
+            return user, f"{role.capitalize()} profile updated successfully"

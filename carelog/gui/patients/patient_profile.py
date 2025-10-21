@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import datetime
+import re
 from app.user import User
 from helper_manager.profile_manager import find_age
 
@@ -37,12 +38,13 @@ def profile(Manager):
             new_password = st.text_input("Password", value=patient.password, type="password")
             new_name = st.text_input("Name", value=patient.name).title()
 
+            new_gender = st.selectbox("Gender", ["Male", "Female", "Other"], 
+                                          index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
             col3, col4 = st.columns(2)
             with col3:
-                new_gender = st.selectbox("Gender", ["Male", "Female", "Other"], 
-                                          index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
+                patient_bday = datetime.datetime.fromisoformat(patient.bday)
+                new_bday = st.date_input("Birthday", value=patient_bday)
             with col4:
-                new_bday = st.date_input("Birthday", value=patient.bday)
                 # Find age
                 age = find_age(patient.bday)
                 # Display age
@@ -84,20 +86,23 @@ def profile(Manager):
             if "@" not in new_email or "." not in new_email:
                 errors.append("Invalid email address.")
 
-            # Contact validation (digits only, min length check)
-            if not new_contact_num.isdigit() or len(new_contact_num) < 8:
-                errors.append("Contact number must be at least 8 digits and numeric.")
+            # Contact Number Validation
+            contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
+            if not re.match(contact_num_format, new_contact_num):
+                errors.append("Contact number is invalid - please include '+60' and '-'")
 
             if errors:
                 for e in errors:
                     st.error(e)
             else:
+                new_name = new_name.title()
                 new_bday = new_bday.isoformat()
-
-                result = User.update_profile(manager, username, new_password, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None, None)
+                result, msg = User.update_profile(patient.p_id, "patient", username, new_password, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None)
+                st.info(result)
+                st.info(msg)
                 with st.spinner("Saving changes..."):
                     time.sleep(1)
                 if result:
                     manager.save()
-                    st.toast("Successfully Updated!")
+                    st.session_state.success_msg = msg
                     st.rerun()
