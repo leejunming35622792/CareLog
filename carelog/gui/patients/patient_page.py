@@ -35,6 +35,14 @@ def patient_page(manager):
     elif option == "Appointments":
         appointment(manager)
 
+    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+        st.success(st.session_state.success_msg)
+        st.session_state.success_msg = ""
+
+    # End of Page
+    st.divider()
+    st.markdown("<h6 style='text-align:center'>CareLog</h6>", unsafe_allow_html=True)
+
 def logout():
     st.session_state.page = "login"
     st.session_state.username = None
