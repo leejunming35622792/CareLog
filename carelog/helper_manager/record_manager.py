@@ -1,10 +1,11 @@
-from app.schedule import ScheduleManager
 import app.utils as utils
-
-manager = ScheduleManager()
 
 def _persist():
     """Best-effort persistence without assuming exact method name/placement."""
+
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
     for obj, method in [
         (manager, "save_to_json"),
         (manager, "save"),
@@ -18,9 +19,10 @@ def _persist():
 def search_record(p_id, record_id):
     """
     Search for a record by patient ID and record ID.
-
     Returns a display-friendly dict or {} if not found.
     """
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
     for record in manager.records:
         if record.pr_record_id == record_id and record.p_id == p_id:
             return {
@@ -55,9 +57,13 @@ def create_patient_record_nurse(record_id, patient_id, timestamp, conditions, me
     )
     return new_record
 
-def view_patient_records_doctor(self, patient_id):
+def view_patient_records_doctor(patient_id):
     "View all records for a patient"
-    patient=self.find_patient_by_id(patient_id)
+
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
+    patient=manager.find_patient_by_id(patient_id)
     if not patient:
         return False,"Patient Not Found", None
     records=[r for r in manager.records if r.p_id == patient_id]
@@ -103,6 +109,10 @@ def update_record_doctor(p_id, record_id, **kwargs):
     Returns:
         bool: True if updated (and persisted), False if not found or invalid.
     """
+
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
     for record in manager.records:
         if record.pr_record_id == record_id and record.p_id == p_id:
 
@@ -147,23 +157,33 @@ def update_record_doctor(p_id, record_id, **kwargs):
             return True
     return False
 
-def update_patient_record_nurse(sc, record_id, conditions=None, medications=None, remark=None):
+def update_patient_record_nurse(record_id, conditions=None, medications=None, remark=None):
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
     if conditions is not None:
-        sc.record.pr_conditions = conditions
+        manager.record.pr_conditions = conditions
     if medications is not None:
-        sc.record.pr_medications = medications
+        manager.record.pr_medications = medications
     if remark is not None:
-        sc.record.pr_remark = remark
+        manager.record.pr_remark = remark
     return True
 
-def delete_patient_record_doctor(self, record_id):
+def delete_patient_record_doctor(record_id):
     """Delete patient record"""
-    record = next((r for r in self.records if r.pr_record_id == record_id), None)
+
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
+    record = next((r for r in manager.records if r.pr_record_id == record_id), None)
     if not record:
         return False, "Record not found", None
     
-    self.records.remove(record)
-    self.save()
+    manager.records.remove(record)
+    manager.save()
     
     utils.log_event(f"Nurse deleted record {record_id}", "INFO")
     return True, "Record deleted successfully", record_id
+
+def print_record():
+    pass
