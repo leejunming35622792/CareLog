@@ -90,17 +90,68 @@ class AppointmentManager:
         }
         return True, "Appointment found", result
     
+    def view_all_appointments(self, username):
+        """Return all appointments"""
+        user = next((d for d in self.sc.doctors if getattr(d, "username", None) == username), None)
+        
+        if not user:
+            return False, f"{user} not found", []
+        
+        user_id = getattr(user, f"d_id", None)
+        if not user_id:
+            return False, f"{user} record missing {user_id}, []"
+        
+        appointment = []
+
+        for appt in self.appointments:
+            a_did  = getattr(appt, "d_id", None)
+            a_pid  = getattr(appt, "p_id", None)
+            a_date = getattr(appt, "date", None)
+            a_time = getattr(appt, "time", None)
+
+            if a_did != user_id or not (a_pid and a_date and a_time):
+                continue
+
+            appt_dt = self._parse_dt(a_date, a_time)
+            if appt_dt is None:
+                # date/time not in an accepted format; skip
+                continue
+            
+            patient = next((p for p in self.sc.patients if getattr(p, "p_id", None) == a_pid), None)
+            p_name = getattr(patient, "name", "Unknown")
+
+            appointment.append({
+                "appt_id": getattr(appt, "appt_id", None),
+                "patient_id": a_pid,
+                "patient_name": p_name,
+                "date": a_date,
+                "time": a_time,
+                "status": getattr(appt, "status", "Pending"),
+                "remark": getattr(appt, "remark", ""),
+                "_dt": appt_dt
+            })
+
+        # Sort by actual datetime
+        appointment.sort(key=lambda x: x["_dt"])
+        for item in appointment:
+            item.pop("_dt", None)
+        return True, f"Found {len(appointment)} upcoming appointment(s)", appointment
+
     def view_upcoming_appointments(self, doctor_username):
         """Return upcoming (>= now) appointments for a specific doctor."""
         # Find the doctor by username
-        doctor = next((d for d in self.sc.doctors if getattr(d, "username", None) == doctor_username), None)
+        doctor = next((d for d in self.sc.doctors if d.username == doctor_username), None)
+
+        # If no doctor found
         if not doctor:
             return False, "No Doctor Found", []
 
+        # Error handling - if ID missing
         doctor_id = getattr(doctor, "d_id", None)
         if not doctor_id:
             return False, "Doctor record missing d_id", []
 
+        # Get current datetime
         now = datetime.datetime.now()
         upcoming = []
 
@@ -110,18 +161,17 @@ class AppointmentManager:
             a_date = getattr(appt, "date", None)
             a_time = getattr(appt, "time", None)
 
-        # Only this doctor's appointments, with basic fields present
+            # Only this doctor's appointments, with basic fields present
             if a_did != doctor_id or not (a_pid and a_date and a_time):
                 continue
 
+            # Convert to datetime
             appt_dt = self._parse_dt(a_date, a_time)
             if appt_dt is None:
-                # date/time not in an accepted format; skip
-                continue
+                continue  # Skip invalid date/time
 
-            # Keep only future (>= now)
             if appt_dt < now:
-                continue
+                continue  # Skip past appointments
 
             patient = next((p for p in self.sc.patients if getattr(p, "p_id", None) == a_pid), None)
             p_name = getattr(patient, "name", "Unknown")
@@ -134,13 +184,47 @@ class AppointmentManager:
                 "time": a_time,
                 "status": getattr(appt, "status", "Pending"),
                 "remark": getattr(appt, "remark", ""),
+                "_dt": appt_dt  # store temporarily for sorting
             })
 
-        # Sort by actual datetime
+        # Sort by datetime
         upcoming.sort(key=lambda x: x["_dt"])
+
+        # Remove the temporary key
         for item in upcoming:
             item.pop("_dt", None)
+
         return True, f"Found {len(upcoming)} upcoming appointment(s)", upcoming
+
+    def create_appointment_nurse(self, patient_id, doctor_id, date, time, remark):
+        """Create a new appointment"""
+        found_p, msg_p, patient = self.find_patient_by_id(patient_id)
+        if not found_p:
+            return False, msg_p, None
+
+        found_d, msg_d, doctor = self.find_doctor_by_id(doctor_id)
+        if not found_d:
+            return False, msg_d, None
+
+        appt_id = f"A{self.next_appt_id:04d}"
+
+        new_appointment = PatientAppointment(
+            appt_id=appt_id,
+            p_id=patient_id,
+            d_id=doctor_id,
+            appt_date=date,
+            appt_time=time,
+            appt_status="scheduled",
+            appt_remark=remark
+        )
+
+        self.appointments.append(new_appointment)
+        self.next_appt_id += 1
+
+        utils.log_event(f"Appointment created: {appt_id}", "INFO")
+        self.save()
+
+        return True, f"Appointment {appt_id} created successfully", new_appointment
 
     # helper: parse "YYYY-MM-DD" + "HH:MM[:SS]"
     @staticmethod
@@ -156,7 +240,6 @@ class AppointmentManager:
                 continue
         return None
     
-
     def print_appt(self, patient, appt):
         # Find current patient detail
         current_patient = next((p for p in self.sc.patients if p.username == patient.username))
@@ -204,4 +287,111 @@ class AppointmentManager:
             f.write("+" + " "*70 + "+\n")
             f.write("+" + "=" * 70 + "+\n")
         return file_dir
+    
+    def view_appointment_nurse(self, appointment_id=None, patient_id=None):
+        """View appointments - all, by ID, or by patient"""
+        if appointment_id:
+            found, msg, appt = self.find_appointment_by_id(appointment_id)
+            if not found:
+                return False, msg, None
 
+            
+            return True, "Appointment found", {
+                "appt_id": appt.appt_id,
+                "patient_id": appt.p_id,
+                "doctor_id": appt.d_id,
+                "date": appt.date,
+                "time": appt.time,
+                "status": appt.status,
+                "remark": appt.remark
+            }
+
+        elif patient_id:
+            appts = [a for a in self.appointments if a.p_id == patient_id]
+            if not appts:
+                return False, f"No appointments found for patient {patient_id}", None
+            
+            results = [
+                {
+                    "appt_id": a.appt_id,
+                    "doctor_id": a.d_id,
+                    "date": a.date,
+                    "time": a.time,
+                    "status": a.status,
+                    "remark": a.remark
+                } for a in appts
+            ]
+            return True, f"Found {len(results)} appointment(s)", results
+        
+        else:
+            results = [
+                {
+                    "appt_id": a.appt_id,
+                    "patient_id": a.p_id,
+                    "doctor_id": a.d_id,
+                    "date": a.date,
+                    "time": a.time,
+                    "status": a.status
+                } for a in self.appointments
+            ]
+            return True, f"Found {len(results)} appointment(s)", results
+
+    def update_appointment_nurse(self, appt_id, date=None, time=None, status=None, remark=None):
+        """Update appointment details"""
+        found, msg, appt = self.find_appointment_by_id(appt_id)
+        if not found:
+            return False, msg, None
+
+        if date:
+            appt.date = date
+        if time:
+            appt.time = time
+        if status:
+            if status not in ["scheduled", "completed", "cancelled", "no-show"]:
+                return False, "Invalid status", None
+            appt.status = status
+        if remark is not None:
+            appt.remark = remark
+
+        utils.log_event(f"Appointment updated: {appt_id}", "INFO")
+        self.save()
+
+        return True, f"Appointment {appt_id} updated successfully", appt
+
+    def delete_appointment_nurse(self, appointment_id):
+        """Cancel/delete appointment"""
+        found, msg, appt = self.find_appointment_by_id(appointment_id)
+        if not found:
+            return False, msg, None
+
+        
+        appt.status = "cancelled"
+        self.save()
+        
+        utils.log_event(f"Nurse cancelled appointment {appointment_id}", "INFO")
+        return True, "Appointment cancelled successfully", appointment_id
+    
+    def search_appointments_by_date(self, date):
+        """Search appointments by date"""
+        appts = [a for a in self.appointments if a.date == date]
+        
+        if not appts:
+            return False, f"No appointments found for {date}", None
+        
+        results = [
+            {
+                "appt_id": a.appt_id,
+                "patient_id": a.p_id,
+                "doctor_id": a.d_id,
+                "time": a.time,
+                "status": a.status
+            } for a in appts
+        ]
+        
+        return True, f"Found {len(results)} appointment(s)", results
+
+    def get_todays_appointments(self):
+        """Get today's appointments"""
+        import datetime
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        return self.search_appointments_by_date(today)
