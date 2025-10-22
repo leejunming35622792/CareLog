@@ -158,7 +158,12 @@ def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit:
         items = items[:limit]
     out = []
     for rm in items:
-        doc = manager.find_doctor_by_id(rm.doctor_id) if getattr(rm, "doctor_id", None) else None
+        # find_doctor_by_id returns (found, msg, doctor)
+        if getattr(rm, "doctor_id", None):
+            found_doc, doc_msg, doc = manager.find_doctor_by_id(rm.doctor_id)
+        else:
+            doc = None
+
         out.append({
             "remark_id": rm.remark_id,
             "doctor_id": getattr(rm, "doctor_id", None),
@@ -187,7 +192,7 @@ def get_recent_patient_remarks(patient_id: int, days: int = 7):
                 continue
             if dt >= cutoff:
                 if getattr(rm, "doctor_id", None):
-                    doc = manager.find_doctor_by_id(rm.doctor_id)
+                    found_doc, doc_msg, doc = manager.find_doctor_by_id(rm.doctor_id)
                     doctor_name = doc.name if doc else "Unknown Doctor"
                 else:
                     doctor_name = "Nurse"
