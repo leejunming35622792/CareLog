@@ -11,7 +11,11 @@
             "email": "john@example.com",
             "contact_num": "0123456789",
             "date_joined": "2025-01-01T09:00:00",
-            "p_record": ["PR0001", "PR0002", "PR0003"],
+            "p_record": [
+                "PR0001",
+                "PR0002",
+                "PR0003"
+            ],
             "p_remark": "female doctors"
         },
         {
@@ -25,7 +29,9 @@
             "email": "alice@example.com",
             "contact_num": "0198765432",
             "date_joined": "2025-02-01T11:00:00",
-            "p_record": ["PR0004"],
+            "p_record": [
+                "PR0004"
+            ],
             "p_remark": ""
         },
         {
@@ -39,7 +45,9 @@
             "email": "mike@example.com",
             "contact_num": "0165558888",
             "date_joined": "2025-03-01T10:30:00",
-            "p_record": ["PR0005"],
+            "p_record": [
+                "PR0005"
+            ],
             "p_remark": ""
         },
         {
@@ -377,7 +385,10 @@
             "p_id": "P0002",
             "pr_timestamp": "2025-05-05T10:00:00",
             "pr_conditions": "Cold",
-            "pr_medications": "Cough syrup",
+            "pr_medications": [
+                "Cough syrup",
+                "Molly"
+            ],
             "pr_billings": 80.0,
             "pr_prediction_result": "Low risk",
             "pr_confidence_score": 0.92,
@@ -540,6 +551,16 @@
             "content": "Possible bone weakness",
             "last_modified": "2025-04-12T10:30:00",
             "is_active": true
+        },
+        {
+            "remark_id": "RM0003",
+            "patient_id": "P0001",
+            "doctor_id": "D0001",
+            "timestamp": "2025-10-22 17:26:20",
+            "remark_type": "general",
+            "content": "gotten fatter",
+            "last_modified": "2025-10-22 17:26:20",
+            "is_active": true
         }
     ],
     "next_patient_id": 8,
@@ -550,5 +571,5 @@
     "next_record_id": 6,
     "next_appt_id": 6,
     "next_shift_id": 5,
-    "next_remark_id": 3
+    "next_remark_id": 4
 }

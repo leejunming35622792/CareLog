@@ -138,9 +138,56 @@ def edit_patient_remark(remark_id: str, doctor_username: str, new_content: str):
     return True, "Remark updated successfully"
 
 
+def delete_patient_remark(remark_id, doctor_username: str):
+    """Doctor-initiated soft-delete of a remark they created.
+
+    Accepts numeric IDs (e.g. 1 -> RM0001) or full IDs ("RM0001").
+    Returns (ok, msg, remark_id_or_none)
+    """
+  
+    rid_str = None
+    try:
+
+        if isinstance(remark_id, int) or (isinstance(remark_id, str) and remark_id.isdigit()):
+            num = int(remark_id)
+            rid_str = f"RM{num:04d}"
+        else:
+            rid_str = str(remark_id)
+    except Exception:
+        rid_str = str(remark_id)
+
+    remark = next((rm for rm in manager.remarks if str(rm.remark_id) == rid_str), None)
+    if remark is None:
+        return False, "Remark not found", None
+
+    doc = next((d for d in manager.doctors if d.username == doctor_username), None)
+    if doc is None:
+        return False, "Doctor not found", None
+
+    # only the remark's author (doctor) may delete via doctor UI
+    if getattr(remark, "doctor_id", None) != getattr(doc, "d_id", None):
+        return False, "You can only delete your own remarks", None
+
+    remark.deactivate()
+    # persist
+    if hasattr(manager, "_save_data"):
+        try:
+            manager._save_data()
+        except Exception:
+            pass
+    elif hasattr(manager, "save"):
+        try:
+            manager.save()
+        except Exception:
+            pass
+
+    utils.log_event(f"Doctor {doctor_username} deleted remark {rid_str}", "INFO")
+    return True, "Remark deleted successfully", rid_str
+
+
 def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit: int | None = None):
-    patient = manager.find_patient_by_id(patient_id)
-    if patient is None:
+    found_p, msg_p, patient = manager.find_patient_by_id(patient_id)
+    if not found_p:
         return False, "Patient not found", []
 
     items = [rm for rm in manager.remarks if rm.patient_id == patient_id and rm.is_active]
@@ -151,14 +198,17 @@ def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit:
         try:
             return datetime.datetime.strptime(rm.timestamp, "%Y-%m-%d %H:%M:%S")
         except Exception:
-            return rm.timestamp
+
+            if isinstance(getattr(rm, "timestamp", None), datetime.datetime):
+                return getattr(rm, "timestamp")
+            return datetime.datetime.min
     items.sort(key=_key, reverse=True)
 
     if limit:
         items = items[:limit]
     out = []
     for rm in items:
-        # find_doctor_by_id returns (found, msg, doctor)
+
         if getattr(rm, "doctor_id", None):
             found_doc, doc_msg, doc = manager.find_doctor_by_id(rm.doctor_id)
         else:
@@ -179,8 +229,8 @@ def get_remarks_by_type(patient_id: int, remark_type: str):
         return manager.view_patient_remarks(patient_id, remark_type=remark_type)
     
 def get_recent_patient_remarks(patient_id: int, days: int = 7):
-    patient = manager.find_patient_by_id(patient_id)
-    if patient is None:
+    found_p, msg_p, patient = manager.find_patient_by_id(patient_id)
+    if not found_p:
         return False, "Patient not found", []
     cutoff = datetime.datetime.now() - datetime.timedelta(days=days)
     recent = []
@@ -207,7 +257,9 @@ def get_recent_patient_remarks(patient_id: int, days: int = 7):
         try:
             return datetime.datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S")
         except Exception:
-            return x["timestamp"]
+            if isinstance(x.get("timestamp", None), datetime.datetime):
+                return x.get("timestamp")
+            return datetime.datetime.min
     recent.sort(key=_k, reverse=True)
     return True, f"Found {len(recent)} remarks from last {days} days", recent
     

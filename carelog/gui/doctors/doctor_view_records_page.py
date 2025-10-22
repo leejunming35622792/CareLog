@@ -13,7 +13,7 @@ from helper_manager.remark_manager import (
 
 def patient_records_page(manager, username):
     """View patient details and manage remarks"""
-    st.header("Patient Records & Remarks")
+    st.header("Patient Records")
 
     tab1, tab2, tab3 = st.tabs(["View Patient Details", "Add Remark", "View Remarks"])
 
