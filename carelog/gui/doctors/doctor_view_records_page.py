@@ -112,25 +112,63 @@ def patient_records_page(manager, username):
                 patient_id=view_patient_id, remark_type=remark_type_filter
             )
             if success and remarks:
+                # Store remarks in session state for dropdown access
+                if 'current_remarks' not in st.session_state:
+                    st.session_state.current_remarks = []
+                st.session_state.current_remarks = remarks
+                
                 for remark in remarks:
                     with st.expander(
                         f"{remark['remark_type'].upper()} - {remark['timestamp']} by {remark['doctor_name']}"
                     ):
                         st.write(remark["content"])
                         st.caption(f"Last Modified: {remark['last_modified']}")
-                        if st.button(f"Edit {remark['remark_id']}"):
-                            new_content = st.text_area("Edit Content", remark["content"])
-                            if st.button("Save Edit"):
-                                ok, msg = edit_patient_remark(
-                                    remark_id=remark["remark_id"],
-                                    doctor_username=username,
-                                    new_content=new_content,
-                                )
-                                if ok:
-                                    st.success(msg)
-                                    st.rerun()
+                
+                # Edit section with dropdown
+                st.markdown("---")
+                st.subheader("Edit Remark")
+                with st.form("edit_remark_form"):
+                    
+                    remark_options = [
+                        f"{r['remark_id']} - {r['remark_type'].upper()} ({r['timestamp'][:10]})"
+                        for r in remarks
+                    ]
+                    selected_remark_display = st.selectbox(
+                        "Select Remark to Edit",
+                        options=remark_options,
+                        help="Choose which remark you want to edit"
+                    )
+                    
+                    if selected_remark_display:
+                        # Extract remark_id from the selected option
+                        selected_remark_id = selected_remark_display.split(' - ')[0]
+                        selected_remark = next(
+                            (r for r in remarks if r['remark_id'] == selected_remark_id), 
+                            None
+                        )
+                        
+                        if selected_remark:
+                            st.info(f"**Current Content:** {selected_remark['content']}")
+                            new_content = st.text_area(
+                                "Edit Content", 
+                                value=selected_remark['content'],
+                                height=150
+                            )
+                            
+                            if st.form_submit_button("💾 Save Edit"):
+                                if new_content.strip():
+                                    ok, msg = edit_patient_remark(
+                                        remark_id=selected_remark_id,
+                                        doctor_username=username,
+                                        new_content=new_content,
+                                    )
+                                    if ok:
+                                        st.success(f"✅ {msg}")
+                                        st.rerun()
+                                    else:
+                                        st.error(f"❌ {msg}")
                                 else:
-                                    st.error(msg)
+                                    st.error("Please enter remark content")
             else:
                 st.info("No remarks found.")
 

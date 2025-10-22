@@ -58,6 +58,77 @@ def appointments_page(manager, username):
                     st.write(f"{status_color.get(appt.get('status'), '⚪')} {appt.get('status','—')}")
                 if appt.get("remark"):
                     st.caption(f"Note: {appt['remark']}")
+                
+                # Quick action buttons
+                col1, col2, col3 = st.columns([1, 1, 2])
+                with col1:
+                    if st.button("✅ Complete", key=f"complete_{appt['appt_id']}"):
+                        success, message, _ = appt_manager.update_appointment_doctor(
+                            appt_id=appt['appt_id'],
+                            status="completed"
+                        )
+                        if success:
+                            st.success(message)
+                            st.rerun()
+                        else:
+                            st.error(message)
+                with col2:
+                    if st.button("❌ Cancel", key=f"cancel_{appt['appt_id']}"):
+                        success, message, _ = appt_manager.update_appointment_doctor(
+                            appt_id=appt['appt_id'],
+                            status="cancelled"
+                        )
+                        if success:
+                            st.success(message)
+                            st.rerun()
+                        else:
+                            st.error(message)
                 st.divider()
     else:
         st.info("No appointments match the selected filters")
+
+    # Add appointment update section
+    st.header("Update Appointment")
+    with st.form("update_appointment_form"):
+        st.subheader("📝 Update Appointment Details")
+        appt_id_update = st.text_input("Appointment ID", placeholder="Enter appointment ID to update")
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            new_date = st.date_input("New Date (optional)", value=None, help="Leave empty to keep current date")
+            new_status = st.selectbox("Update Status", 
+                ["", "scheduled", "completed", "cancelled", "no-show"],
+                help="Leave blank to keep current status")
+        
+        with col2:
+            new_time = st.time_input("New Time (optional)", value=None, help="Leave empty to keep current time")
+            new_remark = st.text_area("Update Remark (optional)", placeholder="Add or update appointment notes")
+        
+        submitted = st.form_submit_button("🔄 Update Appointment", use_container_width=True)
+        
+        if submitted and appt_id_update:
+            # Convert date and time to strings if provided
+            date_str = new_date.strftime("%Y-%m-%d") if new_date else None
+            time_str = new_time.strftime("%H:%M") if new_time else None
+            status_str = new_status if new_status else None
+            remark_str = new_remark if new_remark.strip() else None
+            
+            # Call the update function
+            success, message, updated_appt = appt_manager.update_appointment_doctor(
+                appt_id=appt_id_update,
+                date=date_str,
+                time=time_str,
+                status=status_str,
+                remark=remark_str
+            )
+            
+            if success:
+                st.success(f"✅ {message}")
+                st.rerun()  # Refresh the page to show updated data
+            else:
+                st.error(f"❌ {message}")
+        elif submitted:
+            st.warning("⚠️ Please enter an Appointment ID")
+
+
+        

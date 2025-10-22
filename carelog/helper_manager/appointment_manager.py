@@ -395,3 +395,23 @@ class AppointmentManager:
         import datetime
         today = datetime.datetime.now().strftime("%Y-%m-%d")
         return self.search_appointments_by_date(today)
+    
+    def update_appointment_doctor(self, appt_id, date=None, time=None, status=None, remark=None):
+        """Update appointment details"""
+        found, msg, appt = self.sc.find_appointment_by_id(appt_id)
+        if not found:
+            return False, msg, None
+
+        if date:
+            appt.date = date
+        if time:
+            appt.time = time
+        if status:
+            if status not in ["scheduled", "completed", "cancelled", "no-show"]:
+                return False, "Invalid status", None
+            appt.status = status
+        if remark is not None:
+            appt.remark = remark
+
+        utils.log_event(f"Appointment updated: {appt_id}", "INFO")
+        self.sc.save()

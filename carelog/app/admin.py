@@ -32,7 +32,7 @@ class AdminUser(User):
             return False, "Username already in used", None
 
         # Get next ID for the role
-        next_id = User.get_next_id(role)
+        next_id = User.get_next_id(sc, role)
         date_joined = datetime.datetime.now().isoformat()
 
         # Create new user using central factory in user_manager

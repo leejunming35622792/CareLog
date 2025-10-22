@@ -19,7 +19,7 @@ class User:
 
     @staticmethod
     def get_next_id(manager, role):
-        role = role.lower()
+        role = str(role.lower())
         if role == "patient":
             return f"P{manager.next_patient_id:04d}"
         elif role == "doctor":
