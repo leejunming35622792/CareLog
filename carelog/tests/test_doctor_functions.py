@@ -136,3 +136,34 @@ def test_medication_manager_assign_and_edit():
     ok4, msg4, rows = list_medications('P0001', per_record=True)
     assert ok4, msg4
     assert any(row['record_id'] == pr_id for row in rows)
+
+
+
+def test_search_patient_by_name_types():
+    from helper_manager.profile_manager import search_patient_by_name
+    ok, msg, results = search_patient_by_name("this_name_is_unlikely_to_exist_12345")
+    assert isinstance(ok, bool)
+    assert isinstance(msg, str)
+    assert isinstance(results, list)
+
+def test_view_patient_records_doctor_not_found():
+    from helper_manager.record_manager import view_patient_records_doctor
+    ok, msg, records = view_patient_records_doctor('P_DOES_NOT_EXIST')
+    assert ok is False
+    # records may be None or [], just ensure not a non-empty list
+    assert not records
+
+def test_update_patient_record_doctor_invalid_billings():
+    from helper_manager.record_manager import update_patient_record_doctor
+    m = _get_manager()
+    target = next(iter(m.records), None)
+    assert target is not None, "No records available for invalid billings test"
+    ok, msg = update_patient_record_doctor(target.pr_record_id, billings="not-a-number")
+    assert ok is False
+    assert "billings" in msg.lower()
+
+def test_delete_patient_record_doctor_not_found():
+    from helper_manager.record_manager import delete_patient_record_doctor
+    ok, msg, deleted_id = delete_patient_record_doctor('PR_DOES_NOT_EXIST')
+    assert ok is False
+    assert deleted_id is None
