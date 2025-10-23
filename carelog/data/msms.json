@@ -337,17 +337,6 @@
     ],
     "records": [
         {
-            "pr_record_id": "PR0001",
-            "p_id": "P0001",
-            "pr_timestamp": "2025-03-15T09:00:00",
-            "pr_conditions": "Healthy",
-            "pr_medications": "None",
-            "pr_billings": 100.0,
-            "pr_prediction_result": "Low risk",
-            "pr_confidence_score": 0.95,
-            "pr_remark": "Routine checkup"
-        },
-        {
             "pr_record_id": "PR0002",
             "p_id": "P0001",
             "pr_timestamp": "2025-04-12T10:00:00",

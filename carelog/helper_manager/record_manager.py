@@ -160,7 +160,6 @@ def update_record_doctor(p_id, record_id, **kwargs):
 def update_patient_record_nurse(record_id, conditions=None, medications=None, remark=None):
     from app.schedule import ScheduleManager
     manager = ScheduleManager()
-
     if conditions is not None:
         manager.record.pr_conditions = conditions
     if medications is not None:
@@ -185,17 +184,35 @@ def delete_patient_record_doctor(record_id):
     utils.log_event(f"Nurse deleted record {record_id}", "INFO")
     return True, "Record deleted successfully", record_id
 
-def update_patient_record_doctor(record_id, conditions=None, medications=None, remark=None):
+def update_patient_record_doctor(record_id, conditions=None, medications=None, billings=None, prediction_result=None, confidence_score=None):
     from app.schedule import ScheduleManager
     manager = ScheduleManager()
+    record = next((r for r in manager.records if r.pr_record_id == record_id), None)
+    if not record:
+        return False, "Record not found"
 
     if conditions is not None:
-        manager.record.pr_conditions = conditions
+        record.pr_conditions = conditions
     if medications is not None:
-        manager.record.pr_medications = medications
-    if remark is not None:
-        manager.record.pr_remark = remark
-    return True
+        record.pr_medications = medications
+    if billings is not None:
+        try:
+            record.pr_billings = float(billings)
+        except (TypeError, ValueError):
+            return False, "Invalid billings value; must be a number"
+    if prediction_result is not None:
+        record.pr_prediction_result = prediction_result
+    if confidence_score is not None:
+        try:
+            record.pr_confidence_score = float(confidence_score)
+        except (TypeError, ValueError):
+            return False, "Invalid confidence score; must be a number"
+
+    try:
+        manager.save()
+    except Exception:
+        _persist()
+    return True, "Record updated successfully"
 
 def print_record():
     pass
