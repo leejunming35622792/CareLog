@@ -22,7 +22,6 @@ def remarks_page(manager, username):
         "Delete",
     ])
 
-    # Tab 1: View remarks
     with tab1:
         st.subheader("View Patient Remarks")
         patient_ids = [getattr(p, "p_id", "") for p in getattr(manager, "patients", [])]
@@ -68,7 +67,6 @@ def remarks_page(manager, username):
                 else:
                     st.info(msg or f"No remarks in last {days} days")
 
-    # Tab 2: Add remark
     with tab2:
         st.subheader("Add Remark")
         pid_add = st.selectbox("Patient ID", options=([""] + patient_ids), key="pid_add")
@@ -84,7 +82,6 @@ def remarks_page(manager, username):
                 else:
                     st.error(msg)
 
-    # Tab 3: Edit remark
     with tab3:
         st.subheader("Edit Remark (only your own)")
         rid = st.text_input("Remark ID (e.g., RM0002)")

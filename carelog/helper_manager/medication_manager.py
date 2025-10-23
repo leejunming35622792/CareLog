@@ -95,7 +95,7 @@ def assign_medications(patient_id, medications, doctor_username=None, instructio
 		_persist()
 		return True, "Prescription recorded", pr_id
 
-	# Append to latest record
+	
 	latest = _latest_record(patient_id)
 	if latest is None:
 		if doctor_username:

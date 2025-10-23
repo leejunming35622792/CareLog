@@ -10,7 +10,7 @@ from gui.doctors.doctor_appt_page import appointments_page
 from gui.doctors.doctor_shift_page import shift_page
 from gui.doctors.doctor_remark_page import remarks_page
 from gui.doctors.doctor_medication_page import medication_page
-# SEARCH UI
+
 def search_and_select_profile_ui(manager):
     role_map = {
         "patient": (manager.patients, "p_id"),
@@ -72,7 +72,6 @@ def search_and_select_profile_ui(manager):
 
     return False, None, None
 
-# ENTRYPOINT
 def doctor_page(_Manager):
     manager = st.session_state.manager
     username = st.session_state.username
@@ -83,7 +82,7 @@ def doctor_page(_Manager):
         st.session_state.logout_triggered = False
         st.rerun()
 
-    # Page design
+    
 
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
@@ -98,7 +97,6 @@ def doctor_page(_Manager):
     elif option == "Patient Records":
         patient_records_page(manager, username)
     elif option == "Medications":
-        # Call the page function we defined in doctor_medication_page.py
         medication_page(manager, username)
     elif option == "Appointments":
         appointments_page(manager, username)

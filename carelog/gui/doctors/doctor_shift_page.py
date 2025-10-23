@@ -2,7 +2,6 @@ import streamlit as st
 from datetime import datetime, timedelta
 import pandas as pd
 
-# SHIFT
 def shift_page(manager):
     manager = st.session_state.manager
     username = st.session_state.username

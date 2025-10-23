@@ -17,7 +17,6 @@ def medication_page(manager, username):
 		"List",
 	])
 
-	# Assign medications (new record or append to latest)
 	with tab1:
 		st.subheader("Assign Medications")
 		with st.form("assign_meds_form"):
@@ -31,7 +30,6 @@ def medication_page(manager, username):
 			submit_assign = st.form_submit_button("Assign")
 
 			if submit_assign:
-				# Normalize input: accept either comma-separated or newline-separated
 				meds_str = meds_input.replace("\n", ",")
 				if not pid:
 					st.error("Please provide a patient ID")
@@ -50,7 +48,6 @@ def medication_page(manager, username):
 					else:
 						st.error(msg)
 
-	# Edit an existing record's medications (replace all)
 	with tab2:
 		st.subheader("Edit Record Medications")
 		with st.form("edit_meds_form"):
@@ -72,7 +69,6 @@ def medication_page(manager, username):
 					else:
 						st.error(msg)
 
-	# Remove one medication string from a record
 	with tab3:
 		st.subheader("Remove One Medication From Record")
 		with st.form("remove_med_form"):
@@ -90,7 +86,6 @@ def medication_page(manager, username):
 					else:
 						st.error(msg)
 
-	# List medications for a patient
 	with tab4:
 		st.subheader("List Medications")
 		pid = st.text_input("Patient ID", key="list_pid").strip()
@@ -103,7 +98,6 @@ def medication_page(manager, username):
 				if ok:
 					st.success(msg)
 					if per_record:
-						# Show per-record structure
 						for row in data:
 							with st.expander(f"{row.get('record_id','')} — {row.get('timestamp','')}"):
 								meds = row.get("medications", [])
@@ -113,7 +107,6 @@ def medication_page(manager, username):
 								else:
 									st.caption("No medications on this record")
 					else:
-						# Flat list
 						if data:
 							for m in data:
 								st.write(f"• {m}")
