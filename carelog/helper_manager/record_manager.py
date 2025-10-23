@@ -185,5 +185,17 @@ def delete_patient_record_doctor(record_id):
     utils.log_event(f"Nurse deleted record {record_id}", "INFO")
     return True, "Record deleted successfully", record_id
 
+def update_patient_record_doctor(record_id, conditions=None, medications=None, remark=None):
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
+    if conditions is not None:
+        manager.record.pr_conditions = conditions
+    if medications is not None:
+        manager.record.pr_medications = medications
+    if remark is not None:
+        manager.record.pr_remark = remark
+    return True
+
 def print_record():
     pass
