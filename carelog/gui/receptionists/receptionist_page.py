@@ -6,25 +6,52 @@ from app.user import User as user
 import app.utils as utils
 
 def receptionist_page(receptionist: ReceptionistUser):
-    sc = ScheduleManager()
-    st.title("🏥 Receptionist Dashboard")
+    # Variables
+    manager = st.session_state.manager
+    recep_uname = st.session_state.username
+    receptionist = next((r for r in manager.receptionists if r.username == recep_uname), None)
+
+    # Page design
     tabs = ["Dashboard", "Account", "Patient Search", "Appointments", "Profile"]
 
     # Sidebar
-    username = st.session_state.get("username", receptionist.username)
-    st.sidebar.title(f"Welcome, {username}")
+    username = st.session_state.username
+    st.sidebar.title(f"CareLog Navigation")
+    st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Navigation", tabs)
     st.sidebar.button("Logout", on_click=logout)
 
     # ============================================================
     # DASHBOARD
     # ============================================================
+
     if option == "Dashboard":
-        st.header("📊 Overview")
-        st.write(f"Logged in as: **{username}**")
-        st.metric("Total Patients", len(sc.patients))
-        st.metric("Total Doctors", len(sc.doctors))
-        st.metric("Total Appointments", len(sc.appointments))
+        st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
+        st.balloons()
+        st.image("img/dashboard.png")
+        st.divider()
+        st.header("Dashboard Overview 🎗️")
+
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Receptionist ID", receptionist.r_id)
+        with col2:
+            if receptionist.name:
+                disp = receptionist.name
+            else:
+                disp = ""
+            st.metric("Name", disp)
+        with col3:
+            if receptionist.email:
+                disp = receptionist.email
+            else:
+                disp = ""
+            st.metric("Name", disp)
+        st.divider()
+
+        st.metric("Total Patients", len(manager.patients))
+        st.metric("Total Doctors", len(manager.doctors))
+        st.metric("Total Appointments", len(manager.appointments))
 
     # ============================================================
     # CREATE PATIENT ACCOUNT
@@ -51,7 +78,7 @@ def receptionist_page(receptionist: ReceptionistUser):
                 success, message, _ = receptionist.register_user(role, username, password)
 
             if success:
-                sc.save()
+                manager.save()
                 st.success(message)
                 st.toast(f"{role} account successfully created!")
                 utils.log_event(f"Receptionist {receptionist.username} created new patient {username}", "INFO")
@@ -97,8 +124,8 @@ def receptionist_page(receptionist: ReceptionistUser):
         # Create Appointment
         with tab1:
             st.subheader("➕ Create New Appointment")
-            patient_id = st.selectbox("Select Patient", [p.p_id for p in sc.patients])
-            doctor_id = st.selectbox("Select Doctor", [d.d_id for d in sc.doctors])
+            patient_id = st.selectbox("Select Patient", [p.p_id for p in manager.patients])
+            doctor_id = st.selectbox("Select Doctor", [d.d_id for d in manager.doctors])
             date = st.date_input("Appointment Date")
             time_ = st.time_input("Appointment Time")
 
@@ -112,8 +139,8 @@ def receptionist_page(receptionist: ReceptionistUser):
         # View Appointment
         with tab2:
             st.subheader("📋 All Appointments")
-            if sc.appointments:
-                for a in sc.appointments:
+            if manager.appointments:
+                for a in manager.appointments:
                     st.write(f"**{a['appt_id']}** - {a['patient_id']} with {a['doctor_id']} on {a['date']} at {a['time']} ({a['status']})")
             else:
                 st.info("No appointments found.")

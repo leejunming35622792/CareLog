@@ -2,8 +2,8 @@
     "patients": [
         {
             "p_id": "P0001",
-            "username": "patient",
-            "password": "patientpass",
+            "username": "pass",
+            "password": "pass",
             "name": "John Doe",
             "bday": "2016-10-21",
             "gender": "Male",
@@ -474,15 +474,6 @@
     ],
     "appointments": [
         {
-            "appt_id": "APPT0001",
-            "p_id": "P0001",
-            "d_id": "D0001",
-            "date": "2025-10-21",
-            "time": "09:00:00",
-            "status": "Pending",
-            "remark": "First checkup"
-        },
-        {
             "appt_id": "APPT0002",
             "p_id": "P0002",
             "d_id": "D0002",
@@ -490,15 +481,6 @@
             "time": "11:30:00",
             "status": "Booked",
             "remark": "Follow-up"
-        },
-        {
-            "appt_id": "APPT0003",
-            "p_id": "P0001",
-            "d_id": "D0003",
-            "date": "2026-04-12",
-            "time": "10:00:00",
-            "status": "Booked",
-            "remark": "Bone checkup"
         },
         {
             "appt_id": "APPT0004",
@@ -510,13 +492,31 @@
             "remark": "Skin consultation"
         },
         {
-            "appt_id": "AAPT0005",
+            "appt_id": "AAPT0009",
+            "p_id": "P0001",
+            "d_id": "D0001",
+            "date": "2025-10-25",
+            "time": "00:42:00",
+            "status": "Pending",
+            "remark": ""
+        },
+        {
+            "appt_id": "AAPT0010",
+            "p_id": "P0001",
+            "d_id": "D0003",
+            "date": "2025-10-25",
+            "time": "00:42:00",
+            "status": "cancelled",
+            "remark": ""
+        },
+        {
+            "appt_id": "AAPT0011",
             "p_id": "P0001",
             "d_id": "D0005",
-            "date": "2025-10-21",
-            "time": "23:00:00",
-            "status": "Rescheduled",
-            "remark": "can i date you plsssss doctorrr\n\ni love you docccc"
+            "date": "2025-10-25",
+            "time": "00:42:00",
+            "status": "Pending",
+            "remark": ""
         }
     ],
     "shifts": [],
@@ -558,7 +558,7 @@
     "next_receptionist_id": 5,
     "next_admin_id": 3,
     "next_record_id": 6,
-    "next_appt_id": 6,
+    "next_appt_id": 12,
     "next_shift_id": 5,
     "next_remark_id": 4
 }

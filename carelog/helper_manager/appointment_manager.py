@@ -60,16 +60,16 @@ class AppointmentManager:
         utils.log_event(f"Appointment {appt_id} updated", "INFO")
         return True, f"Appointment {appt_id} updated successfully"
 
-    def delete_appointments(self, appt_id):
-        """Delete an appointment by ID"""
-        initial_len = len(self.appointments)
-        self.appointments = [a for a in self.appointments if a.appt_id != appt_id]
-        self.sc.appointments = self.appointments
+    def cancel_appointment(self, appt_id):
+        """Cancel an appointment by setting its status to 'Cancelled'"""
+        target_appt = next((a for a in self.appointments if a.appt_id == appt_id), None)
 
-        if len(self.appointments) < initial_len:
+        if target_appt:
+            target_appt.status = "Cancelled"
+            self.sc.appointments = self.appointments
             self.sc.save()
-            utils.log_event(f"Appointment {appt_id} deleted", "INFO")
-            return True, f"Appointment {appt_id} deleted"
+            utils.log_event(f"Appointment {appt_id} cancelled", "INFO")
+            return True, f"Appointment {appt_id} cancelled"
         else:
             return False, f"No appointment with ID {appt_id}"
 
@@ -364,7 +364,6 @@ class AppointmentManager:
         if not found:
             return False, msg, None
 
-        
         appt.status = "cancelled"
         self.sc.save()
         

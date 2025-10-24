@@ -82,10 +82,9 @@ def doctor_page(_Manager):
         st.session_state.logout_triggered = False
         st.rerun()
 
-    
-
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
+    st.sidebar.divider()
     option = st.sidebar.radio("Select", tabs)
     st.sidebar.divider()
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)

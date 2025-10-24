@@ -29,6 +29,7 @@ def nurse_page(nurse: NurseUser):
     # Page design
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
+    st.sidebar.divider()
     option = st.sidebar.radio("Select", tabs, key="nurse_sidebar_radio")
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True, key="nurse_logout_btn")
     

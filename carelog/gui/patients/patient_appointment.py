@@ -78,10 +78,12 @@ def appointment(manager):
                             for e in errors:
                                 st.error(e)
                         else:
-                            appt_manager.add_appointments(p_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                            success, msg = appt_manager.add_appointments(p_id, d_id, str(appt_date), str(appt_time), appt_remark)
                             with st.spinner("Submitting request..."):
                                 time.sleep(1)
+                            st.session_state.success_msg = msg
                             manager.save()
+                            st.rerun()
          
     with tab2:
         # Display appointment id with doctor
@@ -158,12 +160,12 @@ def appointment(manager):
         if "cancel" not in st.session_state:
             st.session_state.cancel = ""
 
-        patient_appt = [appt for appt in manager.appointments if appt.p_id == patient.p_id]
+        patient_appt = [appt for appt in manager.appointments if appt.p_id == patient.p_id and appt.status.lower() != "cancelled"]
 
         if patient_appt:
             for i, appt in enumerate(patient_appt):
                 with st.form(f"appt-box{i}"):
-                    col1, col2, col3 = st.columns([2, 2, 1])
+                    col1, col2, col3 = st.columns([2, 2, 2])
                     with col1:
                         st.markdown(f"""
                         **Appointment ID:** {appt.appt_id}  
@@ -198,22 +200,21 @@ def appointment(manager):
                         if edit_button:
                             st.session_state.edit = appt.appt_id
                             st.rerun()
+
                         if cancel_button:
-                            st.session_state.cancel = appt.appt_id
+                            st.session_state.cancel = "cancel"
+
+                    if st.session_state.cancel == "cancel":
+                        st.warning(f"⚠️ You are about to cancel Appointment {appt.appt_id}. This action cannot be undone.")
+                        confirm_button = st.form_submit_button("Confirm Cancel", key=f"confirm-{appt.appt_id}", use_container_width=True)
+                        if confirm_button:
+                            success, msg, appt_idd = appt_manager.delete_appointment_nurse(appt.appt_id)
+                            st.session_state.cancel = ""
+                            st.session_state.success_msg = f"✅ Appointment {appt.appt_id} cancelled successfully!"
                             st.rerun()
-
-                        if st.session_state.cancel:
-                            confirm_delete_button = st.form_submit_button("Confirm Delete", use_container_width=True)
-
-                            if confirm_delete_button != "":
-                                manager.delete_appointments(st.session_state.cancel)
-                                st.session_state.edit = ""
-                                st.session_state.cancel = ""
-                        
+                    
         else:
             st.warning("No appointments found!")
-
-        st.divider()
 
         if "edit" in st.session_state and st.session_state.edit != "":
             # Variables
@@ -221,7 +222,6 @@ def appointment(manager):
             target_appt = next((a for a in patient_appt if a.appt_id == target_appt_id), None)
             doctor_options = list(doctor_id.keys())
             current_doc_display = next((disp for disp, did in doctor_id.items() if did == target_appt.d_id), doctor_options[0])
-
 
             if target_appt:
                 st.markdown(f"### ✏️ Editing Appointment {target_appt.appt_id}")
@@ -239,14 +239,12 @@ def appointment(manager):
                     submitted = st.form_submit_button("Save Changes")
 
                     if submitted:
-                        result = appt_manager.edit_appointments(target_appt_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                        result = AppointmentManager.edit_appointments(target_appt_id, d_id, str(appt_date), str(appt_time), appt_remark)
                         st.session_state.success_msg = f"Appointment {target_appt.appt_id} updated successfully!"
                         manager.save()
                         st.session_state.edit = ""  # reset
                         st.rerun()
 
-        st.divider()
-        
     if "success_msg" in st.session_state and st.session_state.success_msg != "":
         st.success(st.session_state.success_msg)
         st.session_state.success_msg = ""
