@@ -98,7 +98,7 @@
             "d_id": "D0001",
             "username": "doc",
             "password": "docpass",
-            "name": "Dr. Smith",
+            "name": "Dr. Smth",
             "bday": "1980-01-01",
             "gender": "Male",
             "address": "789 Avenue C",
@@ -309,7 +309,6 @@
     ],
     "admins": [
         {
-            "admin_password": "admin",
             "a_id": "A0001",
             "username": "admin",
             "password": "adminpass",
@@ -322,7 +321,6 @@
             "date_joined": "2025-01-01T08:00:00"
         },
         {
-            "admin_password": "admin",
             "a_id": "A0002",
             "username": "admin2",
             "password": "Admin2Pass",

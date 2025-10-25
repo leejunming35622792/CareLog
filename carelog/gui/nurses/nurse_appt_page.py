@@ -23,7 +23,7 @@ def appointments_page(manager, username):
         
         if view_option == "All Appointments":
             if st.button("Show All Appointments"):
-                success, msg, appts = appt_manager.view_appointment_nurse()
+                success, msg, appts = appt_manager.list("nurse", username, scope="all", upcoming_only=False, date=None, status=None, patient_id=None, doctor_id=None, appt_id=None)
                 if success:
                     st.success(msg)
                     if appts:
@@ -41,7 +41,7 @@ def appointments_page(manager, username):
             appt_id = st.text_input("Appointment ID", key="view_appt_id")
             if st.button("Search"):
                 if appt_id:
-                    success, msg, appt = appt_manager.view_appointment_nurse(appointment_id=appt_id)
+                    success, msg, appt = appt_manager.list("nurse", username, scope="all", upcoming_only=False, date=None, status=None, patient_id=None, doctor_id=None, appt_id=appt_id)
                     if success:
                         st.success(msg)
                         st.json(appt)
@@ -52,7 +52,7 @@ def appointments_page(manager, username):
             patient_id = st.text_input("Patient ID", key="view_patient_appts")
             if st.button("Search"):
                 if patient_id:
-                    success, msg, appts = appt_manager.view_appointment_nurse(patient_id=patient_id)
+                    success, msg, appts = appt_manager.list("nurse", username, scope="all", upcoming_only=False, date=None, status=None, patient_id=patient_id, doctor_id=None, appt_id=None)
                     if success:
                         st.success(msg)
                         if appts:
@@ -68,7 +68,7 @@ def appointments_page(manager, username):
             date_query = st.date_input("Select Date", value=datetime.date.today())
             if st.button("Search"):
                 date_str = date_query.strftime("%Y-%m-%d")
-                success, msg, results = appt_manager.search_appointments_by_date(date_str)
+                success, msg, results = appt_manager.list("nurse", username, scope="all", upcoming_only=False, date=date_str, status=None, patient_id=None, doctor_id=None, appt_id=None)
                 if success:
                     st.success(msg)
                     if success:
@@ -143,7 +143,7 @@ def appointments_page(manager, username):
         
         if st.button("Cancel Appointment", type="primary", use_container_width=True):
             if appt_id_del and confirm_cancel:
-                success, msg, _ = appt_manager.delete_appointment_nurse(appt_id_del)
+                success, msg, _ = appt_manager.cancel("nurse", username ,appt_id_del)
                 if success:
                     st.success(f"✅ {msg}")
                 else:

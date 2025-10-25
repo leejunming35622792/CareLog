@@ -50,7 +50,7 @@ class AuthManager:
             return ReceptionistUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined)
         elif role == "admin":
             from app.admin import AdminUser
-            return AdminUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, [], "")
+            return AdminUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined)
         else:
             raise ValueError(f"Invalid role type: {role}")
 

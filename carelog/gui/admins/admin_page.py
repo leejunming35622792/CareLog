@@ -101,9 +101,13 @@ def admin_page(manager):
 
         with tab3:
             st.subheader("Appointment")
-            pass
+            st.text("All appointments")
+            admin.get_appointment(username)
 
-            st.write("This is the Appointments Page")
+            st.text("Upcoming appointments")
+            admin.upcoming_appointment(username)
+
+            utils.log_event(f"Viewed all appointments and upcoming appointments", "INFO")
 
     # ============================================================
     # RECORDS

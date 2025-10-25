@@ -1,4 +1,3 @@
-
 import datetime
 
 from app.schedule import ScheduleManager
@@ -155,4 +154,3 @@ def list_medications(patient_id, per_record=False):
 				if m not in all_meds:
 					all_meds.append(m)
 	return True, f"Found {len(all_meds)} unique medication(s)", all_meds
-

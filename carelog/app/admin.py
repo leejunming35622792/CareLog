@@ -4,11 +4,8 @@ from app.user import User
 from helper_manager.appointment_manager import AppointmentManager
 
 class AdminUser(User):
-    def __init__(self, a_id, username, password, name, bday, gender, address, email, contact_num, date_joined):
-        from app.schedule import ScheduleManager
-        sc = ScheduleManager()
+    def __init__(self, a_id: str, username: str, password: str, name: str, bday: str, gender: str, address: str, email: str, contact_num: str, date_joined: str):
         self.a_id = a_id
-        self.appt_manager = AppointmentManager(sc)
         super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
 
     """Account Management"""
@@ -73,10 +70,14 @@ class AdminUser(User):
         return True, f"{role.capitalize()} '{user_to_remove.user_id}' removed successfully."
 
     def get_appointment(self, username):
-        self.appt_manager.view_all_appointments(username)
+        from app.schedule import ScheduleManager
+        appt_manager = AppointmentManager(ScheduleManager)
+        return appt_manager.view_all_appointments(username)
 
     def upcoming_appointment(self, username):
-        self.appt_manager.view_upcoming_appointments(username)
+        from app.schedule import ScheduleManager
+        appt_manager = AppointmentManager(ScheduleManager)
+        return appt_manager.view_upcoming_appointments(username)
 
     """System Management"""
     def view_all_logs(self, n=20):

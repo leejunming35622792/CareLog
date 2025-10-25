@@ -11,14 +11,14 @@ def update_doctor_details(manager, *, username,
     doc = next((d for d in manager.doctors if getattr(d, "username", None) == username), None)
     if not doc:
         return False
-    if new_password:    doc.password = new_password
-    if new_name:        doc.name = new_name
-    if new_gender:      doc.gender = new_gender
-    if new_address:     doc.address = new_address
-    if new_email:       doc.email = new_email
+    if new_password:    doc.password    = new_password
+    if new_name:        doc.name        = new_name
+    if new_gender:      doc.gender      = new_gender
+    if new_address:     doc.address     = new_address
+    if new_email:       doc.email       = new_email
     if new_contact_num: doc.contact_num = new_contact_num
-    if new_department:  doc.department = new_department
-    if new_speciality:  doc.speciality = new_speciality
+    if new_department:  doc.department  = new_department
+    if new_speciality:  doc.speciality  = new_speciality
     if hasattr(manager, "save"): manager.save()
     return True
 
@@ -76,7 +76,7 @@ def profile_page(manager, username):
                 new_speciality=new_speciality or None,
             )
             if ok:
-                st.success("✅ Profile updated successfully!")
+                st.session_state.success("✅ Profile updated successfully!")
                 st.rerun()
             else:
                 st.error("Failed to update profile")
