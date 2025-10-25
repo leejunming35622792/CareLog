@@ -1,7 +1,7 @@
 import streamlit as st
 from app.schedule import ScheduleManager
 
-st.set_page_config(layout="wide")
+st.set_page_config(page_title="CareLog", layout="wide")
 
 def login_page():
     # --- Session States ---
@@ -16,6 +16,9 @@ def login_page():
 
     if "register_phase" not in st.session_state:
         st.session_state.get_user_detail = "basic"
+
+    if "success_msg" not in st.session_state:
+        st.session_state.success_msg = ""
 
     # --- Default Display ---
     if st.session_state.get("page") == "login":

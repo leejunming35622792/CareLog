@@ -13,7 +13,7 @@ def get_detail(role, username, password, user_id):
     st.title("CareLog Sign Up")
 
     with st.form("get-detail-form"):
-        st.subheader("Personal Details")
+        st.subheader("Account Information")
         st.info("You are almost there! 😉")
 
         col1, col2 = st.columns(2)
@@ -23,6 +23,7 @@ def get_detail(role, username, password, user_id):
             input_password = st.text_input("Password", value=password, type="password")
 
         st.divider()
+        st.subheader("Personal Information")
         col3, col4 = st.columns(2)
         with col3:
             name = st.text_input("Enter Name: ")
