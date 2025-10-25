@@ -1,10 +1,8 @@
 import streamlit as st
 import time
-import pandas as pd
+import datetime 
 from helper_manager.appointment_manager import AppointmentManager
 
-manager = st.session_state.manager
-appt_manager = AppointmentManager(manager)
 
 def appointment(manager):
     # Session states
@@ -15,6 +13,8 @@ def appointment(manager):
     st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
 
     # Variables
+    manager = st.session_state.manager
+    appt_manager = AppointmentManager(manager)
     tabs = ["Book Appointment", "View Appointments", "Edit Appointments"]
     doctors = {d.d_id:d.name for d in manager.doctors}
     status_type = ["Pending", "Booked", "Reschedules", "Cancelled"]
@@ -78,7 +78,9 @@ def appointment(manager):
                             for e in errors:
                                 st.error(e)
                         else:
-                            success, msg = appt_manager.add_appointments(p_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                            appt_date = appt_date.isoformat()
+                            appt_time = appt_time.isoformat()
+                            success, msg, appt = appt_manager.create("patient", username, p_id, d_id, appt_date, appt_time, appt_remark)
                             with st.spinner("Submitting request..."):
                                 time.sleep(1)
                             st.session_state.success_msg = msg
@@ -101,11 +103,13 @@ def appointment(manager):
                 st.divider()
 
                 # Input box
+                st.header("Search 🔎")
+                st.write("")
                 choose_appt = st.selectbox("Select Appointments", appt_id.keys())
                 appt_id = appt_id[choose_appt]
 
                 # Appointment in 'dict' type
-                success, msg, appt = appt_manager.search_appt(appt_id)
+                success, msg, appt_list = appt_manager.list(manager, "patient", username, scope="own", upcoming_only=False, date=None, status=None, patient_id=patient.p_id, doctor_id=None, appt_id=None)
 
                 # Display button
                 search_button = st.form_submit_button("Search Appointment")
@@ -116,38 +120,55 @@ def appointment(manager):
                 st.divider()
 
                 if search_button:
-                    disp1, disp2, disp3 = st.columns(3)
-                    with disp1:
-                        st.metric("Appointment ID", appt.get("Appointment ID"))
-                    with disp2:
-                        st.metric("Patient ID", appt["Patient ID"], delta=patient.name, delta_color="off")
-                    with disp3:
-                        doc_id_name = {d.d_id:d.name for d in manager.doctors}
-                        appt_doc = appt["Doctor ID"]
-                        st.metric("Doctor ID", appt["Doctor ID"], delta=f"{doc_id_name[appt_doc]}", delta_color="off")
-                    disp4, disp5, disp6 = st.columns(3)
-                    with disp4:
-                        st.metric("Appointment Date", appt["Appointment Date"])
-                    with disp5:
-                        st.metric("Appointment Time", appt["Appointment Time"])
-                    with disp6:
-                        appt_status = appt["Appointment Status"]
-                        risk_color = {
-                            "Booked": "green",
-                            "Pending": "blue",
-                            "Rescheduled": "yellow",
-                            "Cancelled": "red"
-                        }
+                    # Find the selected appointment in the list
+                    appt = next((a for a in appt_list if a["appt_id"] == appt_id), None)
 
-                        color = risk_color.get(appt_status, "black")
-                        st.markdown(f"**Appointment Status:**<br><span style='color:{color};; font-size:200%'><b>{appt_status}</b></span>", unsafe_allow_html=True)
-                    st.text_area("Remark", value=appt["Remark"], disabled=True)
+                    st.header("Appointment 📄")
+                    st.write("")
+                    
+                    if not appt:
+                        st.warning("Appointment not found.")
+                    else:
+                        disp1, disp2, disp3 = st.columns(3)
+                        with disp1:
+                            st.metric("Appointment ID", appt["appt_id"])
+                        with disp2:
+                            st.metric("Patient ID", appt["patient_id"], delta=patient.name, delta_color="off")
+                        with disp3:
+                            doc_id_name = {d.d_id: d.name for d in manager.doctors}
+                            appt_doc = appt["doctor_id"]
+                            st.metric("Doctor ID", appt_doc, delta=doc_id_name.get(appt_doc, "Unknown"), delta_color="off")
+
+                        disp4, disp5, disp6 = st.columns(3)
+                        with disp4:
+                            st.metric("Appointment Date", appt["date"])
+                        with disp5:
+                            st.metric("Appointment Time", appt["time"])
+                        with disp6:
+                            appt_status = appt["status"]
+                            risk_color = {
+                                "Booked": "green",
+                                "Pending": "blue",
+                                "Rescheduled": "yellow",
+                                "Cancelled": "red"
+                            }
+                            color = risk_color.get(appt_status, "black")
+                            st.markdown(f"**Appointment Status:**<br><span style='color:{color}; font-size:200%'><b>{appt_status}</b></span>", unsafe_allow_html=True)
+                        
+                        st.text_area("Remark", value=appt["remark"], disabled=True)
+                
                 if download_button:
-                    success, msg, appt = appt_manager.search_appt(appt_id)
-                    result = appt_manager.print_appt(patient, appt)
-                    if result:
-                        st.session_state.success_msg = f"Successfully downloaded to {result}"
+                    success, msg, appt_list = appt_manager.list(manager, "patient", username, scope="own", upcoming_only=False, date=None, status=None, patient_id=patient.p_id, doctor_id=None, appt_id=None)
+
+                    appt = next((a for a in appt_list if a["appt_id"] == appt_id), None)
+
+                    success, result, file_dir = appt_manager.export_report("patient", patient.username, appt_id)
+
+                    if success:
+                        st.session_state.success_msg = f"Successfully downloaded to '{file_dir}'"
                         st.rerun()
+                    else:
+                        st.warning(result)
 
     with tab3:
         # Page Design
@@ -176,6 +197,7 @@ def appointment(manager):
                         """)
 
                     with col2:
+                        appt_status = appt_status.title()
                         if appt.status == "Pending":
                             st.markdown(f"""
                             ### Status: :blue[{appt.status}]
@@ -202,15 +224,17 @@ def appointment(manager):
                             st.rerun()
 
                         if cancel_button:
-                            st.session_state.cancel = "cancel"
+                            st.session_state.cancel = appt.appt_id
+                            st.rerun()
 
-                    if st.session_state.cancel == "cancel":
+                    if st.session_state.cancel == appt.appt_id:
                         st.warning(f"⚠️ You are about to cancel Appointment {appt.appt_id}. This action cannot be undone.")
                         confirm_button = st.form_submit_button("Confirm Cancel", key=f"confirm-{appt.appt_id}", use_container_width=True)
                         if confirm_button:
-                            success, msg, appt_idd = appt_manager.delete_appointment_nurse(appt.appt_id)
+                            success, msg, appt_idd = appt_manager.cancel(manager, "patient", username, appt.appt_id)
                             st.session_state.cancel = ""
                             st.session_state.success_msg = f"✅ Appointment {appt.appt_id} cancelled successfully!"
+                            manager.save()
                             st.rerun()
                     
         else:
@@ -224,6 +248,7 @@ def appointment(manager):
             current_doc_display = next((disp for disp, did in doctor_id.items() if did == target_appt.d_id), doctor_options[0])
 
             if target_appt:
+                st.divider()
                 st.markdown(f"### ✏️ Editing Appointment {target_appt.appt_id}")
                 with st.form("edit-appt-form"):
                     doctor_disp = st.selectbox("Select Doctor", doctor_id.keys(), index=doctor_options.index(current_doc_display))
@@ -239,7 +264,7 @@ def appointment(manager):
                     submitted = st.form_submit_button("Save Changes")
 
                     if submitted:
-                        result = AppointmentManager.edit_appointments(target_appt_id, d_id, str(appt_date), str(appt_time), appt_remark)
+                        result = appt_manager.update(manager, "patient", username, target_appt_id, date=appt_date.isoformat(), time=appt_time.isoformat(), doctor_id=d_id, status=target_appt.status, remark=appt_remark)
                         st.session_state.success_msg = f"Appointment {target_appt.appt_id} updated successfully!"
                         manager.save()
                         st.session_state.edit = ""  # reset
@@ -248,3 +273,4 @@ def appointment(manager):
     if "success_msg" in st.session_state and st.session_state.success_msg != "":
         st.success(st.session_state.success_msg)
         st.session_state.success_msg = ""
+        st.balloons()

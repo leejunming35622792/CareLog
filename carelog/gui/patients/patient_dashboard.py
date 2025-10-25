@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 from helper_manager.profile_manager import find_age
+from gui.patients.chat_box import chat_box
 
 def dashboard(manager, username):
     # Variable
@@ -8,9 +9,10 @@ def dashboard(manager, username):
     
     # Page design
     st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
-    st.balloons()
     st.image("img/dashboard.png")
     st.divider()
+
+    # --- Dashboard ---
     st.header("Dashboard Overview 🎗️")
     st.write("")
     m1, m2, m3 = st.columns(3)
@@ -38,3 +40,10 @@ def dashboard(manager, username):
             st.metric("Last Record", latest_record_str, delta=f"{days_difference} days")
         else:
             st.info("Book a medical check-up with us right now! 😊")
+
+    st.divider()
+
+    # --- Chat Box ---
+    st.header("CareBot 💬")
+    st.write("")
+    chat_box()

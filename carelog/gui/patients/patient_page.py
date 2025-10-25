@@ -20,11 +20,19 @@ def patient_page(manager):
     if "cancel" not in st.session_state:
         st.session_state.cancel = ""
 
+    if "option" not in st.session_state:
+        st.session_state.option = ""
+
+    if st.session_state.option != "Dashboard":
+        del st.session_state.message
+        st.session_state.message = []
+
     # Page design
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
     st.sidebar.divider()
     option = st.sidebar.radio("Select", tabs)
+    st.session_state.option = option
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
 
     if option == "Dashboard":
