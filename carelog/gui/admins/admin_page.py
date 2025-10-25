@@ -62,11 +62,17 @@ def admin_page(manager):
 
                 username = st.text_input("Username")
                 password = st.text_input("Password", type="password")
+                name     = st.text_input("Name")
+                bday     = st.date_input("Birthday")
+                gender   = st.selectbox("Gender")
+                address  = st.text_input("Address")
+                email    = st.text_input("Email")
+                contact  = st.text_input("Contact")
 
                 if st.form_submit_button("Create Account"):
                     with st.spinner("Registering..."):
                         time.sleep(1)
-                    success, message, _ = admin.register_user(role, username, password)
+                    success, message, _ = admin.register_user(role, username, password, name, bday, gender, address, email, contact)
 
                     if success:
                         manager.save()
