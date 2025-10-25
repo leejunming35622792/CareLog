@@ -67,14 +67,15 @@ class AppointmentManager:
         utils.log_event(f"[{actor_role}] {actor_username} created appointment {appt_id} (P={patient_id}, D={doctor_id})", "INFO")
         return True, f"Appointment {appt_id} created.", new_appt
 
-    def update(self, actor_role, actor_username, appt_id, *, date=None, time=None, doctor_id=None, status=None, remark=None):
+    def update(self, manager, actor_role, actor_username, appt_id, *, date=None, time=None, doctor_id=None, status=None, remark=None):
         """
         Update parts of an appointment.
         - Receptionist/Admin: may change date/time/doctor/status/remark.
         - Patient: may reschedule/cancel only; cannot change doctor; cannot edit within <24h of the slot.
         - Doctor: may mark status-only (e.g., completed/no-show), cannot reschedule.
-        - Nurse: no scheduling changes; optional status-only if your UI needs it; defaults to denied.
+        - Nurse: status-only
         """
+        
         actor_role = (actor_role or "").lower()
         self._ensure_role(actor_role)
         self._ensure_user_exists(actor_username, actor_role)
@@ -140,28 +141,16 @@ class AppointmentManager:
         if remark is not None:
             appt.remark = remark
 
-        self.sc.save()
+        manager.save()
+        manager._save_data()
         utils.log_event(f"[{actor_role}] {actor_username} updated appointment {appt_id}", "INFO")
         return True, f"Appointment {appt_id} updated.", appt
 
-    def cancel(self, actor_role, actor_username, appt_id):
+    def cancel(self, manager, actor_role, actor_username, appt_id):
         """Convenience: set status to 'cancelled' with permission checks."""
-        return self.update(actor_role, actor_username, appt_id, status="cancelled")
+        return self.update(manager, actor_role, actor_username, appt_id, status="cancelled")
 
-    def list(self, actor_role, actor_username=None, *, scope="own", upcoming_only=False, date=None, status=None, patient_id=None, doctor_id=None, appt_id=None):
-        """
-        List appointments with one call for ANY role.
-
-        scope:
-          - 'own'   : doctor -> their patients; patient -> their own; nurse/receptionist/admin -> all
-          - 'all'   : everyone who has the privilege to view all (nurse/receptionist/admin); doctor/patient will be reduced to 'own'
-        Filters:
-          - upcoming_only: keep only appts >= now
-          - date: 'YYYY-MM-DD'
-          - status: exact match (case-insensitive)
-          - patient_id / doctor_id: explicit filters (overrides scope)
-          - appt_id: filter appointment id
-        """
+    def list(self, manager, actor_role, actor_username=None, *, scope="own", upcoming_only=False, date=None, status=None, patient_id=None, doctor_id=None, appt_id=None):
         actor_role = (actor_role or "").lower()
         self._ensure_role(actor_role)
         if actor_username:
@@ -179,7 +168,7 @@ class AppointmentManager:
             u = self._get_user_by_username(actor_username, "patient")
             patient_self_id = getattr(u, "p_id", None)
 
-        for a in self.appointments:
+        for a in manager.appointments:
             # Scope filter
             if scope == "own":
                 if actor_role == "doctor" and doctor_self_id and a.d_id != doctor_self_id:
@@ -212,8 +201,8 @@ class AppointmentManager:
             if appt_id and a.appt_id != appt_id:
                 continue
 
-            p = next((p for p in self.sc.patients if getattr(p, "p_id", None) == a.p_id), None)
-            d = next((d for d in self.sc.doctors if getattr(d, "d_id", None) == a.d_id), None)
+            p = next((p for p in manager.patients if getattr(p, "p_id", None) == a.p_id), None)
+            d = next((d for d in manager.doctors if getattr(d, "d_id", None) == a.d_id), None)
 
             results.append({
                 "appt_id": a.appt_id,
@@ -236,12 +225,18 @@ class AppointmentManager:
     def export_report(self, actor_role, actor_username, appt_id):
         """
         Export a simple text report. Patients can export their own; doctor can export theirs;
-        receptionist/admin can export any; nurses denied unless policy changed.
+        receptionist/admin can export any
         """
         from helper_manager.profile_manager import find_age
         actor_role = (actor_role or "").lower()
-        self._ensure_role(actor_role)
-        self._ensure_user_exists(actor_username, actor_role)
+
+        ensure_role, msg, _ = self._ensure_role(actor_role)
+        if not ensure_role:
+            return False, msg, _
+        
+        ensure_user, msg, _ = self._ensure_user_exists(actor_username, actor_role)
+        if not ensure_user:
+            return False, msg, _
 
         found, msg, appt = self.sc.find_appointment_by_id(appt_id)
         if not found:
@@ -304,23 +299,23 @@ class AppointmentManager:
 
     # ----------------------------- Legacy wrappers (optional) -----------------------------
 
-    def view_all_appointments(self, username):
+    def view_all_appointments(self, manager, username):
         """Back-compat: doctor only; returns all (including past)."""
-        ok, msg, rows = self.list("doctor", username, scope="own", upcoming_only=False)
+        ok, msg, rows = self.list(manager, "doctor", username, scope="own", upcoming_only=False)
         return ok, msg, rows
 
-    def view_upcoming_appointments(self, doctor_username):
-        return self.list("doctor", doctor_username, scope="own", upcoming_only=True)
+    def view_upcoming_appointments(self, manager, doctor_username):
+        return self.list(manager, "doctor", doctor_username, scope="own", upcoming_only=True)
 
     def create_appointment_nurse(self, patient_id, doctor_id, date, time, remark):
         # Delegate to receptionist role since nurses cannot create by policy
-        return self.create("receptionist", "nurse@system", patient_id, doctor_id, date, time, remark)
+        return self.create("nurse", "", patient_id, doctor_id, date, time, remark)
 
     def update_appointment_nurse(self, appt_id, date=None, time=None, status=None, remark=None):
-        return False, "Nurses cannot modify appointments.", None
+        return self.update("nurse", "", appt_id, date=date, time=time, status=status, remark=remark)
 
     def update_appointment_doctor(self, appt_id, date=None, time=None, status=None, remark=None):
-        return self.update("doctor", "doctor@system", appt_id, date=date, time=time, status=status, remark=remark)
+        return self.update("doctor", "", appt_id, date=date, time=time, status=status, remark=remark)
 
     # ----------------------------- Internals -----------------------------
 
@@ -338,14 +333,16 @@ class AppointmentManager:
 
     def _ensure_role(self, role):
         if role not in ROLES:
-            raise ValueError(f"Unknown role '{role}'")
+            return False, f"Unknown role '{role}'", None
+        return True, "Role exists", None
 
     def _ensure_user_exists(self, username, role):
         if not username:
             return
         u = self._get_user_by_username(username, role)
         if not u:
-            raise ValueError(f"User '{username}' with role '{role}' not found.")
+            return False, f"User '{username}' with role '{role}' not found.", None
+        return True, "User exists", None
 
     def _get_user_by_username(self, username, role):
         coll = {

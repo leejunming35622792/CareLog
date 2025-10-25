@@ -78,3 +78,11 @@ class AuthManager:
             if domain_part.endswith(domain.lstrip('.').lower()):
                 return True, "Valid email format", None
         return False, f"Invalid top-level domain: {domain_part}", None
+    
+    def check_contact_validation(contact_num):
+        if not contact_num:
+            return False, "Missing contact number", None
+        
+        contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
+        if not re.match(contact_num_format, contact_num):
+            return False, f"Contact number is invalid - please include '+60' and '-'", None
