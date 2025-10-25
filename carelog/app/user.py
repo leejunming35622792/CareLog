@@ -39,6 +39,8 @@ class User:
 
         errors = []
 
+        bday = bday.isoformat()
+
         # Check if any fields are blank
         fields = {
             "Name": name,
