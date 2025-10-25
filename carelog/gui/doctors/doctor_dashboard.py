@@ -1,10 +1,7 @@
 import datetime
 import streamlit as st
-
-# details manager functions
-from helper_manager.profile_manager import (
-    view_doctor_details
-)
+from helper_manager.profile_manager import (view_doctor_details)
+from helper_manager.profile_manager import (view_patient_details_by_nurse, search_patient_by_name)
 
 # Appointment manager
 from helper_manager.appointment_manager import AppointmentManager
@@ -12,12 +9,17 @@ from helper_manager.appointment_manager import AppointmentManager
 # DASHBOARD
 def dashboard(manager, username):
     """Main dashboard showing overview and quick stats"""
+    # Variable
+    manager = st.session_state.manager
+    username = st.session_state.username
+    current_doctor = next((d for d in manager.doctors if d.username == st.session_state.username))
+
     # Page design
     st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
     st.balloons()
     st.image("img/dashboard.png")
     st.divider()
-    st.header("Dashboard Overview")
+    st.header("Dashboard Overview 🎗️")
 
     # --- Doctor Details ---
     success, message, profile = view_doctor_details(username)
@@ -25,7 +27,7 @@ def dashboard(manager, username):
     if profile:
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Doctor ID", profile.get("staff_id", "N/A"))
+            st.metric("Doctor ID", current_doctor.d_id)
         with col2:
             st.metric("Department", profile.get("department", "Not Set"))
         with col3:
@@ -33,22 +35,163 @@ def dashboard(manager, username):
 
         st.divider()
 
-        # --- Appointment ---
-        st.header("Today's Appointments")
-        appt_manager = AppointmentManager(manager)
-        success, msg, appointments = appt_manager.view_upcoming_appointments(username)
+    # --- Search Patient ---
+    st.header("Quick Search 🔍")
+    st.write("")
+    with st.expander("Filter Patients", expanded=True):
+        search_type = st.radio("Search By:", ["Patient ID", "Name"], horizontal=True)
 
-        if success and appointments:
-            today = datetime.datetime.now().strftime("%Y-%m-%d")  # ✅ fixed
-            today_appts = [a for a in appointments if a.get("date") == today]
-            if today_appts:
-                for appt in today_appts[:3]:
-                    st.info(
-                        f"🕐 {appt.get('time','--:--')} - {appt.get('patient_name','Unknown')} ({appt.get('status','—')})"
-                    )
-            else:
-                st.success("No appointments scheduled for today")
+        if search_type == "Patient ID":
+            query = st.text_input("Enter search value", value="P000X")
         else:
-            st.info("No upcoming appointments")
+            query = st.text_input("Enter search value", placeholder="")
+
+        if st.button("Search🔍", use_container_width=True):
+            if not query.strip():
+                st.warning("Please enter a value to search ⚠️")
+            else:
+                if search_type == "Patient ID":
+                    try:
+                        patient_id = int(query) if query.isdigit() else query
+                        success, msg, info = view_patient_details_by_nurse(patient_id)
+                    except ValueError:
+                        st.error("Invalid Patient ID format")
+                        return
+                else:
+                    success, msg, info = search_patient_by_name(query)
+
+                if success:
+                    st.success(msg)
+                    st.divider()
+                    if isinstance(info, list):
+                        for patient in info:
+                            with st.container():
+                                st.markdown(f"<h1 style='font-size:200%'>🧍{patient['name']} (ID: {patient['patient_id']})</h1>", unsafe_allow_html=True)
+                                st.markdown(f"<span style='font-size:200%'>💌 </span><span style='font-size:100%'>{patient['email']}</span>", unsafe_allow_html=True)
+                                st.markdown(f"<span style='font-size:200%'>📞 </span><span style='font-size:100%'>{patient['contact']}</span>", unsafe_allow_html=True)
+                                st.markdown("_____")
+                    else:
+                        st.json(info)
+                else:
+                    st.error(msg)
+    
+    st.divider()
+
+    # --- Today Appointment ---
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    st.header(f"Today's Appointments ({today}) 📄")
+    st.write("")
+
+    appt_manager = AppointmentManager(manager)
+    success, msg, appt_list = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=False, date=today, status=None, doctor_id=current_doctor.d_id, appt_id=None)
+
+    if success and appt_list:
+        for appt in appt_list:
+            with st.expander(f"Appointment {appt["appt_id"]}"):
+                col1, col2, col3 = st.columns([1,2,2])
+                with col1:
+                    st.metric("Appointment", appt["appt_id"])
+                    st.metric("Patient", appt["patient_name"], delta=appt["patient_id"], delta_color="off")
+                with col2:
+                    risk_color = {
+                        "Booked": "green",
+                        "Pending": "blue",
+                        "Rescheduled": "orange",
+                        "Cancelled": "red"
+                    }
+
+                    status = appt['status'].capitalize()
+                    color = risk_color.get(status, "black")
+
+                    st.markdown(
+                        f"""
+                        <div style="
+                        display:flex; 
+                        justify-content: space-between; 
+                        align-items:center; 
+                        padding:15px 30px; 
+                        font-size:200%">
+                            <div style="font-weight:bold;">Time:</div>
+                            <div>{appt['time']}</div>
+
+                        </div>
+                        <div style="display:flex; 
+                        justify-content: space-between; 
+                        align-items:center; 
+                        padding:15px 30px; 
+                        font-size:200%">
+                            <div style="font-weight:bold;">Status:</div>
+                            <div style="color:{color}; font-weight:bold;"> {status}</div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                with col3:
+                    st.text_area("Remark", appt["remark"], key=f"remark_disp_{appt["appt_id"]}", disabled=True, height='stretch')
     else:
-        st.error(message)
+        st.info("No upcoming appointments")
+
+    st.divider()
+
+    # --- This Month Appointment ---
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    current_month = today.month
+    current_year = today.year
+    st.header(f"Appointments for {today.strftime('%B %Y')} 📅")
+    st.write("")
+    st.write("")
+
+    # Get appointments
+    appt_manager = AppointmentManager(manager)
+    success, msg, appt_list = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=True, status=None, doctor_id=current_doctor.d_id, appt_id=None)
+
+    if success and appt_list:
+        month_appts = [
+            appt for appt in appt_list 
+            if datetime.datetime.strptime(appt["date"], "%Y-%m-%d").month == current_month
+            and datetime.datetime.strptime(appt["date"], "%Y-%m-%d").year == current_year
+        ]
+        for appt in month_appts:
+            with st.expander(f"Appointment {appt["appt_id"]}"):
+                col1, col2, col3 = st.columns([1,2,2])
+                with col1:
+                    st.metric("Appointment", appt["appt_id"])
+                    st.metric("Patient", appt["patient_name"], delta=appt["patient_id"], delta_color="off")
+                with col2:
+                    risk_color = {
+                        "Booked": "green",
+                        "Pending": "blue",
+                        "Rescheduled": "orange",
+                        "Cancelled": "red"
+                    }
+
+                    status = appt['status'].capitalize()
+                    color = risk_color.get(status, "black")
+
+                    st.markdown(
+                        f"""
+                        <div style="
+                        display:flex; 
+                        justify-content: space-between; 
+                        align-items:center; 
+                        padding:15px 30px; 
+                        font-size:200%">
+                            <div style="font-weight:bold;">Time:</div>
+                            <div>{appt['time']}</div>
+
+                        </div>
+                        <div style="display:flex; 
+                        justify-content: space-between; 
+                        align-items:center; 
+                        padding:15px 30px; 
+                        font-size:200%">
+                            <div style="font-weight:bold;">Status:</div>
+                            <div style="color:{color}; font-weight:bold;"> {status}</div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                with col3:
+                    st.text_area("Remark", appt["remark"], key=f"remark_disp_{appt["appt_id"]}", disabled=True, height='stretch')
+    else:
+        st.info("No upcoming appointments")

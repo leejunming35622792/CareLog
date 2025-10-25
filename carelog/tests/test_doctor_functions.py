@@ -74,6 +74,7 @@ def test_update_patient_record_doctor_medical_only():
     old_remark = target.pr_remark
 
     ok, msg = update_patient_record_doctor(
+        manager,
         target.pr_record_id,
         conditions={'TestCondition': 'Low'},
         medications=['TestMed'],
@@ -153,7 +154,7 @@ def test_update_patient_record_doctor_invalid_billings():
     m = _get_manager()
     target = next(iter(m.records), None)
     assert target is not None, "No records available for invalid billings test"
-    ok, msg = update_patient_record_doctor(target.pr_record_id, billings="not-a-number")
+    ok, msg = update_patient_record_doctor(manager, target.pr_record_id, billings="not-a-number")
     assert ok is False
     assert "billings" in msg.lower()
 

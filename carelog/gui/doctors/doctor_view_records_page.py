@@ -162,6 +162,7 @@ def patient_records_page(manager, username):
                 conf = conf_score if conf_score is not None else None
 
                 success, msg = update_patient_record_doctor(
+                    manager,
                     record_id_edit,
                     conditions=conds,
                     medications=meds,

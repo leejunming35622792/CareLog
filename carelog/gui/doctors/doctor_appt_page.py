@@ -128,7 +128,4 @@ def appointments_page(manager, username):
             else:
                 st.error(f"❌ {message}")
         elif submitted:
-            st.warning("⚠️ Please enter an Appointment ID")
-
-
-        
+            st.warning("⚠️ Please enter an Appointment ID")        
