@@ -1,15 +1,17 @@
 import streamlit as st
 import time
+import datetime
 from app.schedule import ScheduleManager
 from app.receptionist import ReceptionistUser
-from app.user import User as user
+from app.user import User
 import app.utils as utils
+
 
 def receptionist_page(receptionist: ReceptionistUser):
     # Variables
     manager = st.session_state.manager
     recep_uname = st.session_state.username
-    receptionist = next((r for r in manager.receptionists if r.username == recep_uname), None)
+    current_receptionist = next((r for r in manager.receptionists if r.username == recep_uname), None)
 
     # Page design
     tabs = ["Dashboard", "Account", "Patient Search", "Appointments", "Profile"]
@@ -30,62 +32,96 @@ def receptionist_page(receptionist: ReceptionistUser):
         st.balloons()
         st.image("img/dashboard.png")
         st.divider()
-        st.header("Dashboard Overview 🎗️")
 
+        st.header("Dashboard Overview 🎗️")
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.metric("Receptionist ID", receptionist.r_id)
+            st.metric("Receptionist ID", current_receptionist.r_id)
         with col2:
-            if receptionist.name:
-                disp = receptionist.name
+            if current_receptionist.name:
+                disp = current_receptionist.name
             else:
                 disp = ""
             st.metric("Name", disp)
         with col3:
-            if receptionist.email:
-                disp = receptionist.email
+            if current_receptionist.email:
+                disp = current_receptionist.email
             else:
                 disp = ""
             st.metric("Name", disp)
         st.divider()
 
-        st.metric("Total Patients", len(manager.patients))
-        st.metric("Total Doctors", len(manager.doctors))
-        st.metric("Total Appointments", len(manager.appointments))
+        st.header("System Overview 🧰")
+        col4, col5, col6 = st.columns(3)
+        with col4:
+            st.metric("Total Patients", len(manager.patients))
+        with col5:
+            st.metric("Total Doctors", len(manager.doctors))
+        with col6:
+            st.metric("Total Appointments", len(manager.appointments))
 
     # ============================================================
     # CREATE PATIENT ACCOUNT
     # ============================================================
     elif option == "Account":
         from app.admin import AdminUser
-        st.header("👤 Register New Patient")
-        role = "Patient"
-        user_id = receptionist.get_next_id(role)
+        st.header("Register New Patient 👤")
+        role = "patient"
+        user_id = User.get_next_id(manager, role)
+        success, message = "", ""
         # Why receptionist.get_next_id here but not user?
         # ReceptionistUser is a subclass of user, so it will 
 
         with st.form("register_form"):
-            st.text_input("Role", role, disabled=True)
-            st.text_input("Assigned ID", user_id, disabled=True)
+            st.subheader("Account Information")
+            col1, col2 = st.columns(2)
+            with col1:
+                patient_role = st.text_input("Select Role", value=role.title(), disabled=True)
+            with col2:
+                patient_id = st.text_input("Assigned ID", user_id, disabled=True)
 
-            username = st.text_input("Username")
-            password = st.text_input("Password", type="password")
+            col1, col2 = st.columns(2)
+            with col1:
+                input_username = st.text_input("Username: ", value=username)
+            with col2:
+                input_password = st.text_input("Password", type="password")
+
+            st.divider()
+            st.subheader("Personal Information")
+            col3, col4 = st.columns(2)
+            with col3:
+                name = st.text_input("Enter Name: ")
+            with col4:
+                gender = st.selectbox("Select Gender: ", ["Male", "Female", "Prefer Not to Say"])
+
+            col5, col6 = st.columns(2)
+            with col5:
+                address = st.text_area("Enter Home Address: ")
+            with col6:
+                email = st.text_input("Enter Email Address:")
+                contact_num = st.text_input("Enter Contact Number: ", placeholder="+6012-3456789")
+
+            col7, col8 = st.columns(2)
+            with col7:
+                birthday = st.date_input("Enter Birthday: ", min_value="1920-01-01", max_value="today")
+            with col8:
+                current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                date_joined = st.text_input("Date Joined:", value=current_datetime, disabled=True)
 
             submitted = st.form_submit_button("Create Account")
-            if submitted:
-                with st.spinner("Registering..."):
-                    time.sleep(1)
-                success, message, _ = receptionist.register_user(role, username, password)
 
-            if success:
-                manager.save()
-                st.success(message)
-                st.toast(f"{role} account successfully created!")
-                utils.log_event(f"Receptionist {receptionist.username} created new patient {username}", "INFO")
-                st.rerun()
-            else:
-                utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
-                st.error(message)
+            if submitted:
+                with st.spinner("Processing..."):
+                    time.sleep(1.5)
+                success, message, user_obj = User.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)
+                if success:
+                    st.session_state.success_msg = message
+                    utils.log_event(f"Receptionist {current_receptionist.username} created new patient {username}", "INFO")
+                    st.rerun()
+                else:
+                    for error in message:
+                        st.error(error)
+                    utils.log_event(f"Failed registration for {role} ({username}): {message}", "ERROR")
 
     # ============================================================
     # PATIENT SEARCH
@@ -167,6 +203,11 @@ def receptionist_page(receptionist: ReceptionistUser):
         st.write(f"**Email:** {receptionist.email}")
         st.write(f"**Contact:** {receptionist.contact_num}")
         st.write(f"**Date Joined:** {receptionist.date_joined}")
+
+    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+        st.success(st.session_state.success_msg)
+        st.balloons()
+        del st.session_state.success_msg
 
 def logout():
     st.session_state.page = "login"
