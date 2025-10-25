@@ -4,6 +4,8 @@ from gui.login.login_page import login_page
 
 # To start the program and call 'login_page'
 def main():
+    st.set_page_config(page_title="CareLog", layout="wide")
+    
     if "logging_initialized" not in st.session_state:
         # Setup logging once
         setup_logging("data/audit.log")
