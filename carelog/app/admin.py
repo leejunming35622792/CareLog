@@ -9,7 +9,7 @@ class AdminUser(User):
         super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
 
     """Account Management"""
-    def register_user(self, role, username, password):
+    def register_user(self, role, username, password, name, bday, gender, address, email, contact):
         """
         Admin creates any user (including admin)
         """

@@ -231,7 +231,7 @@ class ScheduleManager():
         return True, "Remark found", remark
 
     def find_appointment_by_id(self,appointment_id):
-        appt = next((a for a in self.appointments if a.appt_id == appointment_id),None)
+        appt = next((a for a in self.appointments if str(a.appt_id) == str(appointment_id)), None)
         if appt is None:
             return False, "No appointment found", None
         return True, "Appointment found", appt

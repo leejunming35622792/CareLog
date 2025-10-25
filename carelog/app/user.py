@@ -1,7 +1,6 @@
 # Super class for other user classes
 # Common fields as below
-import datetime
-import re
+import re, datetime
 from helper_manager.auth_manager import AuthManager
 import app.utils as utils
 
@@ -36,6 +35,7 @@ class User:
     @staticmethod
     def create_user(manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Register new user & Check Blank"""
+        auth = AuthManager(manager)
 
         errors = []
 
@@ -82,21 +82,19 @@ class User:
             errors.append("Password must contain at least one number")
 
         # Email Validation
-        email_format = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-        if not re.match(email_format, email):
-            errors.append("Email is invalid - please include the top-domain level")
+        valid, msg, _ = auth.check_email_validation(email)
+        if valid == False:
+            errors.append(msg)
 
         # Contact Number Validation
-        contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
-        if not re.match(contact_num_format, contact_num):
-            errors.append("Contact number is invalid - please include '+60' and '-'")
+        num_valid, msg, _ = auth.check_contact_validation(contact_num)
+        if num_valid == False:
+            errors.append(msg)
         
         if errors:
             return False, errors, None
         else:
             # create account in auth_manager
-            auth = AuthManager(manager)
-
             success, msg, user_obj = auth.create_account(
                 manager, 
                 role, 
