@@ -1,11 +1,14 @@
 import datetime
 import app.utils as utils
 from app.user import User
+from helper_manager.appointment_manager import AppointmentManager
 
 class AdminUser(User):
     def __init__(self, a_id, username, password, name, bday, gender, address, email, contact_num, date_joined):
-        self.admin_password = "admin"
+        from app.schedule import ScheduleManager
+        sc = ScheduleManager()
         self.a_id = a_id
+        self.appt_manager = AppointmentManager(sc)
         super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
 
     """Account Management"""
@@ -68,6 +71,12 @@ class AdminUser(User):
         utils.log_event(f"Admin removed {role} '{user_to_remove.user_id}' ({user_id})", "INFO")
 
         return True, f"{role.capitalize()} '{user_to_remove.user_id}' removed successfully."
+
+    def get_appointment(self, username):
+        self.appt_manager.view_all_appointments(username)
+
+    def upcoming_appointment(self, username):
+        self.appt_manager.view_upcoming_appointments(username)
 
     """System Management"""
     def view_all_logs(self, n=20):

@@ -15,8 +15,8 @@ def dashboard():
         st.rerun()
 
 def admin_page(manager):
-    from app.schedule import ScheduleManager
-    sc = ScheduleManager()
+    admin = AdminUser("", "", "", "", "", "", "", "", "", "")
+
     tabs = ["Dashboard", "Profile", "Management", "Records"]
 
     # guard for username/session
@@ -57,7 +57,7 @@ def admin_page(manager):
             with st.form("register_form"):
                 role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
 
-                user_id = user.get_next_id(role)
+                user_id = user.get_next_id(manager, role)
                 st.text_input("Assigned ID", user_id, disabled=True)
 
                 username = st.text_input("Username")
@@ -66,11 +66,10 @@ def admin_page(manager):
                 if st.form_submit_button("Create Account"):
                     with st.spinner("Registering..."):
                         time.sleep(1)
-                    admin = AdminUser()
                     success, message, _ = admin.register_user(role, username, password)
 
                     if success:
-                        sc.save()
+                        manager.save()
                         st.success(message)
                         st.toast(f"{role} account successfully created!")
                         st.rerun()
@@ -83,7 +82,7 @@ def admin_page(manager):
             st.subheader("Remove User")
 
             role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
-            user_list = getattr(sc, f"{role.lower()}s", [])
+            user_list = getattr(manager, f"{role.lower()}s", [])
 
             if not user_list:
                 st.info(f"No {role} found")
@@ -92,7 +91,6 @@ def admin_page(manager):
                 selected_user = st.selectbox(f"Select {role} to remove", user_display)
                 if st.button("Confirm Remove"):
                     user_id = selected_user.split("(")[1].strip(")")
-                    admin = AdminUser()
                     success, message = admin.remove_user(role, user_id)
                     if success:
                         st.success(message)
