@@ -3,7 +3,7 @@
         {
             "p_id": "P0001",
             "username": "pass",
-            "password": "pass",
+            "password": "$2b$12$MOiPURSkaDLA7efTbojJluIKgelrtpdYNWHdgEw/6Ur.DGImRJdK2",
             "name": "John Doe",
             "bday": "2016-10-21",
             "gender": "Male",
@@ -16,13 +16,12 @@
                 "PR0002",
                 "PR0003"
             ],
-            "p_remark": "female doctors",
-            "remark": "female doctors"
+            "p_remark": "female doctors"
         },
         {
             "p_id": "P0002",
             "username": "alice123",
-            "password": "AlicePass1",
+            "password": "$2b$12$99N.05qGRtLrxoAVNEguJu5hCnLqGC8K6IrH/jBMKmkRk1b99c3aW",
             "name": "Alice Tan",
             "bday": "2016-10-21",
             "gender": "Female",
@@ -38,7 +37,7 @@
         {
             "p_id": "P0003",
             "username": "mikelee",
-            "password": "MikePass1",
+            "password": "$2b$12$Zh16vwfVnCJKdBWbB/uyreEMStoO7pDfYJpevLrDObSJnUz1NMyu.",
             "name": "Mike Lee",
             "bday": "2016-10-21",
             "gender": "Male",
@@ -54,7 +53,7 @@
         {
             "p_id": "P0004",
             "username": "sarasiva",
-            "password": "SaraPass1",
+            "password": "$2b$12$yIBor2/91qRKPsxs..5znOe/kPRi6S7GKnv95txHJlWAQ59aD21iq",
             "name": "Sara Siva",
             "bday": "2016-10-21",
             "gender": "Female",
@@ -68,7 +67,7 @@
         {
             "p_id": "P0005",
             "username": "Patient101",
-            "password": "Patient101",
+            "password": "$2b$12$sDZQYbsCShNES3xWmdUx7.kMHdh9SilgMQydKVmd.tF6WPB9GM8mS",
             "name": "",
             "bday": "2006-10-21",
             "gender": "",
@@ -82,7 +81,7 @@
         {
             "p_id": "P0007",
             "username": "alex",
-            "password": "alexPass123",
+            "password": "$2b$12$zqbQen1rNRxYS5Km1XiQ0uwGC8jCEabAVN/Hm9aY97DGEzFm7D/bi",
             "name": "alex",
             "bday": "2016-10-21",
             "gender": "Male",
@@ -98,7 +97,7 @@
         {
             "d_id": "D0001",
             "username": "doc",
-            "password": "docpass",
+            "password": "$2b$12$Ry5iR6Cxf3D73o.OfaajHetcqpJ/VRCWlL8353kKHqMjOsBy.Hj1a",
             "name": "Dr.Smith",
             "bday": "1980-01-01",
             "gender": "Male",
@@ -112,7 +111,7 @@
         {
             "d_id": "D0002",
             "username": "drjane",
-            "password": "JanePass1",
+            "password": "$2b$12$5bIiW278FDlnihnnknql0OnkmQ2szqPyyAgNExdkyaISqPUd/1Wu6",
             "name": "Dr. Jane Lim",
             "bday": "1987-01-01",
             "gender": "Female",
@@ -126,7 +125,7 @@
         {
             "d_id": "D0003",
             "username": "drkumar",
-            "password": "KumarPass1",
+            "password": "$2b$12$RmBvDZh9JthiSBgcMRbYQejN2T8QQAJX5zvKs5XQIDaZ2k1Mn8NKW",
             "name": "Dr. Kumar",
             "bday": "1983-01-01",
             "gender": "Male",
@@ -140,7 +139,7 @@
         {
             "d_id": "D0004",
             "username": "drchoi",
-            "password": "ChoiPass1",
+            "password": "$2b$12$sJ8zyIVwYU6bFuEfG2p9tu94otnatjeLWz/6WbtVvQZW5whYc26Xm",
             "name": "Dr. Choi",
             "bday": "1989-01-01",
             "gender": "Male",
@@ -154,7 +153,7 @@
         {
             "d_id": "D0005",
             "username": "@Rryanhew",
-            "password": "Ryanhewka12",
+            "password": "$2b$12$ho.6qDP5/bDIsGzPDfklmOz9ZWLxgfsXnvN6bI0CcEEw0fQeYyXoC",
             "name": "Ryan Hew Ka Shing ",
             "bday": "1998-01-01",
             "gender": "Male",
@@ -170,7 +169,7 @@
         {
             "n_id": "N0001",
             "username": "nurse",
-            "password": "nursepass",
+            "password": "$2b$12$YZ.NzqIHXwJUT1mG4hNvlOumM7SOJa1r6KwSCpfnG0sir8XUELpwu",
             "name": "Nurse Kelly",
             "bday": "1995-01-01",
             "gender": "Female",
@@ -185,7 +184,7 @@
         {
             "n_id": "N0002",
             "username": "nursetom",
-            "password": "TomPass1",
+            "password": "$2b$12$0XOGIBNtXSbE7NRjzgKOKupWLk33H..yvB5jmXwQLUtgbRa4xyuMm",
             "name": "Nurse Tom",
             "bday": "1992-01-01",
             "gender": "Male",
@@ -200,7 +199,7 @@
         {
             "n_id": "N0003",
             "username": "nurseaisha",
-            "password": "AishaPass1",
+            "password": "$2b$12$zw/roRjsPQq/Z7U8oCke/ukTDu0giF7R6osb4UN3/9PExaxHTBBYy",
             "name": "Nurse Aisha",
             "bday": "1996-01-01",
             "gender": "Female",
@@ -215,7 +214,7 @@
         {
             "n_id": "N0004",
             "username": "nurselee",
-            "password": "LeePass1",
+            "password": "$2b$12$uMpTMMEH.cbHgWwRYIAAnedPc6bCwjdNQXmjRtk4S/im35maiygRy",
             "name": "Nurse Lee",
             "bday": "1990-01-01",
             "gender": "Male",
@@ -230,7 +229,7 @@
         {
             "n_id": "N0005",
             "username": "Nurse101",
-            "password": "Nurse101",
+            "password": "$2b$12$rkDCWTWsI2VeG9dn/XGG.eDoqdAdDYYhdAvI093ji0XDSEgbwKV7K",
             "name": "",
             "bday": "",
             "gender": "",
@@ -245,7 +244,7 @@
         {
             "n_id": "N0006",
             "username": "Nurse102",
-            "password": "Nurse102",
+            "password": "$2b$12$zY8t/X.wmiASz1G1jCLaq.lvOWF3tfHCKD8UvsS8h.olYQk/mXAXy",
             "name": "",
             "bday": "",
             "gender": "",
@@ -262,7 +261,7 @@
         {
             "r_id": "R0001",
             "username": "rec",
-            "password": "recpass",
+            "password": "$2b$12$HKoHg2iZc4oJRpbd/lzL1eRWquxdZFiettGAHkAk4xk5BOcMNd5yy",
             "name": "Reception Anna",
             "bday": "1993-01-01",
             "gender": "Female",
@@ -274,7 +273,7 @@
         {
             "r_id": "R0002",
             "username": "recjohn",
-            "password": "JohnPass1",
+            "password": "$2b$12$ky8dJre.zDG7/qLCBr1hQu9W7V15ogc0ngExrEctDM7Y82XYAs22S",
             "name": "Reception John",
             "bday": "1996-01-01",
             "gender": "Male",
@@ -286,7 +285,7 @@
         {
             "r_id": "R0003",
             "username": "recmei",
-            "password": "MeiPass1",
+            "password": "$2b$12$gVomeMyZ8oJvyCGvp/pVQuf/P6XfOgc.qcHV4h9c9cCQU4lJ8RntC",
             "name": "Reception Mei",
             "bday": "1998-01-01",
             "gender": "Female",
@@ -298,7 +297,7 @@
         {
             "r_id": "R0004",
             "username": "recdavid",
-            "password": "DavidPass1",
+            "password": "$2b$12$pHki9uA1sBTwdtqsqBDDBOaAYDE0Jdle6SOc9kxKLPDuBbAhXbObm",
             "name": "Reception David",
             "bday": "1991-01-01",
             "gender": "Male",
@@ -312,7 +311,7 @@
         {
             "a_id": "A0001",
             "username": "admin",
-            "password": "adminpass",
+            "password": "$2b$12$Z4UxTNHOsVdQc0EiSxLM4uo03YznvWxISCKCSI634DCo5KSESQCaC",
             "name": "Super Admin",
             "bday": "1984-01-01",
             "gender": "Male",
@@ -324,7 +323,7 @@
         {
             "a_id": "A0002",
             "username": "admin2",
-            "password": "Admin2Pass",
+            "password": "$2b$12$5PM3dpqp9iVJhiuK1JH9GeXZrtFJQzCxSx3gxT089o4CrvjuBd7YK",
             "name": "Backup Admin",
             "bday": "1988-01-01",
             "gender": "Female",

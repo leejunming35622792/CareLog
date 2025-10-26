@@ -14,7 +14,7 @@ class AuthManager:
     def check_credentials(self, role, username, password):
         users = getattr(self.system, f"{role.lower()}s", [])
         # using next to search for a user in user_list, stop when found, or return none by default if not found
-        user = next((u for u in users if u.username == username and u.password == password), None)
+        user = next((u for u in users if u.username == username), None)
         if user is None:    
             utils.log_event(f"Incorrect credentials", "ERROR")
             return False, "Incorrect credentials", None

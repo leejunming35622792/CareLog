@@ -5,12 +5,7 @@
 ---
 
 ## **Overview**
-
-**CareLog** is an all-in-one hospital management system that replaces manual record-keeping with a digital platform.
-It enables different healthcare roles to perform their day-to-day tasks — from patient record updates to scheduling appointments and managing staff shifts — all within a streamlined, interactive web interface.
-
-Developed as part of the **FIT1056 — Introduction to Data Science and Programming (Semester 2, 2025)** course, CareLog demonstrates the power of applied programming, modular design, and user-focused development using Python.
-
+The CareLog application is a Streamlit-based workflow system for clinics that converts manual labour and tasks into 
 ---
 
 ## **Key Highlights**
@@ -161,10 +156,6 @@ pip freeze > requirements.txt
 * Tools used: *Python, Streamlit, GitHub, VS Code*
 
 ---
-
-### **End of Documentation**
-
-**© 2025 CareLog Team | Built with ❤️ using Python and Streamlit** 
 
 
 **GitHub Link:**

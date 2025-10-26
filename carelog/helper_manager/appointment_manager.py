@@ -53,6 +53,17 @@ class AppointmentManager:
                 utils.log_event(f"Failed to create appointment: Role restricted", "ERROR")
                 return False, "Patients may only book appointments for themselves.", None
 
+        clash = next((a for a in self.appointments
+                        if getattr(a, "date", getattr(a, "appt_date", None)) == date
+                        and getattr(a, "time", getattr(a, "appt_time", None)) == time
+                        and (getattr(a, "d_id", getattr(a, "doctor_id", None)) == doctor_id
+                            or getattr(a, "p_id", getattr(a, "patient_id", None)) == patient_id)
+                        and getattr(a, "status", getattr(a, "appt_status", "")).lower() in ("pending", "confirmed")), None)
+        
+        if clash:
+            utils.log_event(f"Failed to create appointment: Time slot clash", "ERROR")
+            return False, "Requested time slot clashes with an existing appointment.", None
+
         # Build model
         appt_id = f"APPT{self.next_appt_id:04d}"
         new_appt = PatientAppointment(

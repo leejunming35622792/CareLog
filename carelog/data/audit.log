@@ -4493,3 +4493,12 @@
 2025-10-26 16:14:06,019 - INFO - Nurse searched for patients with name 'John'
 2025-10-26 16:14:40,011 - INFO - System startup complete
 2025-10-26 16:15:08,047 - INFO - Nurse searched for patients with name 'John'
+2025-10-26 20:03:14,832 - INFO - System startup complete
+2025-10-26 20:03:45,849 - ERROR - Incorrect credentials
+2025-10-26 20:04:02,315 - ERROR - Incorrect credentials
+2025-10-26 20:13:24,862 - INFO - System startup complete
+2025-10-26 20:13:34,491 - INFO - [Patient] @pass joined
+2025-10-26 20:41:37,487 - INFO - System startup complete
+2025-10-26 20:42:12,878 - INFO - [Doctor] @doc joined
+2025-10-26 20:42:17,190 - INFO - Successfully retrieved profile
+2025-10-26 20:42:54,550 - INFO - Successfully retrieved profile

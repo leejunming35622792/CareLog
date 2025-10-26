@@ -16,7 +16,7 @@ def hash_password(password: str) -> str:
     Hash a plaintext password with bcrypt.
     """
     if password is None:
-        raise ValueError("password is None")
+        raise ValueError("Password is None")
     return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(rounds=BCRYPT_ROUNDS)).decode("utf-8")
 
 def check_password(password: str, pw: str) -> bool:
