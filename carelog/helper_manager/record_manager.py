@@ -1,3 +1,5 @@
+import os
+import datetime
 import app.utils as utils
 
 def _persist():
@@ -214,5 +216,49 @@ def update_patient_record_doctor(record_id, conditions=None, medications=None, b
         _persist()
     return True, "Record updated successfully"
 
-def print_record():
-    pass
+def update_record_receptionist(manager, pr_id, amount):
+    current_record = next((r for r in manager.records if r.pr_record_id == pr_id), None)
+    if not current_record:
+        return False
+    else:
+        current_record.pr_billings = amount
+        manager.save()
+        return f"Appointment {pr_id} successfully updated with billings RM{amount}"
+
+def print_record(manager, user, record):
+    from helper_manager.profile_manager import find_age
+
+    folder_path = "record_report"
+    os.makedirs(folder_path, exist_ok=True)
+    file_dir = os.path.join(folder_path, f"{record.pr_record_id}.txt")
+
+    patient = next((p for p in manager.patients if p.p_id == record.p_id), None)
+    doctor = next((d for d in manager.doctors if d.d_id == record.d_id), None)
+
+    with open(file_dir, 'w', encoding="utf-8") as f:
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("|{:^70}|\n".format("CARELOG - MEDICAL RECORD REPORT"))
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("| {:25} {:<43}|\n".format("Record ID", record.pr_record_id))
+        f.write("| {:25} {:<43}|\n".format("Patient ID", getattr(patient, "p_id", "")))
+        f.write("| {:25} {:<43}|\n".format("Patient Name", getattr(patient, "name", "")))
+        f.write("| {:25} {:<43}|\n".format("Patient Age", find_age(getattr(patient, "bday", ""))))
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("| {:25} {:<43}|\n".format("Doctor ID", getattr(doctor, "d_id", "")))
+        f.write("| {:25} {:<43}|\n".format("Doctor Name", getattr(doctor, "name", "")))
+        f.write("| {:25} {:<43}|\n".format("Department", getattr(doctor, "department", "")))
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("| {:25} {:<43}|\n".format("Date & Time", str(record.pr_timestamp)))
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("| {:25} {:<43}|\n".format("Conditions", record.pr_conditions))
+        f.write("| {:25} {:<43}|\n".format("Medications", record.pr_medications))
+        f.write("| {:25} {:<43}|\n".format("Billings (RM)", f"{record.pr_billings:.2f}"))
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("| {:25} {:<43}|\n".format("Prediction Result", record.pr_prediction_result))
+        f.write("| {:25} {:<43}|\n".format("Confidence Score", f"{record.pr_confidence_score:.2%}"))
+        f.write("+" + "=" * 70 + "+\n")
+        f.write("| {:25} {:<43}|\n".format("Remark", record.remark))
+        f.write("+" + "=" * 70 + "+\n")
+
+    utils.log_event(f"[{actor_role}] {actor_username} exported record {record.pr_record_id}", "INFO")
+    return True, "Record exported successfully.", file_dir

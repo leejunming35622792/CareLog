@@ -8,9 +8,10 @@ class PatientUser(User):
         self.p_remark = p_remark
 
 class PatientRecord():
-    def __init__(self, pr_record_id, p_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score, pr_remark):
+    def __init__(self, pr_record_id, p_id, d_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score, pr_remark):
         self.pr_record_id = pr_record_id
         self.p_id = p_id
+        self.d_id = d_id
         self.pr_timestamp = pr_timestamp
         self.pr_conditions = pr_conditions
         self.pr_medications = pr_medications

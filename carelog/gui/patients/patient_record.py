@@ -15,12 +15,12 @@ def record(manager):
     with st.form("view-record-form"):
         st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Records 📃</h1>", unsafe_allow_html=True)
 
-        # --- Get all record IDs for patient ---
+        # Get all record IDs for patient 
         p_record_id = [r.pr_record_id for r in manager.records if r.pr_record_id in patient.p_record]
 
         col1, col2, col3= st.columns([3,1,3])
         with col1:
-            # --- Record selection ---
+            # Choose record 
             record_id = st.selectbox("Select Record ID", p_record_id)
             
         with col3:
@@ -68,3 +68,13 @@ def record(manager):
         if download_button:
             record_searched = search_record(patient.p_id, record_id)
             # print_record()
+
+        with st.expander("ℹ️ Learn more about Confidence Score and Prediction Result"):
+            st.write("""
+            - **Prediction Result** indicates the system’s analysis of your medical record, estimating your **current health risk level** (e.g., *Low*, *Moderate*, or *High*).  
+            This result is derived from patterns in your clinical data such as symptoms, test results, and treatment history.
+            
+            - **Confidence Score** reflects how certain the AI model is about its prediction.  
+            A higher score (close to 100%) means the system found strong evidence or consistent data patterns supporting that risk level,  
+            while a lower score suggests uncertainty — often due to limited or inconsistent data in your record.
+            """)

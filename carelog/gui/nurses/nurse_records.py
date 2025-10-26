@@ -1,7 +1,13 @@
 import streamlit as st
-from helper_manager.profile_manager import (search_patient_by_name, view_patient_details_by_nurse)
 from app.user import User
 from app.nurse import NurseUser
+from helper_manager.profile_manager import (
+    search_patient_by_name, 
+    view_patient_details_by_nurse
+)
+from helper_manager.record_manager import (
+    print_record
+)
 
 def patient_records_page(manager, username):
     nurse = NurseUser("", username, "", "", "", "", "", "", "", "", "", "", "")
@@ -25,7 +31,7 @@ def patient_records_page(manager, username):
         
         if search_method == "Patient ID":
             patient_id = st.text_input("Enter Patient ID", key="view_patient_id")
-            if st.button("Search Patient 🔍", key="search_patient_btn"):
+            if st.button("Search 🔍", key="search_patient_btn"):
                 if patient_id:
                     success, msg, info = view_patient_details_by_nurse(patient_id)
                     if success:
@@ -36,10 +42,11 @@ def patient_records_page(manager, username):
                             col1, col2 = st.columns(2)
                             with col1:
                                 st.write(f"**Name:** {info['name']}")
+                                st.write(f"**ID:** {info['patient_id']}")
                                 st.write(f"**Gender:** {info['gender']}")
-                                st.write(f"**Email:** {info['email']}")
                             with col2:
                                 st.write(f"**Contact:** {info['contact']}")
+                                st.write(f"**Email:** {info['email']}")
                                 st.write(f"**Address:** {info['address']}")
                             
                             st.divider()
@@ -51,7 +58,7 @@ def patient_records_page(manager, username):
                                     with st.expander(f"Record: {record['record_id']} - {record['timestamp']}"):
                                         st.write(f"**Conditions:** {record['conditions']}")
                                         st.write(f"**Medications:** {record['medications']}")
-                                        st.write(f"**Remark:** {record[4]}")
+                                        st.write(f"**Remark:** {record['remark']}")
                             else:
                                 st.info("No records found")
                             
@@ -73,28 +80,59 @@ def patient_records_page(manager, username):
                 else:
                     st.warning("Please enter a Patient ID")
         
-        else:  
+        else:
+            # Search by patient name
             patient_name = st.text_input("Enter Patient Name", key="search_patient_name")
-            if st.button("🔍 Search", key="search_by_name_btn"):
-                if patient_name:
+            if st.button("Search 🔍", key="search_by_name_btn"):
+                if not patient_name:
+                    st.warning("Please enter a name to search")
+                else:
                     success, msg, results = search_patient_by_name(patient_name)
-                    if success:
+                    if not success:
+                        st.error(msg)
+                    else:
                         st.success(msg)
-                        if results:
+
+                        if not results:     # list of patient dicts
+                            st.info("No patients found")
+                        else:
                             for patient in results:
                                 with st.container():
-                                    st.markdown(f"### {patient['name']}")
-                                    st.write(f"**ID:** {patient['patient_id']}")
-                                    st.write(f"**Gender:** {patient['gender']}")
-                                    st.write(f"**Contact:** {patient['contact']}")
-                                    st.write(f"**Email:** {patient['email']}")
+                                    column1, column2 = st.columns(2)
+                                    with column1:
+                                        st.markdown(f"### {patient['name']}")
+                                        st.write(f"**ID:** {patient['patient_id']}")
+                                        st.write(f"**Gender:** {patient['gender']}")
+                                    with column2:
+                                        st.write(f"**Contact:** {patient['contact']}")
+                                        st.write(f"**Email:** {patient['email']}")
+                                        st.write(f"**Address:** {patient['address']}")
+
                                     st.divider()
-                        else:
-                            st.info("No patients found.")
-                    else:
-                        st.error(msg)
-                else:
-                    st.warning("Please enter a name to search")
+
+                                    # Display records
+                                    st.markdown("### Medical Records")
+                                    recs = patient.get('records') or []
+                                    if recs:
+                                        for rec in recs:
+                                            with st.expander(f"Record: {rec.get('record_id', '')} - {rec.get('timestamp', '')}"):
+                                                st.write(f"**Conditions:** {rec.get('conditions', '')}")
+                                                st.write(f"**Medications:** {rec.get('medications', '')}")
+                                                st.write(f"**Remark:** {rec.get('remark', '')}")
+                                    else:
+                                        st.info("No records found")
+
+                                    st.divider()
+
+                                    rems = patient.get('remarks') or []
+                                    st.markdown(f"### Patient Remarks ({len(rems)})")
+                                    if rems:
+                                        for remarks in rems:
+                                            with st.expander(f"Remark: {remarks.get('remark_id', '')} - {remarks.get('type', '')} - {remarks.get('timestamp', '')}"):
+                                                st.write(f"**Doctor ID:** {remarks.get('doctor_id', '')}")
+                                                st.write(f"**Content:** {remarks.get('content', '')}")
+                                    else:
+                                        st.info("No remarks found")
 
     #Create Record
     with tab2:
@@ -133,6 +171,7 @@ def patient_records_page(manager, username):
                                     st.write(f"**Conditions:** {record.get('conditions', '')}")
                                     st.write(f"**Medications:** {record.get('medications', '')}")
                                     st.write(f"**Remark:** {record.get('remark', '')}")
+
                             elif isinstance(record, list):
                                 # Assuming the order: [record_id, timestamp, conditions, medications, remark]
                                 with st.expander(f"Record: {record[0]} - {record[1]}"):

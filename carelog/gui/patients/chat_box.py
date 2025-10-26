@@ -28,7 +28,7 @@ def chat_box():
                 "sleep": (
                     ["sleep", "rest", "insomnia", "nap", "tired", "fatigue", "sleep apnea", "circadian", "jet lag"],
                     [
-                        "Maintain 7–9 hours of consistent sleep daily to stabilize your circadian rhythm.",
+                        "Maintain 7-9 hours of consistent sleep daily to stabilize your circadian rhythm.",
                         "Avoid caffeine and blue light at least 2 hours before bedtime.",
                         "Establish a calming pre-sleep routine such as light stretching or reading.",
                         "If dealing with sleep apnea, consider consulting a specialist for CPAP therapy."

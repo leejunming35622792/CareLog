@@ -7,16 +7,17 @@
             "name": "John Doe",
             "bday": "2016-10-21",
             "gender": "Male",
-            "address": "123 Street A",
+            "address": "123 Street Ab",
             "email": "john@example.com",
-            "contact_num": "0123456789",
+            "contact_num": "+6012-3456789",
             "date_joined": "2025-01-01T09:00:00",
             "p_record": [
                 "PR0001",
                 "PR0002",
                 "PR0003"
             ],
-            "p_remark": "female doctors"
+            "p_remark": "female doctors",
+            "remark": "female doctors"
         },
         {
             "p_id": "P0002",
@@ -98,7 +99,7 @@
             "d_id": "D0001",
             "username": "doc",
             "password": "docpass",
-            "name": "Dr. Smth",
+            "name": "Dr.Smith",
             "bday": "1980-01-01",
             "gender": "Male",
             "address": "789 Avenue C",
@@ -337,6 +338,7 @@
         {
             "pr_record_id": "PR0002",
             "p_id": "P0001",
+            "d_id": "D0001",
             "pr_timestamp": "2025-04-12T10:00:00",
             "pr_conditions": "Fractured arm",
             "pr_medications": "Painkillers",
@@ -348,6 +350,7 @@
         {
             "pr_record_id": "PR0003",
             "p_id": "P0001",
+            "d_id": "D0002",
             "pr_timestamp": "2025-04-15T09:30:00",
             "pr_conditions": "Allergic reaction",
             "pr_medications": "Antihistamines",
@@ -359,6 +362,7 @@
         {
             "pr_record_id": "PR0004",
             "p_id": "P0002",
+            "d_id": "D0001",
             "pr_timestamp": "2025-04-10T11:30:00",
             "pr_conditions": "Migraine",
             "pr_medications": "Painkillers",
@@ -370,6 +374,7 @@
         {
             "pr_record_id": "PR0005",
             "p_id": "P0002",
+            "d_id": "D0001",
             "pr_timestamp": "2025-05-05T10:00:00",
             "pr_conditions": "Cold",
             "pr_medications": [
@@ -384,6 +389,7 @@
         {
             "pr_record_id": "PR0006",
             "p_id": "P0003",
+            "d_id": "D0003",
             "pr_timestamp": "2025-05-01T14:00:00",
             "pr_conditions": "Skin rash",
             "pr_medications": "Topical cream",
@@ -395,6 +401,7 @@
         {
             "pr_record_id": "PR0007",
             "p_id": "P0003",
+            "d_id": "D0001",
             "pr_timestamp": "2025-06-10T09:30:00",
             "pr_conditions": "Sprained ankle",
             "pr_medications": "Painkillers",
@@ -406,6 +413,7 @@
         {
             "pr_record_id": "PR0008",
             "p_id": "P0004",
+            "d_id": "D0001",
             "pr_timestamp": "2025-07-01T10:15:00",
             "pr_conditions": "Flu",
             "pr_medications": "Antivirals",
@@ -417,6 +425,7 @@
         {
             "pr_record_id": "PR0009",
             "p_id": "P0004",
+            "d_id": "D0001",
             "pr_timestamp": "2025-08-05T09:00:00",
             "pr_conditions": "Allergy",
             "pr_medications": "Antihistamines",
@@ -428,6 +437,7 @@
         {
             "pr_record_id": "PR0010",
             "p_id": "P0005",
+            "d_id": "D0002",
             "pr_timestamp": "2025-09-01T11:00:00",
             "pr_conditions": "Cough",
             "pr_medications": "Cough syrup",
@@ -439,6 +449,7 @@
         {
             "pr_record_id": "PR0011",
             "p_id": "P0005",
+            "d_id": "D0003",
             "pr_timestamp": "2025-09-15T10:30:00",
             "pr_conditions": "Fever",
             "pr_medications": "Paracetamol",
@@ -450,6 +461,7 @@
         {
             "pr_record_id": "PR0012",
             "p_id": "P0007",
+            "d_id": "D0003",
             "pr_timestamp": "2025-10-10T09:30:00",
             "pr_conditions": "Headache",
             "pr_medications": "Painkillers",
@@ -461,6 +473,7 @@
         {
             "pr_record_id": "PR0013",
             "p_id": "P0007",
+            "d_id": "D0002",
             "pr_timestamp": "2025-10-15T14:00:00",
             "pr_conditions": "Stomachache",
             "pr_medications": "Antacids",
@@ -515,6 +528,24 @@
             "time": "00:42:00",
             "status": "Pending",
             "remark": ""
+        },
+        {
+            "appt_id": "A0012",
+            "p_id": "P0001",
+            "d_id": "D0001",
+            "date": "2025-10-26",
+            "time": "13:17:00",
+            "status": "scheduled",
+            "remark": ""
+        },
+        {
+            "appt_id": "A0013",
+            "p_id": "P0001",
+            "d_id": "D0001",
+            "date": "2025-10-26",
+            "time": "13:59:00",
+            "status": "scheduled",
+            "remark": ""
         }
     ],
     "shifts": [],
@@ -556,7 +587,7 @@
     "next_receptionist_id": 5,
     "next_admin_id": 3,
     "next_record_id": 6,
-    "next_appt_id": 12,
+    "next_appt_id": 14,
     "next_shift_id": 5,
     "next_remark_id": 4
 }

@@ -3,9 +3,8 @@ from helper_manager.medication_manager import (
 	assign_medications,
 	edit_medications,
 	remove_medication,
-	list_medications,
+	list_medications
 )
-
 
 def medication_page(manager, username):
 	st.header("Medications")
@@ -26,6 +25,7 @@ def medication_page(manager, username):
 				height=100,
 			)
 			make_new = st.checkbox("Create a new record for this prescription", value=False)
+			
 			instructions = st.text_input("Instructions (optional)")
 			submit_assign = st.form_submit_button("Assign")
 

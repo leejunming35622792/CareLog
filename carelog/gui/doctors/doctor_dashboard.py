@@ -134,7 +134,8 @@ def dashboard(manager, username):
     st.divider()
 
     # --- This Month Appointment ---
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    today = datetime.datetime.now()
+    today_str = today.strftime("%Y-%m-%d")
     current_month = today.month
     current_year = today.year
     st.header(f"Appointments for {today.strftime('%B %Y')} 📅")

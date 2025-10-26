@@ -62,7 +62,9 @@ class AppointmentManager:
         )
 
         self.appointments.append(new_appt)
-        self._bump_id_and_save()
+        self.next_appt_id += 1
+        self.sc.next_appt_id = self.next_appt_id
+        self.sc.save()
 
         utils.log_event(f"[{actor_role}] {actor_username} created appointment {appt_id} (P={patient_id}, D={doctor_id})", "INFO")
         return True, f"Appointment {appt_id} created.", new_appt
@@ -142,7 +144,6 @@ class AppointmentManager:
             appt.remark = remark
 
         manager.save()
-        manager._save_data()
         utils.log_event(f"[{actor_role}] {actor_username} updated appointment {appt_id}", "INFO")
         return True, f"Appointment {appt_id} updated.", appt
 
@@ -177,7 +178,7 @@ class AppointmentManager:
                     continue
                 # nurse / receptionist / admin -> see all in 'own' by default
             else:  # 'all'
-                if actor_role in {"doctor", "patient"}:
+                if actor_role in {"doctor", "patient", "nurse"}:
                     # clamp to own
                     if actor_role == "doctor" and doctor_self_id and a.d_id != doctor_self_id:
                         continue
@@ -311,11 +312,11 @@ class AppointmentManager:
         # Delegate to receptionist role since nurses cannot create by policy
         return self.create("nurse", "", patient_id, doctor_id, date, time, remark)
 
-    def update_appointment_nurse(self, appt_id, date=None, time=None, status=None, remark=None):
-        return self.update("nurse", "", appt_id, date=date, time=time, status=status, remark=remark)
+    def update_appointment_nurse(self, manager, appt_id, date=None, time=None, status=None, remark=None):
+        return self.update(manager, "nurse", "", appt_id, date=date, time=time, status=status, remark=remark)
 
-    def update_appointment_doctor(self, appt_id, date=None, time=None, status=None, remark=None):
-        return self.update("doctor", "", appt_id, date=date, time=time, status=status, remark=remark)
+    def update_appointment_doctor(self, manager, username, appt_id, date=None, time=None, status=None, remark=None):
+        return self.update(manager, "doctor", username, appt_id, date=date, time=time, status=status, remark=remark)
 
     # ----------------------------- Internals -----------------------------
 
@@ -360,7 +361,7 @@ class AppointmentManager:
     def _get_doctor(self, d_id):
         return next((d for d in self.sc.doctors if getattr(d, "d_id", None) == d_id), None)
 
-    def _bump_id_and_save(self):
-        self.next_appt_id += 1
-        self.sc.next_appt_id = self.next_appt_id
-        self.sc.save()
+    # def _bump_id_and_save(self):
+    #     self.next_appt_id += 1
+    #     self.sc.next_appt_id = self.next_appt_id
+    #     self.sc.save()

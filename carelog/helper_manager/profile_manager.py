@@ -89,7 +89,7 @@ def view_patient_details_by_doctor(patient_id: int):
         "patient_id": patient.p_id,
         "name": patient.name,
         "gender": patient.gender,
-        "date_of_birth": getattr(patient, "date_of_birth", ""),
+        "date_of_birth": getattr(patient, "bday", ""),
         "previous_conditions": previous_conditions,
         "medication_history": medication_history,
     }
@@ -203,27 +203,49 @@ def search_and_select_profile(manager):
         return True, selected
 
 def search_patient_by_name(name):
-    """Search patients by name"""
+    """Search patients by (partial) name and include their records & remarks."""
     if not name or not name.strip():
         return False, "Please provide a name to search", None
-    
-    matching_patients = [
-        p for p in manager.patients 
-        if name.lower() in p.name.lower()
-    ]
-    
-    if not matching_patients:
+
+    query = name.strip().lower()
+    matches = [p for p in manager.patients if query in (p.name or "").lower()]
+    if not matches:
         return False, f"No patients found with name containing '{name}'", None
-    
-    results = [
-        {
+
+    results = []
+    for p in matches:
+        # join by patient ID
+        recs = [r for r in manager.records if str(getattr(r, "p_id", "")) == str(p.p_id)]
+        rems = [r for r in manager.remarks if str(getattr(r, "patient_id", "")) == str(p.p_id) and getattr(r, "is_active", True)]
+
+        results.append({
             "patient_id": p.p_id,
             "name": p.name,
             "gender": p.gender,
-            "contact": p.contact_num,
-            "email": p.email
-        } for p in matching_patients
-    ]
-    
+            "contact": getattr(p, "contact_num", ""),
+            "email": getattr(p, "email", ""),
+            "address": getattr(p, "address", ""),
+            "records_count": len(recs),
+            "remarks_count": len(rems),
+            "records": [
+                {
+                    "record_id": r.pr_record_id,
+                    "timestamp": r.pr_timestamp,
+                    "conditions": r.pr_conditions,
+                    "medications": r.pr_medications,
+                    "remark": r.pr_remark,
+                } for r in recs
+            ],
+            "remarks": [
+                {
+                    "remark_id": r.remark_id,
+                    "doctor_id": r.doctor_id,
+                    "timestamp": r.timestamp,
+                    "type": r.remark_type,
+                    "content": r.content,
+                } for r in rems
+            ],
+        })
+
     utils.log_event(f"Nurse searched for patients with name '{name}'", "INFO")
     return True, f"Found {len(results)} patient(s)", results

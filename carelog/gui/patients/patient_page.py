@@ -24,8 +24,8 @@ def patient_page(manager):
         st.session_state.option = ""
 
     if st.session_state.option != "Dashboard":
-        del st.session_state.message
-        st.session_state.message = []
+        del st.session_state.success_msg
+        st.session_state.success_msg = []
 
     # Page design
     st.sidebar.title("CareLog Navigation")

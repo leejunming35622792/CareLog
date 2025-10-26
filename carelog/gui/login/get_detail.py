@@ -28,7 +28,7 @@ def get_detail(role, username, password, user_id):
         with col3:
             name = st.text_input("Enter Name: ")
         with col4:
-            gender = st.selectbox("Select Gender: ", ["Male", "Female", "Prefer Not to Say"])
+            gender = st.selectbox("Select Gender: ", ["Male", "Female", "Other"])
 
         col5, col6 = st.columns(2)
         with col5:

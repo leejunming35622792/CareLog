@@ -8,7 +8,7 @@ def appointments_page(manager, username):
     """View and manage appointments"""
     st.header("Appointments")
     appt_manager = AppointmentManager(manager)
-    result = appt_manager.view_all_appointments(username)
+    result = appt_manager.view_all_appointments(manager, username)
     if len(result) == 3:
         success, message, appointments = result
     else:
@@ -64,8 +64,13 @@ def appointments_page(manager, username):
                 with col1:
                     if st.button("✅ Complete", key=f"complete_{appt['appt_id']}"):
                         success, message, _ = appt_manager.update_appointment_doctor(
+                            manager,
+                            username,
                             appt_id=appt['appt_id'],
-                            status="completed"
+                            date=None,
+                            time=None,
+                            status="completed",
+                            remark=None
                         )
                         if success:
                             st.success(message)
@@ -75,8 +80,13 @@ def appointments_page(manager, username):
                 with col2:
                     if st.button("❌ Cancel", key=f"cancel_{appt['appt_id']}"):
                         success, message, _ = appt_manager.update_appointment_doctor(
+                            manager,
+                            username,
                             appt_id=appt['appt_id'],
-                            status="cancelled"
+                            date=None,
+                            time=None,
+                            status="cancelled",
+                            remark=None
                         )
                         if success:
                             st.success(message)
@@ -115,6 +125,8 @@ def appointments_page(manager, username):
             
             # Call the update function
             success, message, updated_appt = appt_manager.update_appointment_doctor(
+                manager,
+                username,
                 appt_id=appt_id_update,
                 date=date_str,
                 time=time_str,

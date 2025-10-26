@@ -69,15 +69,13 @@ class AdminUser(User):
 
         return True, f"{role.capitalize()} '{user_to_remove.user_id}' removed successfully."
 
-    def get_appointment(self, username):
-        from app.schedule import ScheduleManager
-        appt_manager = AppointmentManager(ScheduleManager)
-        return appt_manager.view_all_appointments(username)
+    def get_appointment(self, username, manager):
+        appt_manager = AppointmentManager(manager)
+        return appt_manager.list(manager, "admin", username, scope="own", upcoming_only=False, date=None, status=None, patient_id=None, doctor_id=None, appt_id=None)
 
-    def upcoming_appointment(self, username):
-        from app.schedule import ScheduleManager
-        appt_manager = AppointmentManager(ScheduleManager)
-        return appt_manager.view_upcoming_appointments(username)
+    def upcoming_appointment(self, username, manager):
+        appt_manager = AppointmentManager(manager)
+        return appt_manager.list(manager, "admin", username, scope="own", upcoming_only=True, date=None, status=None, patient_id=None, doctor_id=None, appt_id=None)
 
     """System Management"""
     def view_all_logs(self, n=20):

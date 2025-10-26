@@ -7,6 +7,7 @@ from gui.nurses.nurse_profile import profile_page
 from gui.nurses.nurse_appt_page import appointments_page
 from gui.nurses.nurse_records import patient_records_page
 from gui.nurses.nurse_remark import remarks_page
+from gui.nurses.nurse_shift import shift_page
 
 appt_manager = AppointmentManager(st.session_state.manager)
 
@@ -20,7 +21,7 @@ def nurse_page(nurse: NurseUser):
         st.error("No user logged in")
         return
 
-    tabs = ["Dashboard", "Profile", "Appointments", "Patient Records", "Remarks"]
+    tabs = ["Dashboard", "Profile", "Patient Records", "Appointments", "Shift", "Remarks"]
 
     if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
@@ -37,10 +38,12 @@ def nurse_page(nurse: NurseUser):
         dashboard(manager, username)
     elif option == "Profile":
         profile_page(manager, username)
-    elif option == "Appointments":
-        appointments_page(manager, username)
     elif option == "Patient Records":
         patient_records_page(manager, username)
+    elif option == "Appointments":
+        appointments_page(manager, username)
+    elif option == "Shift":
+        shift_page()
     elif option == "Remarks":
         remarks_page(manager, username)
 

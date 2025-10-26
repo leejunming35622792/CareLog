@@ -3,9 +3,7 @@ import datetime
 from app.schedule import ScheduleManager
 from app.patient import PatientRecord
 
-# one shared manager
 manager = ScheduleManager()
-
 
 def _persist():
 	try:
@@ -57,7 +55,7 @@ def _latest_record(patient_id):
 	return sorted(records, key=lambda r: _parse(getattr(r, "pr_timestamp", "")), reverse=True)[0]
 
 
-def assign_medications(patient_id, medications, doctor_username=None, instructions="", new_record=False):
+def assign_medications(patient_id, doctor_id, conditions, medications, doctor_username, pr_prediction_result, pr_confidence_score, instructions="", new_record=False):
 	meds = _to_list(medications)
 	if not meds:
 		return False, "No medications provided", None
@@ -82,12 +80,13 @@ def assign_medications(patient_id, medications, doctor_username=None, instructio
 		rec = PatientRecord(
 			pr_record_id=pr_id,
 			p_id=patient.p_id,
+			d_id=doctor_id,
 			pr_timestamp=ts,
-			pr_conditions="",
+			pr_conditions=conditions,
 			pr_medications=meds,
 			pr_billings=0.0,
-			pr_prediction_result=None,
-			pr_confidence_score=None,
+			pr_prediction_result=pr_prediction_result,
+			pr_confidence_score=pr_confidence_score,
 			pr_remark=remark,
 		)
 		manager.records.append(rec)

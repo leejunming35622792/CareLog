@@ -70,7 +70,8 @@ def dashboard(manager, username):
 
     # --- Appointments ---
     st.header("Today's Appointments 📆")
-    success, msg, appointments = appt_manager.get_todays_appointments()
+    today = datetime.date.today()
+    success, msg, appointments = appt_manager.list(manager, "nurse", username, scope="all", upcoming_only=True, date=today, status=None, patient_id=None, doctor_id=None, appt_id=None)
 
     if success and appointments:
         disp1, disp2, disp3 = st.columns(3)

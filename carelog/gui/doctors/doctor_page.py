@@ -76,7 +76,7 @@ def doctor_page(_Manager):
     manager = st.session_state.manager
     username = st.session_state.username
 
-    tabs = ["Dashboard", "Profile", "Patient Records", "Medications", "Appointments", "Shift", "Remarks"]
+    tabs = ["Dashboard", "Profile", "Patient Records", "Appointments", "Shift", "Remarks"]
 
     if st.session_state.get("logout_triggered"):
         st.session_state.logout_triggered = False
@@ -95,8 +95,6 @@ def doctor_page(_Manager):
         profile_page(manager, username)
     elif option == "Patient Records":
         patient_records_page(manager, username)
-    elif option == "Medications":
-        medication_page(manager, username)
     elif option == "Appointments":
         appointments_page(manager, username)
     elif option == "Shift":

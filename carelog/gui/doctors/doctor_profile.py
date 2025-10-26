@@ -50,15 +50,15 @@ def profile_page(manager, username):
     with st.form("update_profile_form"):
         c1, c2 = st.columns(2)
         with c1:
-            new_name = st.text_input("New Name (optional)")
-            new_email = st.text_input("New Email (optional)")
-            new_gender = st.selectbox("New Gender (optional)", ["", "Male", "Female", "Other"])
-            new_password = st.text_input("New Password (optional)", type="password")
+            new_name = st.text_input("New Name")
+            new_email = st.text_input("New Email")
+            new_gender = st.selectbox("New Gender", ["Male", "Female", "Other"])
+            new_password = st.text_input("New Password", type="password")
         with c2:
-            new_contact = st.text_input("New Contact Number (optional)")
-            new_address = st.text_area("New Address (optional)")
-            new_department = st.text_input("New Department (optional)")
-            new_speciality = st.text_input("New Speciality (optional)")
+            new_contact = st.text_input("New Contact Number")
+            new_address = st.text_area("New Address")
+            new_department = st.text_input("New Department")
+            new_speciality = st.text_input("New Speciality")
 
         submitted = st.form_submit_button("Update Profile")
 
@@ -76,7 +76,7 @@ def profile_page(manager, username):
                 new_speciality=new_speciality or None,
             )
             if ok:
-                st.session_state.success("✅ Profile updated successfully!")
+                st.session_state.success_msg("✅ Profile updated successfully!")
                 st.rerun()
             else:
                 st.error("Failed to update profile")

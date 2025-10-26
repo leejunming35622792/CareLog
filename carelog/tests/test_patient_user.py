@@ -3,12 +3,17 @@ from datetime import date
 
 def test_patient_user_init():
     user = PatientUser(
-        "P0001", "john123", "Pass123",
-        "John Doe", "Male", "123 Street",
-        "john@example.com", "0123456789",
-        date(2025, 10, 5),
-        ["Checkup record"],
-        "Healthy"
+        p_id="P0001", 
+        username="john123", 
+        password="Pass123",
+        name="John Doe", 
+        gender="Male", 
+        address="123 Street",
+        email="john@example.com", 
+        contact_num="0123456789",
+        date_joined=(2025, 10, 5),
+        p_record=["Checkup record"],
+        p_remark="Healthy"
     )
 
     assert user.p_id == "P0001"

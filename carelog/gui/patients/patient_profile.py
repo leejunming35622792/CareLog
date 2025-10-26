@@ -29,10 +29,10 @@ def profile(Manager):
             disp = "Your Profile 👥"
         st.markdown(f"<h1 style='text-align: center; font-size: 200%'>{disp}</h1>", unsafe_allow_html=True)
 
+        st.info("💡 Your existing details are shown below. To update your profile, simply edit any information you wish to change and click **'Save Changes'**.")
 
         # Layout with columns
         col1, col2 = st.columns(2)
-
         with col1:
             new_username = st.text_input("Username", value=f"@{patient.username}", disabled=True)
             new_password = st.text_input("Password", value=patient.password, type="password")
@@ -53,7 +53,7 @@ def profile(Manager):
         with col2:
             new_address = st.text_area("Address", value=patient.address).title()
             new_email = st.text_input("Email", value=patient.email)
-            new_contact_num = st.text_input("Contact Number", value=patient.contact_num)
+            new_contact_num = st.text_input("Contact Number", value=patient.contact_num, help="+6012-3456789")
             new_date_joined = st.text_input("Date Joined", value=patient.date_joined, disabled=True)
 
         new_remark = st.text_area("Remark", value=patient.p_remark)

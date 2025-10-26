@@ -3,21 +3,27 @@ import datetime, time
 from app.admin import AdminUser
 from app.user import User as user
 import app.utils as utils
+from gui.admins.admin_appt_page import appointment_page
 
-def dashboard():
+def dashboard(manager):
     st.write("This is the Dashboard")
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     col1, col2 = st.columns(2)
     col1.metric("Current time", now)
-    col2.write("")
-
-    if st.button("Refresh time"):
+    if col2.button("Refresh time"):
         st.rerun()
 
-def admin_page(manager):
-    admin = AdminUser("", "", "", "", "", "", "", "", "", "")
+    st.divider()
+    col3, col4, col5 = st.columns(3)
+    col3.metric("Patients", len(manager.patients))
+    col4.metric("Doctors", len(manager.doctors))
+    col5.metric("Appointments", len(manager.appointments))
 
-    tabs = ["Dashboard", "Profile", "Management", "Records"]
+def admin_page(manager):
+    current_username = st.session_state.get("username")
+    admin = next((a for a in manager.admins if a.username == current_username), None)
+
+    tabs = ["Dashboard", "Profile", "Management", "Appointments", "Records"]
 
     # guard for username/session
     username = st.session_state.get("username", "Admin")
@@ -31,7 +37,7 @@ def admin_page(manager):
     # DASHBOARD
     # ============================================================
     if option == "Dashboard":
-        dashboard()
+        dashboard(manager)
 
     # ============================================================
     # PROFILE TAB
@@ -50,7 +56,7 @@ def admin_page(manager):
     # MANAGEMENT
     # ============================================================
     elif option == "Management":
-        tab1, tab2, tab3 = st.tabs(["Add User", "Remove User", "Appointment"])
+        tab1, tab2 = st.tabs(["Add User", "Remove User"])
 
         with tab1:
             st.subheader("User Management")
@@ -58,16 +64,32 @@ def admin_page(manager):
                 role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
 
                 user_id = user.get_next_id(manager, role)
-                st.text_input("Assigned ID", user_id, disabled=True)
 
-                username = st.text_input("Username")
-                password = st.text_input("Password", type="password")
-                name     = st.text_input("Name")
-                bday     = st.date_input("Birthday")
-                gender   = st.selectbox("Gender")
-                address  = st.text_input("Address")
-                email    = st.text_input("Email")
-                contact  = st.text_input("Contact")
+                c1, c2 = st.columns(2)
+                with c1:
+                    st.text_input("Assigned ID", user_id, disabled=True)
+                with c2:
+                    username = st.text_input("Username", key="reg_username")
+
+                c3, c4 = st.columns(2)
+                with c3:
+                    password = st.text_input("Password", type="password", key="reg_password")
+                with c4:
+                    name = st.text_input("Name", key="reg_name")
+
+                c5, c6 = st.columns(2)
+                with c5:
+                    bday     = st.date_input("Birthday", datetime.date(2025, 1, 1), key="reg_birthday")
+                with c6:
+                    gender   = st.selectbox("Gender", ["Male", "Female"], key="reg_gender")
+                
+                address  = st.text_input("Address", key="reg_address")
+                
+                c7, c8 = st.columns(2)
+                with c7:
+                    email    = st.text_input("Email", key="reg_email")
+                with c8:
+                    contact  = st.text_input("Contact", key="reg_contact")
 
                 if st.form_submit_button("Create Account"):
                     with st.spinner("Registering..."):
@@ -87,17 +109,17 @@ def admin_page(manager):
             """Remove user by role and id"""
             st.subheader("Remove User")
 
-            role = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
-            user_list = getattr(manager, f"{role.lower()}s", [])
+            role_rm = st.selectbox("Select Role", ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"])
+            user_list = getattr(manager, f"{role_rm.lower()}s", [])
 
             if not user_list:
-                st.info(f"No {role} found")
+                st.info(f"No {role_rm} found")
             else:
-                user_display = [f"{u.username} ({getattr(u, f'{role[0].lower()}_id', 'N/A')})" for u in user_list]
-                selected_user = st.selectbox(f"Select {role} to remove", user_display)
-                if st.button("Confirm Remove"):
+                user_display = [f"{u.username} ({getattr(u, f'{role_rm[0].lower()}_id', 'N/A')})" for u in user_list]
+                selected_user = st.selectbox(f"Select {role_rm} to remove", user_display)
+                if st.button("Confirm Remove", type="primary"):
                     user_id = selected_user.split("(")[1].strip(")")
-                    success, message = admin.remove_user(role, user_id)
+                    success, message = admin.remove_user(role_rm, user_id)
                     if success:
                         st.success(message)
                         st.toast(message)
@@ -105,15 +127,9 @@ def admin_page(manager):
                     else:
                         st.error(message)
 
-        with tab3:
-            st.subheader("Appointment")
-            st.text("All appointments")
-            admin.get_appointment(username)
-
-            st.text("Upcoming appointments")
-            admin.upcoming_appointment(username)
-
-            utils.log_event(f"Viewed all appointments and upcoming appointments", "INFO")
+    elif option == "Appointments":
+        appointment_page(manager)
+        utils.log_event(f"Viewed all appointments and upcoming appointments", "INFO")
 
     # ============================================================
     # RECORDS
@@ -124,7 +140,7 @@ def admin_page(manager):
 
         if hasattr(manager, "records"):
             if manager.records:
-                st.dataframe(manager.records)
+                st.dataframe([r.__dict__ for r in manager.records], use_container_width=True, hide_index=True)
             else:
                 st.info("No records available.")
         else:

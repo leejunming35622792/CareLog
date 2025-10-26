@@ -98,22 +98,15 @@ class ScheduleManager():
 
         self.records = [
             PatientRecord(
-                r["pr_record_id"], r["p_id"], r["pr_timestamp"], r["pr_conditions"], r["pr_medications"], r["pr_billings"], r["pr_prediction_result"], r["pr_confidence_score"], r["pr_remark"]
+                r["pr_record_id"], r["p_id"], r["d_id"], r["pr_timestamp"], r["pr_conditions"], r["pr_medications"], r["pr_billings"], r["pr_prediction_result"], r["pr_confidence_score"], r["pr_remark"]
             ) for r in data.get("records", [])
         ]
 
         self.appointments = [
             PatientAppointment(
-                appt["appt_id"], 
-                appt["p_id"], 
-                appt["d_id"],
-                appt["date"],          
-                appt["time"],          
-                appt["status"],        
-                appt.get("remark", "") 
+                appt["appt_id"], appt["p_id"], appt["d_id"], appt["date"], appt["time"], appt["status"], appt.get("remark", "") 
             ) for appt in data.get("appointments", [])
         ]
-
 
         self.remarks = [
             PatientRemark(

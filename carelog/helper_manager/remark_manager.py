@@ -34,22 +34,22 @@ def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str,
     manager._save_data()
     return True, "Remark added successfully", remark_id
 
-def add_patient_remark_nurse(self, patient_id, nurse_username, remark_type, content):
+def add_patient_remark_nurse(patient_id, nurse_username, remark_type, content):
     """Add remark to patient (Nurse perspective)"""
     import datetime
     
-    nurse = next((n for n in self.nurses if n.username == nurse_username), None)
+    nurse = next((n for n in manager.nurses if n.username == nurse_username), None)
     if not nurse:
         return False, "Nurse not found", None
     
-    found, msg, patient = self.find_patient_by_id(patient_id)
+    found, msg, patient = manager.find_patient_by_id(patient_id)
     if not found:
         return False, msg, None
 
     
     doctor_id = nurse.with_doctor
     
-    remark_id = self.next_remark_id
+    remark_id = manager.next_remark_id
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     new_remark = PatientRemark(
@@ -63,21 +63,21 @@ def add_patient_remark_nurse(self, patient_id, nurse_username, remark_type, cont
         last_modified = timestamp
     )
     
-    self.remarks.append(new_remark)
-    self.next_remark_id += 1
-    self.save()
+    manager.remarks.append(new_remark)
+    manager.next_remark_id += 1
+    manager.save()
     
     utils.log_event(f"Nurse {nurse_username} added remark {remark_id} for patient {patient_id}", "INFO")
     return True, "Remark added successfully", remark_id
 
-def view_patient_remarks_nurse(self, patient_id):
+def view_patient_remarks_nurse(patient_id):
     """View all remarks for a patient"""
-    found, msg, patient = self.find_patient_by_id(patient_id)
+    found, msg, patient = manager.find_patient_by_id(patient_id)
     if not found:
         return False, msg, None
 
     
-    remarks = [r for r in self.remarks if r.patient_id == patient_id and r.is_active]
+    remarks = [r for r in manager.remarks if r.patient_id == patient_id and r.is_active]
     
     if not remarks:
         return False, f"No remarks found for patient {patient_id}", None
@@ -95,28 +95,28 @@ def view_patient_remarks_nurse(self, patient_id):
     
     return True, f"Found {len(results)} remark(s)", results
 
-def update_patient_remark_nurse(self, remark_id, new_content):
+def update_patient_remark_nurse(remark_id, new_content):
     """Update a remark"""
-    found, msg, remark = self.find_remark_by_id(remark_id)
+    found, msg, remark = manager.find_remark_by_id(remark_id)
     if not found:
         return False, msg, None
 
     
     remark.update_content(new_content)
-    self.save()
+    manager.save()
     
     utils.log_event(f"Nurse updated remark {remark_id}", "INFO")
     return True, "Remark updated successfully", remark_id
 
-def delete_patient_remark_nurse(self, remark_id):
+def delete_patient_remark_nurse(remark_id):
     """Soft delete a remark"""
-    found, msg, remark = self.find_remark_by_id(remark_id)
+    found, msg, remark = manager.find_remark_by_id(remark_id)
     if not found:
         return False, msg, None
 
     
     remark.deactivate()
-    self.save()
+    manager.save()
     
     utils.log_event(f"Nurse deleted remark {remark_id}", "INFO")
     return True, "Remark deleted successfully", remark_id
