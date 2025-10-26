@@ -1,6 +1,7 @@
 from app.patient import PatientUser
 from datetime import date
 
+# --- Test creating new patient ---
 def test_patient_user_init():
     user = PatientUser(
         p_id="P0001", 
@@ -12,7 +13,18 @@ def test_patient_user_init():
         email="john@example.com", 
         contact_num="0123456789",
         date_joined=(2025, 10, 5),
-        p_record=["Checkup record"],
+        p_record=[{
+            "pr_record_id": "PR0002",
+            "p_id": "P0001",
+            "d_id": "D0001",
+            "pr_timestamp": "2025-04-12T10:00:00",
+            "pr_conditions": "Fractured arm",
+            "pr_medications": "Painkillers",
+            "pr_billings": 250.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.85,
+            "pr_remark": "Bone checkup"
+        }],
         p_remark="Healthy"
     )
 
@@ -25,8 +37,20 @@ def test_patient_user_init():
     assert user.email == "john@example.com"
     assert user.contact_num == "0123456789"
     assert user.date_joined == date(2025, 10, 5)
-    assert user.p_record == ["Checkup record"]
+    assert user.p_record == [{
+        "pr_record_id": "PR0002",
+        "p_id": "P0001",
+        "d_id": "D0001",
+        "pr_timestamp": "2025-04-12T10:00:00",
+        "pr_conditions": "Fractured arm",
+        "pr_medications": "Painkillers",
+        "pr_billings": 250.0,
+        "pr_prediction_result": "Moderate risk",
+        "pr_confidence_score": 0.85,
+        "pr_remark": "Bone checkup"
+    }]
     assert user.p_remark == "Healthy"
+
 
 def test_create_acc_defaults():
     from datetime import date

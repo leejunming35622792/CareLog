@@ -75,7 +75,7 @@ def assign_medications(patient_id, doctor_id, conditions, medications, doctor_us
 		ts = datetime.datetime.utcnow().isoformat(timespec="seconds")
 		remark = f"Prescribed by {getattr(doctor, 'name', doctor_username)} ({doctor_username})"
 		if instructions:
-			remark += f". Note: {instructions}"
+			remark += f"\n\nNote: \n{instructions}"
 
 		rec = PatientRecord(
 			pr_record_id=pr_id,

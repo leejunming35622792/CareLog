@@ -35,12 +35,14 @@ def view_doctor_details(username):
             "speciality": doctor.speciality,
             "date_joined": doctor.date_joined,
         }
+        utils.log_event(f"Successfully retrieved profile", "INFO")
         return True, "Profile Successfully Retrieved", profile
 
 def view_patient_details_by_doctor(patient_id: int):
     # be tolerant of caller passing int or string IDs (compare as strings)
     patient = next((p for p in manager.patients if str(p.p_id) == str(patient_id)), None)
     if patient is None:
+        utils.log_event(f"Patient not found", "ERROR")
         return False, "Patient Not Found", None
 
     # records use attribute `p_id` (see record_manager.py), not `patient`
@@ -93,13 +95,16 @@ def view_patient_details_by_doctor(patient_id: int):
         "previous_conditions": previous_conditions,
         "medication_history": medication_history,
     }
+    utils.log_event(f"Successfuly retrieved details", "INFO")
     return True, "Patient details retrieved successfully", info
 
 def view_nurse_details(username, password):
         nurse = next((n for n in manager.nurses if n.username == username), None)
         if nurse is None:
+            utils.log_event(f"Nurse not found", "ERROR")
             return False, "Nurse not found", None
         if nurse.password != password:
+            utils.log_event(f"Invalid credentials", "ERROR")
             return False, "Incorrect password", None
         
         profile = {
@@ -115,6 +120,7 @@ def view_nurse_details(username, password):
             "date_joined": nurse.date_joined,
             "with_doctor": nurse.with_doctor
         }
+        utils.log_event(f"Successfully retrieved profile", "INFO")
         return True, "Profile successfully retrieved", profile
 
 def view_patient_details_by_nurse(patient_id):
@@ -122,12 +128,14 @@ def view_patient_details_by_nurse(patient_id):
     found, msg, patient = manager.find_patient_by_id(patient_id)
     
     if not found:
+        utils.log_event(f"Patient not found", "ERROR")
         return False, msg, None
 
     patient_records = [r for r in manager.records if r.p_id == patient_id]
     patient_remarks = [r for r in manager.remarks if r.patient_id == patient_id and r.is_active]
     
     if patient is None:
+        utils.log_event(f"Patient not found", "ERROR")
         return False, "Patient not found", None
 
     patient_info = {
@@ -162,47 +170,47 @@ def view_patient_details_by_nurse(patient_id):
     utils.log_event(f"Nurse viewed patient {patient_id} details", "INFO")
     return True, "Patient details retrieved", patient_info
 
-def search_and_select_profile(manager):
-        role = input("Search for (patient/doctor/nurse/receptionist): ").strip().lower()
-        role_map = {
-        "patient": (manager.patients, "p_id"),
-        "doctor": (manager.doctors, "d_id"),
-        "nurse": (manager.nurses, "n_id"),
-        "receptionist": (manager.receptionists, "r_id"),
-        }
-        if role not in role_map:
-            print("Invalid role. Please enter patient/doctor/nurse/receptionist.")
-            return False, None
+# def search_and_select_profile(manager):
+#         role = input("Search for (patient/doctor/nurse/receptionist): ").strip().lower()
+#         role_map = {
+#         "patient": (manager.patients, "p_id"),
+#         "doctor": (manager.doctors, "d_id"),
+#         "nurse": (manager.nurses, "n_id"),
+#         "receptionist": (manager.receptionists, "r_id"),
+#         }
+#         if role not in role_map:
+#             utils.log_event("Invalid role. Please enter patient/doctor/nurse/receptionist.", "ERROR")
+#             return False, "Invalid role", None
 
-        items, id_attr = role_map[role]
-        name_query = input("Enter name (partial is okay): ").strip().lower()
-        matches = [obj for obj in items if name_query in getattr(obj, "name", "").lower()]
+#         items, id_attr = role_map[role]
+#         name_query = input("Enter name (partial is okay): ").strip().lower()
+#         matches = [obj for obj in items if name_query in getattr(obj, "name", "").lower()]
 
-        if not matches:
-            print(f"No {role} found matching '{name_query}'.")
-            return False, None
+#         if not matches:
+#             utils.log_event(f"No {role} found matching '{name_query}'.", "ERROR")
+#             return False, None
 
-        print(f"\nFound {len(matches)} {role}(s):")
-        for obj in matches:
-            pid = getattr(obj, id_attr)
-            print(f"- {pid}: {obj.name}")
+#         print(f"\nFound {len(matches)} {role}(s):")
+#         for obj in matches:
+#             pid = getattr(obj, id_attr)
+#             print(f"- {pid}: {obj.name}")
 
-        selected_id = input(f"\nEnter the exact {role.capitalize()} ID to view (e.g., P0001/N0003): ").strip().upper()
-        selected = next((o for o in matches if getattr(o, id_attr).upper() == selected_id), None)
+#         selected_id = input(f"\nEnter the exact {role.capitalize()} ID to view (e.g., P0001/N0003): ").strip().upper()
+#         selected = next((o for o in matches if getattr(o, id_attr).upper() == selected_id), None)
 
-        if not selected:
-            print("No profile found with that ID in the above results.")
-            return False, None
+#         if not selected:
+#             print("No profile found with that ID in the above results.")
+#             return False, None
 
-        print("\n--- Profile ---")
-        for k, v in selected.__dict__.items():
-            if k == "password":
-                continue
-            print(f"{k}: {v}")
+#         print("\n--- Profile ---")
+#         for k, v in selected.__dict__.items():
+#             if k == "password":
+#                 continue
+#             print(f"{k}: {v}")
 
-        return True, selected
+#         return True, selected
 
-def search_patient_by_name(name):
+def search_patient_by_name(role, username, name):
     """Search patients by (partial) name and include their records & remarks."""
     if not name or not name.strip():
         return False, "Please provide a name to search", None
@@ -247,5 +255,5 @@ def search_patient_by_name(name):
             ],
         })
 
-    utils.log_event(f"Nurse searched for patients with name '{name}'", "INFO")
+    utils.log_event(f"[{role.title()}] @{username} searched for patients with name '{name}'", "INFO")
     return True, f"Found {len(results)} patient(s)", results

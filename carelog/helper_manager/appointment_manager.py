@@ -33,31 +33,35 @@ class AppointmentManager:
 
         # Permission gate
         if actor_role not in {"receptionist", "patient", "admin"}:
+            utils.log_event(f"Failed to create appointment: Role restricted", "ERROR")
             return False, "Only receptionists, patients or admins can create appointments.", None
 
         # Validate entities
         patient = self._get_patient(patient_id)
         doctor = self._get_doctor(doctor_id)
         if not patient:
+            utils.log_event(f"Failed to create appointment: {patient_id} not found", "ERROR")
             return False, f"Patient ID '{patient_id}' not found.", None
         if not doctor:
+            utils.log_event(f"Failed to create appointment: {doctor_id} not found", "ERROR")
             return False, f"Doctor ID '{doctor_id}' not found.", None
 
         # Patient can only book for self
         if actor_role == "patient":
             actor = self._get_user_by_username(actor_username, "patient")
             if not actor or getattr(actor, "p_id", None) != patient_id:
+                utils.log_event(f"Failed to create appointment: Role restricted", "ERROR")
                 return False, "Patients may only book appointments for themselves.", None
 
         # Build model
-        appt_id = f"A{self.next_appt_id:04d}"
+        appt_id = f"APPT{self.next_appt_id:04d}"
         new_appt = PatientAppointment(
             appt_id=appt_id,
             p_id=patient_id,
             d_id=doctor_id,
             appt_date=date,
             appt_time=time,
-            appt_status="scheduled",
+            appt_status="Pending",
             appt_remark=remark or ""
         )
 
@@ -66,7 +70,7 @@ class AppointmentManager:
         self.sc.next_appt_id = self.next_appt_id
         self.sc.save()
 
-        utils.log_event(f"[{actor_role}] {actor_username} created appointment {appt_id} (P={patient_id}, D={doctor_id})", "INFO")
+        utils.log_event(f"[{actor_role}] @{actor_username} created appointment {appt_id} (P={patient_id}, D={doctor_id})", "INFO")
         return True, f"Appointment {appt_id} created.", new_appt
 
     def update(self, manager, actor_role, actor_username, appt_id, *, date=None, time=None, doctor_id=None, status=None, remark=None):
@@ -84,6 +88,7 @@ class AppointmentManager:
 
         found, msg, appt = self.sc.find_appointment_by_id(appt_id)
         if not found:
+            utils.log_event(f"Failed to update appointment: Appointment not found", "ERROR")
             return False, msg, None
 
         # Compute current dt for policy checks
@@ -144,6 +149,7 @@ class AppointmentManager:
             appt.remark = remark
 
         manager.save()
+        self.sc.save()
         utils.log_event(f"[{actor_role}] {actor_username} updated appointment {appt_id}", "INFO")
         return True, f"Appointment {appt_id} updated.", appt
 
@@ -259,7 +265,8 @@ class AppointmentManager:
         # Build file
         folder_path = "appt_report"
         os.makedirs(folder_path, exist_ok=True)
-        file_dir = os.path.join(folder_path, f"{appt.appt_id}.txt")
+        current_time = dt.datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+        file_dir = os.path.join(folder_path, f"{appt.appt_id}-{current_time}.txt")
 
         # Truncate remark
         remark = appt.remark or ""
@@ -360,8 +367,3 @@ class AppointmentManager:
 
     def _get_doctor(self, d_id):
         return next((d for d in self.sc.doctors if getattr(d, "d_id", None) == d_id), None)
-
-    # def _bump_id_and_save(self):
-    #     self.next_appt_id += 1
-    #     self.sc.next_appt_id = self.next_appt_id
-    #     self.sc.save()

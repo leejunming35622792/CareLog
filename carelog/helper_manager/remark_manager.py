@@ -32,6 +32,7 @@ def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str,
     rid=manager.next_remark_id
     manager.next_remark_id+=1
     manager._save_data()
+    utils.log_event(f"Remark for {remark_id} added successfully", "INFO")
     return True, "Remark added successfully", remark_id
 
 def add_patient_remark_nurse(patient_id, nurse_username, remark_type, content):
@@ -45,7 +46,6 @@ def add_patient_remark_nurse(patient_id, nurse_username, remark_type, content):
     found, msg, patient = manager.find_patient_by_id(patient_id)
     if not found:
         return False, msg, None
-
     
     doctor_id = nurse.with_doctor
     
@@ -75,7 +75,6 @@ def view_patient_remarks_nurse(patient_id):
     found, msg, patient = manager.find_patient_by_id(patient_id)
     if not found:
         return False, msg, None
-
     
     remarks = [r for r in manager.remarks if r.patient_id == patient_id and r.is_active]
     
@@ -93,6 +92,7 @@ def view_patient_remarks_nurse(patient_id):
         } for r in remarks
     ]
     
+    utils.log_event(f"Viewed result", "INFO")
     return True, f"Found {len(results)} remark(s)", results
 
 def update_patient_remark_nurse(remark_id, new_content):
