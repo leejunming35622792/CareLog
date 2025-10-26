@@ -2,26 +2,26 @@ import streamlit as st
 from streamlit_chat import message
 
 def chat_box():
-    # --- Initialize session state ---
+   #initialize session state for messages
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    MAX_MESSAGES = 20  # Limit messages to last 20
+    MAX_MESSAGES = 20  #limits the message to a constant of 20
 
-    # --- Chat input form ---
+    # a chat input form
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input("Ask a health-related question:")
         submitted = st.form_submit_button("Send")
         
         if submitted and user_input:
-            # Append user message
+            #appends the user message
             st.session_state.messages.append(("user", user_input))
             
-            # --- Bot response logic ---
+            # Bot response logic
             response_parts = []
             text = user_input.lower()
 
-            # Dictionary of categories: key is category name (for reference), value is tuple of (keywords, response_parts)
+            # dictionary of categories: key is category name (for reference), value is tuple of (keywords, response_parts)
             categories = {
                 "sleep": (
                     ["sleep", "rest", "insomnia", "nap", "tired", "fatigue", "sleep apnea", "circadian", "jet lag"],
@@ -324,15 +324,15 @@ def chat_box():
             if not matched:
                 response_parts = ["Stay consistent with healthy habits.", "Consult a doctor for specific issues."]
             
-            # Format bot reply
+            # perform formatting for the bot reply 
             reply = "\n- " + "\n- ".join(response_parts)
             st.session_state.messages.append(("bot", reply))
             
-            # --- Keep only last MAX_MESSAGES ---
+            # limit message history
             if len(st.session_state.messages) > MAX_MESSAGES:
                 st.session_state.messages = st.session_state.messages[-MAX_MESSAGES:]
 
-    # --- Display chat messages in a scrollable container ---
+    # display chat messages in a scrollable container 
     chat_container = st.container()
     for idx, (role, text) in enumerate(st.session_state.messages):
         if role == "user":

@@ -12,7 +12,7 @@ from helper_manager.record_manager import (
 def patient_records_page(manager, username):
     nurse = NurseUser("", username, "", "", "", "", "", "", "", "", "", "", "")
     """Patient Records Management Page"""
-    st.header("Patient Records Management 📋")
+    st.title("Patient Management 😷")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs([
         "View Patient Details", 

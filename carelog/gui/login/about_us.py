@@ -1,5 +1,5 @@
 import streamlit as st
-
+#displays the "about us" page for the carelog application using streamlit, showcasing the mission and values
 def about_us(manager):
     
     st.title("CareLog - About Us")

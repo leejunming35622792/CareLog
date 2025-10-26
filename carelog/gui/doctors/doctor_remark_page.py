@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta
 
-# Remark manager backend functions
+# remark manager backend functions
 from helper_manager.remark_manager import (
     view_patient_remarks,
     add_patient_remark,
@@ -10,10 +10,10 @@ from helper_manager.remark_manager import (
     delete_patient_remark,
 )
 
-
+# start of the remark page for doctors
 def remarks_page(manager, username):
     """Doctor-facing page to view/add/edit patient remarks."""
-    st.header("Patient Remarks")
+    st.title("Patient Remarks 💭")
 
     tab1, tab2, tab3, tab4 = st.tabs([
         "View",
@@ -21,7 +21,7 @@ def remarks_page(manager, username):
         "Edit",
         "Delete",
     ])
-
+    # view patient's reamrks
     with tab1:
         st.subheader("View Patient Remarks")
         patient_ids = [getattr(p, "p_id", "") for p in getattr(manager, "patients", [])]
@@ -41,14 +41,14 @@ def remarks_page(manager, username):
                 if ok and items:
                     st.success(msg)
                     for it in items:
-                        label = f"{it.get('remark_type','').upper()} — {it.get('timestamp','')}"
+                        label = f"{it.get('remark_type','').upper()} — {datetime.fromisoformat(it.get('timestamp',''))}"
                         with st.expander(label):
                             st.write(f"Doctor: {it.get('doctor_name','Unknown')}")
                             st.write(it.get("content", ""))
-                            st.caption(f"Last Modified: {it.get('last_modified','')}")
+                            st.caption(f"Last Modified: {datetime.fromisoformat(it.get('last_modified',''))}")
                 else:
                     st.info(msg or "No remarks found")
-
+        # view recent remarks by days
         st.divider()
         st.subheader("View Recent (by days)")
         pid_recent = st.selectbox("Patient ID (recent)", options=([""] + patient_ids), key="pid_recent")
@@ -66,11 +66,11 @@ def remarks_page(manager, username):
                             st.write(it.get("content", ""))
                 else:
                     st.info(msg or f"No remarks in last {days} days")
-
+    # add remarks for patients
     with tab2:
         st.subheader("Add Remark")
         pid_add = st.selectbox("Patient ID", options=([""] + patient_ids), key="pid_add")
-        rtype_add = st.selectbox("Remark Type", ["mood", "pain_level", "dietary", "general", "observation"])
+        rtype_add = st.selectbox("Remark Type", ["Mood", "Pain_level", "Dietary", "General", "Observation"])
         content = st.text_area("Content", height=120)
         if st.button("Add Remark"):
             if not pid_add or not content.strip():
@@ -81,7 +81,7 @@ def remarks_page(manager, username):
                     st.success(f"{msg} (ID: {rid})")
                 else:
                     st.error(msg)
-
+    # edit existing remarks 
     with tab3:
         st.subheader("Edit Remark (only your own)")
         rid = st.text_input("Remark ID (e.g., RM0002)")
@@ -95,15 +95,25 @@ def remarks_page(manager, username):
                     st.success(msg)
                 else:
                     st.error(msg)
-
+    # delete existing remarks 
     with tab4:
         st.markdown("### Delete Remark")
-        st.warning("This will deactivate the remark")
+        st.warning(f"⚠️ You are about to **cancel** the following remark and this action cannot be undone.")
         
-        remark_id_del = st.number_input("Remark ID to Delete", min_value=1, step=1, key="del_rem_id")
+        all_patient = {p.p_id:p.name for p in manager.patients}
+        remark_disp = {f"{r.remark_id} - {all_patient[r.patient_id]}": r.remark_id for r in manager.remarks}
+
+        if not remark_disp:
+            st.warning("⚠️ No remark found")
+            st.stop()
+
+        choose_remark_id = st.selectbox("Select Remark ID", remark_disp.keys())
         confirm_delete_rem = st.checkbox("I confirm I want to delete this remark", key="confirm_del_rem")
         
         if st.button("🗑️ Delete Remark", type="primary", use_container_width=True):
+            remark_id_del = remark_disp[choose_remark_id]
+            st.info(remark_id_del)
+
             if remark_id_del and confirm_delete_rem:
                 success, msg, rid = delete_patient_remark(remark_id_del, username)
                 if success:

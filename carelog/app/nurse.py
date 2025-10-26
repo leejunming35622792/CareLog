@@ -2,15 +2,16 @@ import datetime
 from app.user import User
 import app.utils as utils
 import helper_manager.record_manager as hm
-
+#Represents nurse in the CareLog system
 class NurseUser(User):
     def __init__(self, n_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         self.n_id = n_id
+        #initialize common user attributes via parent constructor
         super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
         self.speciality = speciality
         self.department = department 
         self.with_doctor = with_doctor  # store doctor ID
-
+    # creates a new patient record
     def create_patient_record(self, patient_id, conditions, medications, remark=""):
         """Create new patient record"""
         from app.schedule import ScheduleManager
@@ -31,7 +32,7 @@ class NurseUser(User):
 
         utils.log_event(f"Nurse created record {record_id} for patient {patient_id}", "INFO")
         return True, "Patient record created successfully", record_id
-    
+    # view all records of a patient based on the ID passed as argument
     def view_patient_records(self, patient_id):
         """View all records for a patient"""
         from app.schedule import ScheduleManager
@@ -49,7 +50,7 @@ class NurseUser(User):
         record = hm.view_patient_records_nurse(records)
 
         return True, f"Found {len(record)} record(s)", record
-    
+    # performs an update to an existing patient record
     def update_patient_record(self, record_id, conditions, medications, remark):
         """Update patient record (conditions and medications only)"""
         from app.schedule import ScheduleManager
@@ -65,7 +66,7 @@ class NurseUser(User):
             return True, "Record updated successfully", record_id
         utils.log_event(f"Failed to update record", "ERROR")
         return False, "Record update failed", record_id
-
+    # deletes a patient record based on the record ID passed as argument
     def delete_patient_record(self, record_id):
         """Delete patient record"""
         from app.schedule import ScheduleManager

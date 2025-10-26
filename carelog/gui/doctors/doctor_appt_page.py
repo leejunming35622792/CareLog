@@ -3,19 +3,19 @@ import streamlit as st
 # Appointment manager
 from helper_manager.appointment_manager import AppointmentManager
 
-# APPOINTMENTS
+#appointments page for doctor 
 def appointments_page(manager, username):
     """View and manage appointments"""
-    # Variables
+    # variables from manager
     appt_manager = AppointmentManager(manager)
     result = appt_manager.view_all_appointments(manager, username)
 
-    # Page design
-    st.header("Appointment Management 🏥")
+    # page design
+    st.title("Appointment Management 📅")
     tab1, tab2 = st.tabs(["View Appointments", "Update Appointments"])
-
+    #view appointments tab section
     with tab1:
-        st.header("View Appointments 📜")   
+        st.header("View Appointments")   
         if len(result) == 3:
             success, message, appointments = result
         else:
@@ -54,23 +54,23 @@ def appointments_page(manager, username):
                 with st.container():
                     col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
                     with col1:
-                        st.write(f"**📅 {appt.get('date','—')}**")
+                        st.write(f"**{appt.get('date','—')}**")
                     with col2:
-                        st.write(f"**🕐 {appt.get('time','--:--')}**")
+                        st.write(f"**{appt.get('time','--:--')}**")
                     with col3:
-                        st.write(f"**👤 {appt.get('patient_name','Unknown')}** (ID: {appt.get('patient_id','—')})")
+                        st.write(f"**{appt.get('patient_name','Unknown')}** (ID: {appt.get('patient_id','—')})")
                     with col4:
                         status_color = {
-                            "Pending": "🟡", "Confirmed": "🟢", "Completed": "🔵", "Cancelled": "🔴",
+                            "Pending": "🟡", "Confirmed": "🟢", "Completed": "🔵", "Cancelled": "🔴", 
                         }
                         st.write(f"{status_color.get(appt.get('status'), '⚪')} {appt.get('status','—')}")
                     if appt.get("remark"):
                         st.caption(f"Note: {appt['remark']}")
                     
-                    # Quick action buttons
+                    #quick action buttons 
                     col1, col2, col3 = st.columns([1, 1, 2])
                     with col1:
-                        if st.button("✅ Complete", key=f"complete_{appt['appt_id']}"):
+                        if st.button("Complete✅", key=f"complete_{appt['appt_id']}"):
                             success, message, _ = appt_manager.update_appointment_doctor(
                                 manager,
                                 username,
@@ -86,7 +86,7 @@ def appointments_page(manager, username):
                             else:
                                 st.error(message)
                     with col2:
-                        if st.button("❌ Cancel", key=f"cancel_{appt['appt_id']}"):
+                        if st.button("Cancel❌", key=f"cancel_{appt['appt_id']}"): 
                             success, message, _ = appt_manager.update_appointment_doctor(
                                 manager,
                                 username,
@@ -106,10 +106,10 @@ def appointments_page(manager, username):
             st.info("No appointments match the selected filters")
 
     with tab2:
-        # Add appointment update section
-        st.header("Update Appointment 🖊️📜")
+        #update appointment tab section
+        st.header("Update Appointment ")
         with st.form("update_appointment_form"):
-            st.subheader("📝 Update Appointment Details")
+            st.subheader("Update Appointment Details📝")
             appt_id_update = st.text_input("Appointment ID", placeholder="Enter appointment ID to update")
             
             col1, col2 = st.columns(2)
@@ -123,7 +123,7 @@ def appointments_page(manager, username):
                 new_time = st.time_input("New Time (optional)", value=None, help="Leave empty to keep current time")
                 new_remark = st.text_area("Update Remark (optional)", placeholder="Add or update appointment notes")
             
-            submitted = st.form_submit_button("🔄 Update Appointment", use_container_width=True)
+            submitted = st.form_submit_button(" Update Appointment", use_container_width=True)
             
             if submitted and appt_id_update:
                 # Convert date and time to strings if provided
@@ -132,7 +132,7 @@ def appointments_page(manager, username):
                 status_str = new_status if new_status else None
                 remark_str = new_remark if new_remark.strip() else None
                 
-                # Call the update function
+                #calls the update appointment function from appointment manager
                 success, message, updated_appt = appt_manager.update_appointment_doctor(
                     manager,
                     username,
@@ -144,9 +144,9 @@ def appointments_page(manager, username):
                 )
                 
                 if success:
-                    st.success(f"✅ {message}")
-                    st.rerun()  # Refresh the page to show updated data
+                    st.success(f"{message}✅ ")
+                    st.rerun()  # refreshes the page to update the data after changes
                 else:
-                    st.error(f"❌ {message}")
+                    st.error(f"{message}❌")
             elif submitted:
-                st.warning("⚠️ Please enter an Appointment ID")        
+                st.warning("Please enter an Appointment ID⚠️")        

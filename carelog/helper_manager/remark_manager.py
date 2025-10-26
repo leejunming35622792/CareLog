@@ -4,7 +4,7 @@ from app.remark import PatientRemark
 import app.utils as utils
 
 manager = ScheduleManager()
-
+#adds a new patienr remark by a doctor, validating patient, doctor, and remark type
 def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str, remark_content :str):
     patient=next((p for p in manager.patients if p.p_id==patient_id), None)
     if patient is None:
@@ -34,7 +34,7 @@ def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str,
     manager._save_data()
     utils.log_event(f"Remark for {remark_id} added successfully", "INFO")
     return True, "Remark added successfully", remark_id
-
+#adds a new patient remark by a nurse
 def add_patient_remark_nurse(patient_id, nurse_username, remark_type, content):
     """Add remark to patient (Nurse perspective)"""
     import datetime
@@ -69,7 +69,7 @@ def add_patient_remark_nurse(patient_id, nurse_username, remark_type, content):
     
     utils.log_event(f"Nurse {nurse_username} added remark {remark_id} for patient {patient_id}", "INFO")
     return True, "Remark added successfully", remark_id
-
+#Retrieves all active remarks for a patient, formatted for nurse viewing 
 def view_patient_remarks_nurse(patient_id):
     """View all remarks for a patient"""
     found, msg, patient = manager.find_patient_by_id(patient_id)
@@ -94,7 +94,7 @@ def view_patient_remarks_nurse(patient_id):
     
     utils.log_event(f"Viewed result", "INFO")
     return True, f"Found {len(results)} remark(s)", results
-
+#updates a patient remark by a nurse
 def update_patient_remark_nurse(remark_id, new_content):
     """Update a remark"""
     found, msg, remark = manager.find_remark_by_id(remark_id)
@@ -107,7 +107,7 @@ def update_patient_remark_nurse(remark_id, new_content):
     
     utils.log_event(f"Nurse updated remark {remark_id}", "INFO")
     return True, "Remark updated successfully", remark_id
-
+#soft deletes a patient remark by a nurse
 def delete_patient_remark_nurse(remark_id):
     """Soft delete a remark"""
     found, msg, remark = manager.find_remark_by_id(remark_id)
@@ -120,7 +120,7 @@ def delete_patient_remark_nurse(remark_id):
     
     utils.log_event(f"Nurse deleted remark {remark_id}", "INFO")
     return True, "Remark deleted successfully", remark_id
-
+# edits a patient remark by a doctor
 def edit_patient_remark(remark_id: str, doctor_username: str, new_content: str):
     remark = next((rm for rm in manager.remarks if str(rm.remark_id) == str(remark_id)), None)
     if remark is None:
@@ -137,14 +137,9 @@ def edit_patient_remark(remark_id: str, doctor_username: str, new_content: str):
     manager._save_data()
     return True, "Remark updated successfully"
 
-
+#soft deletes a patient remark by a doctor
 def delete_patient_remark(remark_id, doctor_username: str):
-    """Doctor-initiated soft-delete of a remark they created.
 
-    Accepts numeric IDs (e.g. 1 -> RM0001) or full IDs ("RM0001").
-    Returns (ok, msg, remark_id_or_none)
-    """
-  
     rid_str = None
     try:
 
@@ -181,10 +176,11 @@ def delete_patient_remark(remark_id, doctor_username: str):
         except Exception:
             pass
 
+    manager.save()
     utils.log_event(f"Doctor {doctor_username} deleted remark {rid_str}", "INFO")
     return True, "Remark deleted successfully", rid_str
 
-
+# view the patient remarks
 def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit: int | None = None):
     found_p, msg_p, patient = manager.find_patient_by_id(patient_id)
     if not found_p:
@@ -224,10 +220,10 @@ def view_patient_remarks(patient_id: int, remark_type: str | None = None, limit:
             "last_modified": getattr(rm, "last_modified", rm.timestamp),
         })
     return True, f"Found {len(out)} remarks", out
-
+#view remarks by type
 def get_remarks_by_type(patient_id: int, remark_type: str):
         return manager.view_patient_remarks(patient_id, remark_type=remark_type)
-    
+ #get recent remarks for a patient within a number of days
 def get_recent_patient_remarks(patient_id: int, days: int = 7):
     found_p, msg_p, patient = manager.find_patient_by_id(patient_id)
     if not found_p:

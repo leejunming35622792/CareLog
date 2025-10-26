@@ -1,7 +1,7 @@
 import os
 import datetime
 import app.utils as utils
-
+#attempts to persist data using various possible save methods from ScheduleManager
 def _persist():
     """Best-effort persistence without assuming exact method name/placement."""
 
@@ -17,7 +17,7 @@ def _persist():
         if obj and hasattr(obj, method):
             getattr(obj, method)()
             return
-
+#searches for a patient record by patient ID and record ID, returning a formatted dictionary
 def search_record(p_id, record_id):
     """
     Search for a record by patient ID and record ID.
@@ -42,7 +42,7 @@ def search_record(p_id, record_id):
                 "Remark": getattr(record, "pr_remark", ""),
             }
     return {}
-
+#creates a new patient record for a nurse with the provided details
 def create_patient_record_nurse(record_id, patient_id, timestamp, conditions, medications, remark):
     from app.patient import PatientRecord
     
@@ -58,7 +58,7 @@ def create_patient_record_nurse(record_id, patient_id, timestamp, conditions, me
         pr_remark=remark
     )
     return new_record
-
+#retrieves all records for a patient, formatted for doctor viewing
 def view_patient_records_doctor(patient_id):
     "View all records for a patient"
 
@@ -84,7 +84,7 @@ def view_patient_records_doctor(patient_id):
     ]
         
     return True, f"Found {len(results)} record(s)", results
-
+#formats a list of patient records for nurse viewing
 def view_patient_records_nurse(records):
     results = [{
             "record_id": r.pr_record_id,
@@ -95,23 +95,9 @@ def view_patient_records_nurse(records):
         } for r in records]
     
     return results
-
+# updates a patient record for a doctor with specified fields, including validation
 def update_record_doctor(p_id, record_id, **kwargs):
-    """
-    Edit an existing record by (p_id, record_id).
-
-    Allowed kwargs:
-        pr_conditions: dict[str, str]  e.g., {"Hypertension": "Moderate"}
-        pr_medications: list[str]
-        pr_billings: float|int
-        pr_prediction_result: str
-        pr_confidence_score: float (0..1 or 0..100 depending on your convention)
-        pr_remark: str
-
-    Returns:
-        bool: True if updated (and persisted), False if not found or invalid.
-    """
-
+   
     from app.schedule import ScheduleManager
     manager = ScheduleManager()
 
@@ -158,7 +144,7 @@ def update_record_doctor(p_id, record_id, **kwargs):
             _persist()
             return True
     return False
-
+#updates a patient record for a nurse with specified fields
 def update_patient_record_nurse(record_id, conditions=None, medications=None, remark=None):
     from app.schedule import ScheduleManager
     manager = ScheduleManager()
@@ -169,7 +155,7 @@ def update_patient_record_nurse(record_id, conditions=None, medications=None, re
     if remark is not None:
         manager.record.pr_remark = remark
     return True
-
+#deletes a patient record by ID, logging the action
 def delete_patient_record_doctor(record_id):
     """Delete patient record"""
 
@@ -185,7 +171,7 @@ def delete_patient_record_doctor(record_id):
     
     utils.log_event(f"Nurse deleted record {record_id}", "INFO")
     return True, "Record deleted successfully", record_id
-
+#Updates a patient record for a doctor with specified fields
 def update_patient_record_doctor(record_id, conditions=None, medications=None, billings=None, prediction_result=None, confidence_score=None):
     from app.schedule import ScheduleManager
     manager = ScheduleManager()
@@ -224,7 +210,7 @@ def update_record_receptionist(manager, pr_id, amount):
         current_record.pr_billings = amount
         manager.save()
         return f"Appointment {pr_id} successfully updated with billings RM{amount}"
-
+#wxports a patient record to a formatted text file
 def print_record(manager, user, record):
     from helper_manager.profile_manager import find_age
 

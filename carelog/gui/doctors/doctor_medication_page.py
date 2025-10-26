@@ -5,7 +5,7 @@ from helper_manager.medication_manager import (
 	remove_medication,
 	list_medications
 )
-
+# starting of the medication page
 def medication_page(manager, username):
 	st.header("Medications")
 
@@ -15,7 +15,7 @@ def medication_page(manager, username):
 		"Remove From Record",
 		"List",
 	])
-
+	# assgin medications to patient 
 	with tab1:
 		st.subheader("Assign Medications")
 		with st.form("assign_meds_form"):
@@ -47,7 +47,7 @@ def medication_page(manager, username):
 						st.success(f"{msg}. Record ID: {rec_id}")
 					else:
 						st.error(msg)
-
+	# edit medications on existing record
 	with tab2:
 		st.subheader("Edit Record Medications")
 		with st.form("edit_meds_form"):
@@ -68,7 +68,7 @@ def medication_page(manager, username):
 						st.success(msg)
 					else:
 						st.error(msg)
-
+	# remove one medication from record
 	with tab3:
 		st.subheader("Remove One Medication From Record")
 		with st.form("remove_med_form"):
@@ -85,7 +85,7 @@ def medication_page(manager, username):
 						st.success(msg)
 					else:
 						st.error(msg)
-
+	# list medications for a patient 
 	with tab4:
 		st.subheader("List Medications")
 		pid = st.text_input("Patient ID", key="list_pid").strip()

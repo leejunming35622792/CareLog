@@ -9,19 +9,19 @@ from helper_manager.appointment_manager import AppointmentManager
 # DASHBOARD
 def dashboard(manager, username):
     """Main dashboard showing overview and quick stats"""
-    # Variable
+    #main variables
     manager = st.session_state.manager
     username = st.session_state.username
     current_doctor = next((d for d in manager.doctors if d.username == st.session_state.username))
 
-    # Page design
+    # page design 
     st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
     st.balloons()
     st.image("img/dashboard.png")
     st.divider()
     st.header("Dashboard Overview 🎗️")
 
-    # --- Doctor Details ---
+    #details of the doctor profile 
     success, message, profile = view_doctor_details(username)
 
     if profile:
@@ -35,7 +35,7 @@ def dashboard(manager, username):
 
         st.divider()
 
-    # --- Search Patient ---
+    #search for patient profile 
     st.header("Quick Search 🔍")
     st.write("")
     with st.expander("Filter Patients", expanded=True):
@@ -77,14 +77,14 @@ def dashboard(manager, username):
     
     st.divider()
 
-    # --- Today Appointment ---
+   #view today's upcoming appointments
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     st.header(f"Today's Appointments ({today}) 📄")
     st.write("")
 
     appt_manager = AppointmentManager(manager)
     success, msg, appt_list = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=False, date=today, status=None, doctor_id=current_doctor.d_id, appt_id=None)
-
+    #display appointments
     if success and appt_list:
         for appt in appt_list:
             with st.expander(f"Appointment {appt["appt_id"]}"):
@@ -96,13 +96,14 @@ def dashboard(manager, username):
                     risk_color = {
                         "Booked": "green",
                         "Pending": "blue",
+                        "Scheduled": "blue",
                         "Rescheduled": "orange",
                         "Cancelled": "red"
                     }
 
                     status = appt['status'].capitalize()
                     color = risk_color.get(status, "black")
-
+                    #display date and time
                     st.markdown(
                         f"""
                         <div style="
@@ -133,7 +134,7 @@ def dashboard(manager, username):
 
     st.divider()
 
-    # --- This Month Appointment ---
+   #view appointment of this months
     today = datetime.datetime.now()
     today_str = today.strftime("%Y-%m-%d")
     current_month = today.month
@@ -142,7 +143,7 @@ def dashboard(manager, username):
     st.write("")
     st.write("")
 
-    # Get appointments
+    #retrieve appointments for the doctor user
     appt_manager = AppointmentManager(manager)
     success, msg, appt_list = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=False, status=None, doctor_id=current_doctor.d_id, appt_id=None)
 
@@ -161,14 +162,15 @@ def dashboard(manager, username):
                 with col2:
                     risk_color = {
                         "Booked": "green",
+                        "Scheduled": "blue",
                         "Pending": "blue",
                         "Rescheduled": "orange",
                         "Cancelled": "red"
                     }
 
-                    status = appt['status'].capitalize()
-                    color = risk_color.get(status, "black")
-
+                    status = appt['status'].title()
+                    color = risk_color.get(status, "red")
+                    #display date and time
                     st.markdown(
                         f"""
                         <div style="
@@ -203,6 +205,6 @@ def dashboard(manager, username):
                         unsafe_allow_html=True
                     )
                 with col3:
-                    st.text_area("Remark", appt["remark"], disabled=True, height='stretch')
+                    st.text_area("Remark",appt["remark"], disabled=True, height='stretch', key=f"remark_{appt['appt_id']}")
     else:
         st.info("No upcoming appointments")

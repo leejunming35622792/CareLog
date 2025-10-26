@@ -2,17 +2,19 @@ import streamlit as st
 import time
 import datetime
 import re
+import bcrypt
+from helper_manager.password_utils import (is_hashed, check_password)
 from app.user import User
 from helper_manager.profile_manager import find_age
-
+# the profile page for patients
 def profile(Manager):
     # Variables
     manager = st.session_state.manager
     username = st.session_state.username
 
-    # Page design
+    # page design
     st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
-
+    # the form for the updatig profile
     with st.form("profile-form"):
         # Find patient by username
         patient = next((p for p in manager.patients if p.username == username), None)
@@ -20,7 +22,7 @@ def profile(Manager):
             st.error("Unexpected Error!")
             return
         
-        # Page design
+        # page design
         if patient.gender == "Male":
             disp = "Your Profile 👨"
         elif patient.gender == "Female":
@@ -31,7 +33,7 @@ def profile(Manager):
 
         st.info("💡 Your existing details are shown below. To update your profile, simply edit any information you wish to change and click **'Save Changes'**.")
 
-        # Layout with columns
+        # layout with columns
         col1, col2 = st.columns(2)
         with col1:
             new_username = st.text_input("Username", value=f"@{patient.username}", disabled=True)
@@ -45,9 +47,9 @@ def profile(Manager):
                 patient_bday = datetime.datetime.fromisoformat(patient.bday)
                 new_bday = st.date_input("Birthday", value=patient_bday)
             with col4:
-                # Find age
+                # find age
                 age = find_age(patient.bday)
-                # Display age
+                # display age
                 new_age = st.text_input("Age", value=str(age), disabled=True)
 
         with col2:
@@ -58,39 +60,39 @@ def profile(Manager):
 
         new_remark = st.text_area("Remark", value=patient.p_remark)
 
-        # Save button
+        # save button
         button = st.form_submit_button("Save Changes")
 
         if button:
             errors = []
 
-            # Username validation
+            # username validation
             all_usernames = [p.username for p in manager.patients if p.username != patient.username]
             if not new_username:
                 errors.append("Username cannot be empty!")
             elif new_username in all_usernames:
                 errors.append("Username has been taken!")
 
-            # Password validation
+            # password validation
             if patient.password != new_password:
                 if len(new_password) < 8:
                     errors.append("Password must be at least 8 characters!")
                 if not any(c.isupper() for c in new_password):
                     errors.append("Password must contain at least 1 uppercase letter.")
 
-            # Name validation
+            # name validation
             if not new_name.strip():
                 errors.append("Name cannot be empty!")
 
-            # Email validation (very basic check)
+            # email validation (very basic check)
             if "@" not in new_email or "." not in new_email:
                 errors.append("Invalid email address.")
 
-            # Contact Number Validation
+            # contact Number Validation
             contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
             if not re.match(contact_num_format, new_contact_num):
                 errors.append("Contact number is invalid - please include '+60' and '-'")
-
+            # birthday validation
             if errors:
                 for e in errors:
                     st.error(e)

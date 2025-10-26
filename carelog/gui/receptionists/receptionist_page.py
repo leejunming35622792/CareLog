@@ -14,19 +14,17 @@ def receptionist_page(manager: ScheduleManager):
     recep_uname = st.session_state.username
     current_receptionist = next((r for r in manager.receptionists if r.username == recep_uname), None)
 
-    # Page design
+    # design of the receptionist page 
     tabs = ["Dashboard", "Register", "Patient", "Appointments", "Shift", "Profile"]
 
-    # Sidebar
+    # sidebar
     username = st.session_state.username
     st.sidebar.title(f"CareLog Navigation")
     st.sidebar.write(f"@{username}")
     option = st.sidebar.radio("Navigation", tabs)
     st.sidebar.button("Logout", on_click=logout)
 
-    # ============================================================
-    # DASHBOARD
-    # ============================================================
+    # dashboard tab for receptionist
 
     if option == "Dashboard":
         st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
@@ -61,9 +59,7 @@ def receptionist_page(manager: ScheduleManager):
         with col6:
             st.metric("Total Appointments", len(manager.appointments))
 
-    # ============================================================
-    # CREATE PATIENT ACCOUNT
-    # ============================================================
+    # registration of new patient
     elif option == "Register":
         from app.admin import AdminUser
         st.header("Register New Patient 👤")
@@ -124,16 +120,14 @@ def receptionist_page(manager: ScheduleManager):
                         st.error(error)
                     utils.log_event(f"Failed registration for {role} ({input_username}): {message}", "ERROR")
 
-    # ============================================================
-    # PATIENT SEARCH
-    # ============================================================
+    # patient tab for searching and editing patient records
     elif option == "Patient":
         tab1, tab2 = st.tabs(["Search Patient", "Edit Records"])
 
         with tab1:
             st.header("🔍 Search Patients")
 
-            # Search bar
+            # search input query
             query = st.text_input("Enter name, patient ID, email or contact: ")
             if query:
                 results = current_receptionist.search_patients(query, manager)
@@ -194,18 +188,16 @@ def receptionist_page(manager: ScheduleManager):
                     else:
                         st.warning("Unexpected error")
                 else:
-                    st.warning("⚠️ Please save with a billing amount")
+                    st.warning(" Please save with a billing amount⚠️")
     
-    # ============================================================
-    # APPOINTMENTS
-    # ============================================================
+   # appointment management
     elif option == "Appointments":
         st.header("📅 Appointment Management")
         tab1, tab2, tab3 = st.tabs(["Create Appointment", "View Appointments", "Update Status"])
 
-        # Create Appointment
+        # creates a new appointment
         with tab1:
-            st.subheader("➕ Create New Appointment")
+            st.subheader(" Create New Appointment➕")
             patient_id = st.selectbox("Select Patient", [p.p_id for p in manager.patients])
             doctor_id = st.selectbox("Select Doctor", [d.d_id for d in manager.doctors])
             date = st.date_input("Appointment Date")
@@ -218,81 +210,88 @@ def receptionist_page(manager: ScheduleManager):
                 else:
                     st.error(message)
 
-        # View Appointment
+        #view all appointments
         with tab2:
-            st.subheader("📋 All Appointments")
+            st.subheader("All Appointments📋")
             if manager.appointments:
                 for a in manager.appointments:
                     st.write(f"**{a.appt_id}** – {a.p_id} with {a.d_id} on {a.date} at {a.time} ({a.status})")
             else:
                 st.info("No appointments found.")
 
-        # Update Status
+        #update the status of an appointment
         with tab3:
-            st.subheader("✏️ Update Appointment Status")
-            appt_id = st.text_input("Enter Appointment ID")
+            st.subheader(" Update Appointment Status✏️")
+            appt_disp = {appt.appt_id:appt.appt_id for appt in manager.appointments}
+            if not appt_disp:
+                st.warning("No appointments found")
+                st.stop()
+                
+            appt = st.selectbox("Select Appointment", options=appt_disp.keys())
             new_status = st.selectbox("New Status", ["Scheduled", "Completed", "Cancelled"])
             if st.button("Update Status"):
+                appt_id = appt_disp[appt]
                 success, message = current_receptionist.update_appointment_status(manager, current_receptionist.username, appt_id, new_status)
                 if success:
                     st.success(message)
                 else:
                     st.error(message)
 
-    # ============================================================
-    # SHIFT
-    # ============================================================  
+    #shift management
     elif option == "Shift":
+        st.title("Shift Management 🕒")
         tab1, tab2 = st.tabs(["Create Shift", "View Shift"])
         with tab1:
-            st.markdown(
-            "<h2 style='text-align: center; color: #2c3e50;'>🕒 Create New Shift</h2>",
-            unsafe_allow_html=True
-            )
-
-            # Get next Shift ID
+            # creates a new shift form 
             shift_id = manager.next_shift_id
 
-            # Combine all doctors and nurses
+            # combine all doctors and nurses
             all_staff = []
             for doc in getattr(manager, "doctors", []):
                 all_staff.append(f"{doc.d_id} - {doc.name}")
             for nurse in getattr(manager, "nurses", []):
                 all_staff.append(f"{nurse.n_id} - {nurse.name}")
 
-            # Input boxes
+            #input form for creating a new shift
             with st.form("create_shift_form"):
-                st.text_input("🆔 Shift ID", shift_id, disabled=True)
+                st.markdown(
+                "<h2 style='text-align: center;> Create New Shift</h2>",
+                unsafe_allow_html=True
+                )
+                st.text_input("Shift ID🆔", shift_id, disabled=True)
 
                 staff_choice = st.selectbox("Select Staff Member 👩‍⚕️", all_staff)
 
-                # Extract ID
+                # extract the selected staff id
                 selected_id = staff_choice.split(" - ")[0]
 
-                # Shift scheduling info
+                # day, remark, start time, end time inputs
                 col1, col2 = st.columns(2)
                 with col1:
                     day = st.selectbox(
                         "Day 📅",
                         ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
                     )
+                # optional remark input    
                 with col2:
                     remark = st.text_input("Remark (optional) 📝")
-
+                # time inputs
                 col3, col4 = st.columns(2)
                 with col3:
                     start_time = st.time_input("Start Time 🕓", value=datetime.time(9, 0))
+                # end time input    
                 with col4: 
                     end_time = st.time_input("End Time 🕔", value=datetime.time(17, 0))
 
-                submitted = st.form_submit_button("💾 Create Shift")
+                submitted = st.form_submit_button("Create Shift💾")
 
                 if submitted:
-                    success, msg = create_shift(manager, shift_id, staff_choice, day, start_time, end_time, remark)
+                    success, msg = create_shift(manager, shift_id, selected_id, day, start_time, end_time, remark)
                     with st.spinner("Processing"):
                         time.sleep(1.5)
                     if success:
-                        st.session_state.success_msg = success
+                        st.session_state.success_msg = msg
+                        manager._save_data()
                         manager.save()
                         st.rerun()
                     else:
@@ -302,11 +301,11 @@ def receptionist_page(manager: ScheduleManager):
             all_shifts = get_all_shift(manager, "receptionist")
             records = shift_convert_df(all_shifts)
 
-            if records.empty():
+            if records.empty:
                 st.warning("No shifts found")
                 st.stop()
 
-            st.title("Shift Schedule 📅")
+            st.header("Shift Schedule 📅")
 
             with st.expander("Filter Options 🔍", expanded=True):
                 col1, col2, col3 = st.columns(3)
@@ -324,13 +323,13 @@ def receptionist_page(manager: ScheduleManager):
                     "Filter by Start Time Range (hour)", 0, 24, (0, 24)
                 )
 
-            # Filters 
+           # Apply filters for the records 
             filtered_records = records[
                 records["Staff"].isin(staff_filter)
                 & records["Day"].isin(day_filter)
             ]
 
-            # If times are strings
+            # if times are strings
             def time_to_hour(t):
                 try:
                     return int(str(t).split(":")[0])
@@ -341,15 +340,12 @@ def receptionist_page(manager: ScheduleManager):
             ]
 
             # Display table 
-            st.dataframe(filtered_records, use_container_width=True)
-
+            st.dataframe(filtered_records, width='stretch')
             st.caption(f"Showing {len(filtered_records)} shifts.")
 
-    # ============================================================
-    # PROFILE TAB
-    # ============================================================
+    # profile tab for receptionist
     elif option == "Profile":
-        st.header("🧍 My Profile")
+        st.header("My Profile🧍")
         st.write(f"**Username:** {current_receptionist.username}")
         st.write(f"**Name:** {current_receptionist.name}")
         st.write(f"**Email:** {current_receptionist.email}")
@@ -360,7 +356,7 @@ def receptionist_page(manager: ScheduleManager):
         st.success(st.session_state.success_msg)
         st.balloons()
         del st.session_state.success_msg
-
+# logout function
 def logout():
     st.session_state.page = "login"
     st.session_state.username = None

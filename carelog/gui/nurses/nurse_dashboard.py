@@ -17,7 +17,7 @@ def dashboard(manager, username):
     st.image("img/dashboard.png")
     st.divider()
 
-    # --- Dashboard ---
+    # Dashboard 
     st.header("Dashboard Overview 🎗️")
     st.write("")
     col1, col2, col3 = st.columns(3)
@@ -26,7 +26,7 @@ def dashboard(manager, username):
     with col3: st.metric("Speciality", nurse.speciality if nurse.speciality else "Not Set")
     st.divider()
 
-    # --- Search Patient ---
+    #Search Patient
     st.header("Quick Search 🔍")
     st.write("")
     with st.expander("Filter Patients", expanded=True):
@@ -68,12 +68,10 @@ def dashboard(manager, username):
     
     st.divider()
 
-    # --- Appointments ---
+    # Today Appointments 
     st.header("Today's Appointments 📆")
     today = datetime.date.today()
-    success, msg, appointments = appt_manager.list(manager, "nurse", username, scope="own", upcoming_only=True, date=today, status=None, patient_id=None, doctor_id=None, appt_id=None)
-
-    st.info(appointments)
+    success, msg, appointments = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=True, date=today, status=None, patient_id=None, doctor_id=None, appt_id=None)
 
     if success and appointments:
         disp1, disp2, disp3 = st.columns(3)
@@ -109,7 +107,7 @@ def dashboard(manager, username):
 
         st.divider()
 
-        st.header("Statistics")
+        st.header("Statistics 📊")
         col1, col2, col3 = st.columns(3)
 
         with col1:

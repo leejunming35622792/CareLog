@@ -21,7 +21,7 @@ def nurse_page(nurse: NurseUser):
         st.error("No user logged in")
         return
 
-    tabs = ["Dashboard", "Profile", "Patient Records", "Appointments", "Shift", "Remarks"]
+    tabs = ["Dashboard", "Profile", "Patient", "Appointments", "Shift", "Remarks"]
 
     if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
@@ -38,7 +38,7 @@ def nurse_page(nurse: NurseUser):
         dashboard(manager, username)
     elif option == "Profile":
         profile_page(manager, username)
-    elif option == "Patient Records":
+    elif option == "Patient":
         patient_records_page(manager, username)
     elif option == "Appointments":
         appointments_page(manager, username)

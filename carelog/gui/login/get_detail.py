@@ -1,17 +1,17 @@
 import streamlit as st
 import time, datetime
 import app.utils as utils
-
+# function to get additional details from the new user
 def get_detail(role, username, password, user_id):
     from app.user import User
     user = User("","","","","","","","", "")
     
-    # Variable
+    # access the manager from session state
     manager = st.session_state.manager
     success, message = "", ""
 
     st.title("CareLog Sign Up")
-
+    # the detail form for the new user to fill in
     with st.form("get-detail-form"):
         st.subheader("Account Information")
         st.info("You are almost there! 😉")
@@ -21,7 +21,7 @@ def get_detail(role, username, password, user_id):
             input_username = st.text_input("Username: ", placeholder=f"@{username}", value=username)
         with col2:
             input_password = st.text_input("Password", value=password, type="password")
-
+        # personal information section
         st.divider()
         st.subheader("Personal Information")
         col3, col4 = st.columns(2)
@@ -53,7 +53,7 @@ def get_detail(role, username, password, user_id):
                 with_doctor = doctor_disp[with_doctor_input]
 
         continue_button = st.form_submit_button("Continue")
-
+        # process the form submission
         if continue_button:
             with st.spinner("Processing..."):
                 time.sleep(1.5)

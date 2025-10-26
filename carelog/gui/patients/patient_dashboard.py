@@ -4,25 +4,25 @@ from helper_manager.profile_manager import find_age
 from gui.patients.chat_box import chat_box
 
 def dashboard(manager, username):
-    # Variable
+    # get current patient based on the username
     current_patient = next((p for p in manager.patients if p.username == username))
     
-    # Page design
+    # page design 
     st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
     st.image("img/dashboard.png")
     st.divider()
 
-    # --- Dashboard ---
+    # dahsboard overview
     st.header("Dashboard Overview 🎗️")
     st.write("")
     m1, m2, m3 = st.columns(3)
 
     with m1:
-        # Name
+        # name
         p_name = current_patient.name
         st.metric("Name", p_name)
     with m2:
-        # Age
+        # age
         p_age = find_age(current_patient.bday)
         st.metric("Age", p_age)
     with m3:
@@ -39,11 +39,11 @@ def dashboard(manager, username):
             days_difference = (today - last_record_dt).days
             st.metric("Last Record", latest_record_str, delta=f"{days_difference} days")
         else:
-            st.info("Book a medical check-up with us right now! 😊")
+            st.info("Book a medical check-up with us right now! 😊") 
 
     st.divider()
 
-    # --- Chat Box ---
+    #chatbox
     st.header("CareBot 💬")
     st.write("")
     chat_box()

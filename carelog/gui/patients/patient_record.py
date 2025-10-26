@@ -3,29 +3,29 @@ from helper_manager.record_manager import (
     search_record,
     print_record
 )
-
+# patient Record Page
 def record(manager):
-    # Variable
+    # gets the patient info
     username = st.session_state.username
     patient = next((p for p in manager.patients if p.username == username), None)
     if patient is None:
         st.error("Patient not found!")
         return
 
-    # Page design
+    # page design
     st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
-
+    # the record form 
     with st.form("view-record-form"):
         st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Records 📃</h1>", unsafe_allow_html=True)
 
-        # Get all record IDs for patient 
+        # get all record IDs for patient 
         p_record_id = [r.pr_record_id for r in manager.records if r.pr_record_id in patient.p_record]
 
         col1, col2, col3= st.columns([3,1,3])
         with col1:
-            # Choose record 
+            # selectbox for record IDs
             record_id = st.selectbox("Select Record ID", p_record_id)
-            
+        # empty col   
         with col3:
             st.markdown("")
             if p_record_id:
@@ -39,14 +39,14 @@ def record(manager):
         if not p_record_id:
             st.warning("No records found!")
 
-        # Get current record first
+        # get current record first
         current_record = search_record(patient.p_id, record_id)
 
         if view_button:
-            # --- Display as a dashboard ---
+            # display record details 
             st.markdown(f"### Record: {current_record['Record ID']} (Date: {current_record['Date'][:10]})")
 
-            # Metrics
+            # the metrics for
             col1, col2 = st.columns(2)
             col1.metric("Billings (RM)", current_record["Billings"])
             col2.metric("Confidence Score", f"{current_record['Confidence Score']*100:.1f}%")
@@ -55,7 +55,7 @@ def record(manager):
             st.markdown(f"**Condition:** <span style='background-color: #f0ad4e; padding: 4px; border-radius: 5px; margin: 10px'>{current_record['Conditions']}</span>", unsafe_allow_html=True)
             st.markdown(f"**Medications:** <span style='background-color: #5bc0de; padding: 4px; border-radius: 5px; margin: 10px'>{current_record['Medications']}</span>", unsafe_allow_html=True)
 
-            # Risk color coding
+            # the color coding for prediction result
             risk_color = {
                 "Low risk": "green",
                 "Moderate risk": "orange",
@@ -64,16 +64,16 @@ def record(manager):
             color = risk_color.get(current_record["Prediction Result"], "black")
             st.markdown(f"**Prediction Result:** <span style='color:{color};; font-size:150%'><b>     {current_record['Prediction Result']}</b></span>", unsafe_allow_html=True)
 
-            # Optional details in expander
+            # optional details in expander
             with st.expander("More Details"):
                 st.write("Remark:", current_record["Remark"])
-
+        # button to download record as a PDF 
         if download_button:
             record_searched = search_record(patient.p_id, record_id)
             success, msg, file_dir = print_record(manager, username, current_record)
             st.session_state.success_msg = msg
             st.rerun()
-
+        # info expander
         with st.expander("ℹ️ Learn more about Confidence Score and Prediction Result"):
             st.write("""
             - **Prediction Result** indicates the system’s analysis of your medical record, estimating your **current health risk level** (e.g., *Low*, *Moderate*, or *High*).  

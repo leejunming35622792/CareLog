@@ -1,12 +1,12 @@
 import streamlit as st
 import time
 from app.utils import log_event
-
+# function to handle user login
 def log_in(manager):
     # Variable
     user_list = ["Patient", "Doctor", "Nurse", "Receptionist", "Admin"]
 
-    # Page design
+    # page design
     st.title("CareLog")
     col1, col2 = st.columns(2)
 
@@ -21,7 +21,7 @@ def log_in(manager):
             button = st.form_submit_button("Login")
 
             if button:
-                # Variables
+                # validate inputs
                 errors = []
                 
                 if not username:

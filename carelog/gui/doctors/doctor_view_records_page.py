@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-
+# import backend functions from profile_manager and record_manager
 from helper_manager.profile_manager import (
     search_patient_by_name, 
     view_patient_details_by_doctor
@@ -15,44 +15,44 @@ from helper_manager.record_manager import (
 from helper_manager.medication_manager import (
 	assign_medications
 )
-
+#start of patient records page for doctors
 def patient_records_page(manager, username):
     """View patient details and manage remarks"""
-    # Variables
+    # variables 
     manager = st.session_state.manager
     current_doctor = next((d for d in manager.doctors if d.username == username), None)
 
-    # Page design
-    st.header("Patient Management 🏥")
+    # page design
+    st.title("Patient Management 😷")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Add Records", "Update Record", "View Patient Details", "View Patient Records", "Delete Record"])
-
+    # add new records for patient 
     with tab1:
         st.subheader("Add Record 📃")
         patient_disp = {f"{p.p_id} - {p.name}": p.p_id for p in manager.patients}
 
         if not patient_disp:
-            st.warning("⚠️ No patients found")
+            st.warning(" No patients found")
             st.stop()
-
+        # assign medications form
         with st.form("assign_meds_form"):
             col1, col2 = st.columns(2)
             with col1:
                 pid = st.selectbox("Patient ID", patient_disp.keys(), key="assign_pid")
-                
+            # get doctor id    
             with col2:
                 d_id = st.text_input("Doctor ID", current_doctor.d_id, disabled=True)
-
+            # input fields for conditions, medications, prediction result, confidence score, and remarks
             col1, col2 = st.columns(2)
             with col1:
                 conditions = st.text_area("Medical Conditions")
-
+            # get medications input
             with col2:
                 meds_input = st.text_area(
                 "Medications (comma-separated or one per line)",
                 height=100,
                 )
-
+            # shows prediction result and confidence score
             col3, col4 = st.columns(2)
             with col3:
                 pred = ["Low risk", "Moderate risk", "High risk"]
@@ -63,10 +63,10 @@ def patient_records_page(manager, username):
             instructions = st.text_area("Remark (optional)", value="Before/ After Meal: \nDaily Dose: ")
 
             submit_assign = st.form_submit_button("Create Record")
-
+            # process the form submission
             if submit_assign:
                 meds_str = meds_input.replace("\n", ",")
-
+                # validation checks
                 if not pid:
                     st.error("Please choose a patient")
                 if not conditions:
@@ -95,9 +95,9 @@ def patient_records_page(manager, username):
                         st.success(f"{msg}. Record ID: {rec_id}")
                     else:
                         st.error(msg)
-
+    # update existing patient records
     with tab2:
-        st.subheader("Update Record 🖊️📃")
+        st.subheader("Update Record ")
 
         records_disp = {f"{r.pr_record_id}": r for r in manager.records if r.d_id == current_doctor.d_id}
 
@@ -107,16 +107,16 @@ def patient_records_page(manager, username):
             
         record_id_edit = st.selectbox("Select Record ID", options=records_disp.keys(), key="edit_rec_id")
 
-        load_button = st.button("Load Record 🔃")
+        load_button = st.button("Load Record ")
 
         if load_button:
             current_record = records_disp[record_id_edit]
             st.session_state["loaded_record_id"] = record_id_edit
 
-        # Session state
+        # load session state
         if "loaded_record_id" in st.session_state:
             current_record = records_disp[st.session_state["loaded_record_id"]]
-
+            # display the form with current record details
             with st.form("update-record"):
                 st.markdown("#### Record Information")
                 col1, col2 = st.columns(2)
@@ -134,7 +134,7 @@ def patient_records_page(manager, username):
                 st.markdown("#### Medications")
                 st.caption("Comma-separated list, e.g., Metformin, Lisinopril")
                 meds_text = st.text_input("", value=", ".join(current_record.pr_medications) if isinstance(current_record.pr_medications, list) else str(current_record.pr_medications), key="edit_rec_medications", label_visibility="hidden")
-
+                
                 st.divider()
                 st.markdown("#### Others")
                 col_a, col_b = st.columns(2)
@@ -148,7 +148,7 @@ def patient_records_page(manager, username):
                 remark = st.text_area("Remark", value=current_record.pr_remark)
 
                 billings_val = st.number_input("Billings", min_value=0.0, step=25.00, key="edit_rec_billings")
-
+                # helper functions to parse conditions and medications
                 def _parse_conditions(text: str):
                     text = (text or "").strip()
                     if not text:
@@ -164,7 +164,7 @@ def patient_records_page(manager, username):
                         else:
                             result[line] = ""
                     return result
-
+                # helper function to parse medications
                 def _parse_meds(text: str):
                     text = (text or "").strip()
                     if not text:
@@ -172,7 +172,7 @@ def patient_records_page(manager, username):
                     items = [m.strip() for m in text.split(",") if m.strip()]
                     return items if items else None
                 
-                update_button = st.form_submit_button("Update Record ✏️", key="edit_rec_btn")
+                update_button = st.form_submit_button("Update Record ", key="edit_rec_btn")
 
                 if update_button:
                     if not record_id_edit:
@@ -200,7 +200,7 @@ def patient_records_page(manager, username):
                             st.rerun()
                         else:
                             st.error(f"{msg}")
-
+    # view patient details
     with tab3:
         st.header("View Patient Details 😷")
         st.info("To find a patient, enter their Patient ID below or name.")
@@ -223,6 +223,7 @@ def patient_records_page(manager, username):
                                 st.write(f"**Patient ID:** {info.get('patient_id', 'N/A')}")
                                 st.write(f"**Date of Birth:** {info.get('date_of_birth', 'N/A')}")
                             st.divider()
+        # display patient information                 
         else:
             def _search_by_name_cb():
                 name = st.session_state.get("search_patient_name", "").strip()
@@ -238,14 +239,14 @@ def patient_records_page(manager, username):
                 st.session_state['search_success'] = bool(success)
 
             patient_name = st.text_input("Enter Patient Name", key="search_patient_name", on_change=_search_by_name_cb)
-
-            if st.button("🔍 Search", key="search_by_name_btn"):
+            
+            if st.button(" Search", key="search_by_name_btn"):
                 _search_by_name_cb()
             st.divider()
             success = st.session_state.get('search_success', False)
             msg = st.session_state.get('search_msg', '')
             results = st.session_state.get('search_results', [])
-
+            # display search results
             if not patient_name and not results:
                 pass
             else:
@@ -277,7 +278,7 @@ def patient_records_page(manager, username):
                         st.error(msg)
                     elif not patient_name:
                         st.warning("Please enter a name to search")
-
+    # view patient records
     with tab4:
         st.header("View Patient Records")
         patient_id_view =st.selectbox("Select Patient ID", options=[p.p_id for p in manager.patients], key="view_patient_id_2")
@@ -286,6 +287,7 @@ def patient_records_page(manager, username):
                 success, msg, records = view_patient_records_doctor(patient_id_view)
                 if success:
                     st.success(msg)
+                    # display records
                     if records:
                         for record in records:
                             if isinstance(record, dict):
@@ -299,6 +301,7 @@ def patient_records_page(manager, username):
 
                                     if download_button:
                                         print_record(manager, username, record.pr_record_id)
+                            # display record if it's a list            
                             elif isinstance(record, list):
                                 with st.expander(f"Record: {record[0]} - {record[1]}"):
                                     st.write(f"**Conditions:** {record[2]}")
@@ -313,15 +316,15 @@ def patient_records_page(manager, username):
                 else:
                     st.error(msg)
             else:
-                st.warning("Please enter a Patient ID")
-    
+                st.warning("Please enter a Patient ID") 
+    # delete patient record
     with tab5:
         st.subheader("Delete Patient Record")
         st.warning("Deleting a record is irreversible. Please proceed with caution.")
         options = [r.pr_record_id for r in manager.records]
         record_id_del = st.selectbox("Select Record ID", options=options, key="delete_rec_id")
 
-        if st.button("Delete Record 🗑️", key="delete_rec_btn"):
+        if st.button("Delete Record ", key="delete_rec_btn"):
             if record_id_del:
                 st.session_state['pending_delete'] = record_id_del
             else:

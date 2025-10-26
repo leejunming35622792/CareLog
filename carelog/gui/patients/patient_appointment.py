@@ -88,7 +88,7 @@ def appointment(manager):
                             st.rerun()
          
     with tab2:
-        # Display appointment id with doctor
+        #display appointment details
         appt_id = {f"Appointment {appt.appt_id} - {doctor_list[appt.doctor]}":appt.appt_id for appt in manager.appointments if str(appt.patient) == str(patient.p_id)}
 
         if not appt_id:
@@ -96,25 +96,25 @@ def appointment(manager):
             
         else:
             with st.form("view-appt-form", clear_on_submit=False):
-                # Page Design
+                # page Design
                 st.markdown(f"<h1 style='text-align: center; font-size: 200%'>View Your Appointments 🗓️</h1>", unsafe_allow_html=True)
                 st.markdown(f"<h1 style='text-align: center; font-size: 100%; text-decoration: None'> Select one of your appointments from the list below to see the details.</h1>", unsafe_allow_html=True)
 
                 st.divider()
 
-                # Input box
+                # Iiput box
                 st.header("Search 🔎")
                 st.write("")
                 choose_appt = st.selectbox("Select Appointments", appt_id.keys())
                 appt_id = appt_id[choose_appt]
 
-                # Appointment in 'dict' type
+                # appointment in 'dict' type
                 success, msg, appt_list = appt_manager.list(manager, "patient", username, scope="own", upcoming_only=False, date=None, status=None, patient_id=patient.p_id, doctor_id=None, appt_id=None)
 
-                # Display button
+                # display button
                 search_button = st.form_submit_button("Search Appointment")
 
-                # Download button
+                # download button
                 download_button = st.form_submit_button("Download Appointment")
 
                 st.divider()
@@ -156,7 +156,7 @@ def appointment(manager):
                             st.markdown(f"**Appointment Status:**<br><span style='color:{color}; font-size:200%'><b>{appt_status}</b></span>", unsafe_allow_html=True)
                         
                         st.text_area("Remark", value=appt["remark"], disabled=True)
-                
+                # button performs a download of appointment report
                 if download_button:
                     success, msg, appt_list = appt_manager.list(manager, "patient", username, scope="own", upcoming_only=False, date=None, status=None, patient_id=patient.p_id, doctor_id=None, appt_id=None)
 
@@ -169,9 +169,9 @@ def appointment(manager):
                         st.rerun()
                     else:
                         st.warning(result)
-
+    # the tab that edits the appointment of the self user patient 
     with tab3:
-        # Page Design
+        # page Design
         st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Edit Your Appointments🖊️ </h1>", unsafe_allow_html=True)
         st.divider()
 
@@ -182,7 +182,7 @@ def appointment(manager):
             st.session_state.cancel = ""
 
         patient_appt = [appt for appt in manager.appointments if appt.p_id == patient.p_id and appt.status.lower() != "cancelled"]
-
+        # display appointment boxes
         if patient_appt:
             for i, appt in enumerate(patient_appt):
                 with st.form(f"appt-box{i}"):
@@ -214,7 +214,7 @@ def appointment(manager):
                             st.markdown(f"""
                             ### Status: :red[{appt.status}]
                             """)
-
+                    # form buttons
                     with col3:
                         edit_button = st.form_submit_button("Edit", key=f"edit-{appt.appt_id}", use_container_width=True)
                         cancel_button = st.form_submit_button("Cancel", key=f"cancel-{appt.appt_id}", use_container_width=True)
@@ -226,7 +226,7 @@ def appointment(manager):
                         if cancel_button:
                             st.session_state.cancel = appt.appt_id
                             st.rerun()
-
+                    # confirm of cancellation
                     if st.session_state.cancel == appt.appt_id:
                         st.warning(f"⚠️ You are about to cancel Appointment {appt.appt_id}. This action cannot be undone.")
                         confirm_button = st.form_submit_button("Confirm Cancel", key=f"confirm-{appt.appt_id}", use_container_width=True)
@@ -239,9 +239,9 @@ def appointment(manager):
                     
         else:
             st.warning("No appointments found!")
-
+        # edit appointment form
         if "edit" in st.session_state and st.session_state.edit != "":
-            # Variables
+            # variables
             target_appt_id = st.session_state.edit
             target_appt = next((a for a in patient_appt if a.appt_id == target_appt_id), None)
             doctor_options = list(doctor_id.keys())
@@ -269,7 +269,7 @@ def appointment(manager):
                         manager.save()
                         st.session_state.edit = ""  # reset
                         st.rerun()
-
+    # display the success messages 
     if "success_msg" in st.session_state and st.session_state.success_msg != "" and st.session_state.success_msg != "[]" and st.session_state.success_msg != []:
         st.success(st.session_state.success_msg)
         time.sleep(1.5)

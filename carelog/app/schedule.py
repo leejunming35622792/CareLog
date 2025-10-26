@@ -10,8 +10,9 @@ from app.admin import AdminUser
 from app.shift_schedule import Shift
 from app.remark import PatientRemark
 import app.utils as utils
-
+#manages scheduling and data persistence for a medical system, handling users, records, appointments, shifts and remarks
 class ScheduleManager():
+    #initializes the manager with a data file path and loads existing data
     def __init__(self, data_path="data/msms.json"):
         self.data_path = data_path
         self.patients = []
@@ -36,7 +37,7 @@ class ScheduleManager():
 
         # Load existing data
         self._load_data()
-
+# loads data from JSON file into the system, initializing objects for patients, doctors, nurses, etc
     def _load_data(self):
         try:
             with open(self.data_path, "r") as f:
@@ -132,7 +133,7 @@ class ScheduleManager():
         self.next_remark_id = data.get("next_remark_id", 1)
         return data
 
-
+    # saves the data in the system back to the JSON file as a dictionary
     def _save_data(self):
         os.makedirs(os.path.dirname(self.data_path), exist_ok=True)
 
@@ -165,7 +166,7 @@ class ScheduleManager():
 
     def save(self): 
         self._save_data()
-
+    # adds a new user to the system based on their role
     def add_user(self, role, user_obj):
         """Add a new user to the correct list and increment ID"""
         role = role.lower()
@@ -198,31 +199,31 @@ class ScheduleManager():
     def get_doctor_count(self):
         return len(self.doctors)
 
-    # Helper functions
+    # find doctors by its ID
     def find_doctor_by_id(self,doctor_id):
         doctor = next((d for d in self.doctors if d.d_id == doctor_id),None)
         if doctor is None:
             return False, "No doctor found",None
         return True, "Doctor Found", doctor
-    
+    #find nurse by its ID 
     def find_nurse_by_id(self,nurse_id):
         nurse = next((n for n in self.nurses if n.n_id == nurse_id),None)
         if nurse is None:
             return False,"No nurse found",None
         return True, "Nurse Found", nurse
-    
+    # find patient by ID
     def find_patient_by_id(self,patient_id):
         patient = next((p for p in self.patients if p.p_id == patient_id),None)
         if patient is None:
             return False,"No patient found",None
         return True, "Patient Found", patient
-    
+    # finds remark by its ID
     def find_remark_by_id(self,remark_id):
         remark = next((r for r in self.remarks if r.remark_id == remark_id),None)
         if remark is None:
             return False, "No remark found", None
         return True, "Remark found", remark
-
+    # finds appointment by its ID
     def find_appointment_by_id(self,appointment_id):
         appt = next((a for a in self.appointments if str(a.appt_id) == str(appointment_id)), None)
         if appt is None:

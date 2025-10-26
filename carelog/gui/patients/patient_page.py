@@ -5,15 +5,15 @@ from gui.patients.patient_record import record
 from gui.patients.patient_appointment import appointment
 
 def patient_page(manager):
-    # Variables
+    # variables
     username = st.session_state.username
     tabs = ["Dashboard", "Profile", "Records", "Appointments"]
 
-    # Session state
+    # session state management
     if "logout_triggered" in st.session_state and st.session_state.logout_triggered:
         st.session_state.logout_triggered = False
         st.rerun()
-
+    # initialize session state variables
     if "edit" not in st.session_state:
         st.session_state.edit = ""
 
@@ -27,14 +27,14 @@ def patient_page(manager):
         del st.session_state.success_msg
         st.session_state.success_msg = []
 
-    # Page design
+    # page layout design
     st.sidebar.title("CareLog Navigation")
     st.sidebar.write(f"@{username}")
     st.sidebar.divider()
     option = st.sidebar.radio("Select", tabs)
     st.session_state.option = option
     st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
-
+    # content of the page
     if option == "Dashboard":
         dashboard(manager, username)
     elif option == "Profile":
@@ -44,10 +44,10 @@ def patient_page(manager):
     elif option == "Appointments":
         appointment(manager)
 
-    # End of Page
+    # end of Page
     st.divider()
     st.markdown("<h6 style='text-align:center'>CareLog</h6>", unsafe_allow_html=True)
-
+# logout function
 def logout():
     st.session_state.page = "login"
     st.session_state.username = None

@@ -21,7 +21,7 @@ def update_doctor_details(manager, *, username,
     if new_speciality:  doc.speciality  = new_speciality
     if hasattr(manager, "save"): manager.save()
     return True
-
+# main doctor profile page section
 def profile_page(manager, username):
     """View and update doctor profile"""
 
@@ -37,7 +37,7 @@ def profile_page(manager, username):
         st.error(message)
         return
  
-    # Page design
+    #page design for the doctor's profile
     if profile.get("gender") == "Male":
         disp = "Your Profile 👨‍⚕️"
     elif profile.get("gender") == "Female":
@@ -62,7 +62,7 @@ def profile_page(manager, username):
 
     st.divider()
     st.header("Update Profile")
-
+    #update form for doctor profile
     with st.form("update_profile_form"):
         c1, c2 = st.columns(2)
         with c1:

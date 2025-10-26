@@ -7,7 +7,7 @@ appt_manager = AppointmentManager(st.session_state.manager)
 def appointments_page(manager, username):
     """Appointments Management Page"""
     # Page design
-    st.header("Appointments Management 📅")
+    st.title("Appointments Management 📅")
     
     tab1, tab2, tab3, tab4 = st.tabs([
         "View Appointments",

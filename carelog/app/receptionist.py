@@ -3,7 +3,7 @@ from app.user import User
 import app.utils as utils
 from app.patient import PatientAppointment
 from helper_manager.appointment_manager import AppointmentManager
-
+# Receptionist user class inheriting from User
 class ReceptionistUser(User):
     def __init__(self, r_id, username, password, name, bday, gender, address, email, contact_num, date_joined):
         self.r_id = r_id
@@ -32,32 +32,34 @@ class ReceptionistUser(User):
 
         utils.log_event(f"Appointment {appt_id} created by receptionist {self.username}", "INFO")
         return True, f"Appointment {appt_id} successfully created.", new_appointment
-    
+    # view appointments of all patients
     def view_appointments(self, manager):
         return manager.appointments
-    
-    def update_appointment_status(self, manager, username, appt_id, new_status):
-        AppointmentManager.update(manager, "receptionist", username, appt_id, date=None, time=None, doctor_id=None, status=new_status, remark=None)
+    # performs an update to the patient's appointment status 
+    @staticmethod
+    def update_appointment_status(manager, username, appt_id, new_status):
+        appt_manager = AppointmentManager(manager)
+        result = appt_manager.update(manager, "receptionist", username, appt_id, date=None, time=None, doctor_id=None, status=new_status, remark=None)
         manager.save()
         utils.log_event(f"Appointment {appt_id} status updated to {new_status}", "INFO")
         return True, f"Appointment {appt_id} updated successfully"
-    
+    # cancels the appoitnment of a patient 
     def cancel_appointment(self, appt_id):
         return self.update_appointment_status(appt_id, "Cancelled")
-
+    # lists all patients
     """ Patient and Doctor Info """
     def list_patients(self):
         from app.schedule import ScheduleManager
         return [(p.p_id, p.name, p.contact_num) for p in ScheduleManager.patients]
-
+    # list all doctors
     def list_doctors(self):
         from app.schedule import ScheduleManager
         return [(d.d_id, d.name, d.contact_num) for d in ScheduleManager.doctors]
-    
+    # list all nurses
     def list_nurses(self):
         from app.schedule import ScheduleManager
         return [(n.n_id, n.name, n.contact_num) for n in ScheduleManager.nurses]
-    
+    # searches for patients based on a query
     """Search for patient"""
     def search_patients(self, query, manager):
         q = (query or "").lower()

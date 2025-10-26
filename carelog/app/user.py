@@ -3,7 +3,7 @@
 import re, datetime
 from helper_manager.auth_manager import AuthManager
 import app.utils as utils
-
+# class for User with its attributes and methods
 class User:
     def __init__(self, username, password, name, bday, gender, address, email, contact_num, date_joined):
         self.username = username
@@ -15,7 +15,7 @@ class User:
         self.email = email
         self.contact_num = contact_num
         self.date_joined = date_joined
-
+    # Generate next user ID based on role
     @staticmethod
     def get_next_id(manager, role):
         role = str(role.lower())
@@ -31,7 +31,7 @@ class User:
             return f"A{manager.next_admin_id:04d}"
         else:
             raise ValueError(f"Invalid role: {role}")
-    
+    # Register new user
     @staticmethod
     def create_user(manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Register new user & Check Blank"""
