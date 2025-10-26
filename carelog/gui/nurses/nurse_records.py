@@ -87,7 +87,7 @@ def patient_records_page(manager, username):
                 if not patient_name:
                     st.warning("Please enter a name to search")
                 else:
-                    success, msg, results = search_patient_by_name(patient_name)
+                    success, msg, results = search_patient_by_name("nurse", username, patient_name)
                     if not success:
                         st.error(msg)
                     else:

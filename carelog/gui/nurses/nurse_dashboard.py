@@ -49,7 +49,7 @@ def dashboard(manager, username):
                         st.error("Invalid Patient ID format")
                         return
                 else:
-                    success, msg, info = search_patient_by_name(query)
+                    success, msg, info = search_patient_by_name("nurse", username, query)
 
                 if success:
                     st.success(msg)
@@ -71,7 +71,9 @@ def dashboard(manager, username):
     # --- Appointments ---
     st.header("Today's Appointments 📆")
     today = datetime.date.today()
-    success, msg, appointments = appt_manager.list(manager, "nurse", username, scope="all", upcoming_only=True, date=today, status=None, patient_id=None, doctor_id=None, appt_id=None)
+    success, msg, appointments = appt_manager.list(manager, "nurse", username, scope="own", upcoming_only=True, date=today, status=None, patient_id=None, doctor_id=None, appt_id=None)
+
+    st.info(appointments)
 
     if success and appointments:
         disp1, disp2, disp3 = st.columns(3)

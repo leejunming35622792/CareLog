@@ -24,28 +24,44 @@ def update_doctor_details(manager, *, username,
 
 def profile_page(manager, username):
     """View and update doctor profile"""
-    st.header("My Profile")
 
+    # Variables
     success, message, profile = view_doctor_details(username)
+    current_doctor = next((d for d in manager.doctors if d.username == username), None)
+    
+    if not current_doctor:
+        st.warning("⚠️ Unexpected error - Please try again")
+        st.stop()
+
     if not profile:
         st.error(message)
         return
+ 
+    # Page design
+    if profile.get("gender") == "Male":
+        disp = "Your Profile 👨‍⚕️"
+    elif profile.get("gender") == "Female":
+        disp = "Your Profile 👩‍⚕️"
+    else:
+        disp = "Your Profile"
+    st.markdown(f"<h1 style='text-align: center; font-size: 200%'>{disp}</h1>", unsafe_allow_html=True)
+    st.divider()
 
-    st.subheader("Current Profile Information")
+    st.header("Current Profile Information")
     col1, col2 = st.columns(2)
     with col1:
-        st.text_input("Name", value=profile.get("name", ""), disabled=True)
-        st.text_input("Email", value=profile.get("email", ""), disabled=True)
-        st.text_input("Gender", value=profile.get("gender", ""), disabled=True)
-        st.text_input("Date of Birth", value=profile.get("date_of_birth", ""), disabled=True)
+        st.text_input("Name", value=current_doctor.name or "", disabled=True)
+        st.text_input("Email", value=current_doctor.email or "", disabled=True)
+        st.text_input("Gender", value=current_doctor.gender, disabled=True)
+        st.text_input("Date of Birth", value=current_doctor.bday, disabled=True)
     with col2:
-        st.text_input("Contact Number", value=profile.get("contact_num", ""), disabled=True)
-        st.text_area("Address", value=profile.get("address", ""), disabled=True)
-        st.text_input("Department", value=profile.get("department", ""), disabled=True)
-        st.text_input("Speciality", value=profile.get("speciality", ""), disabled=True)
+        st.text_input("Contact Number", value=current_doctor.contact_num or "", disabled=True)
+        st.text_area("Address", value=current_doctor.address or "", disabled=True)
+        st.text_input("Department", value=current_doctor.department or "", disabled=True)
+        st.text_input("Speciality", value=current_doctor.speciality or "", disabled=True)
 
     st.divider()
-    st.subheader("Update Profile")
+    st.header("Update Profile")
 
     with st.form("update_profile_form"):
         c1, c2 = st.columns(2)
@@ -67,7 +83,7 @@ def profile_page(manager, username):
                 manager=manager,
                 username=username,
                 new_password=new_password or None,
-                new_name=new_name or None,
+                new_name=new_name.title() or None,
                 new_gender=new_gender or None,
                 new_address=new_address or None,
                 new_email=new_email or None,
@@ -76,7 +92,12 @@ def profile_page(manager, username):
                 new_speciality=new_speciality or None,
             )
             if ok:
-                st.session_state.success_msg("✅ Profile updated successfully!")
+                st.session_state.success_msg = "✅ Profile updated successfully!"
+                manager.save()
                 st.rerun()
             else:
                 st.error("Failed to update profile")
+
+    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+        st.success(st.session_state.success_msg)
+        st.session_state.success_msg = ""

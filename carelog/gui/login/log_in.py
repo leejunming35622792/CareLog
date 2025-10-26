@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+from app.utils import log_event
 
 def log_in(manager):
     # Variable
@@ -44,6 +45,7 @@ def log_in(manager):
                     user = user.lower()
 
                     if success:
+                        log_event(f"[{user.title()}] @{username} joined", "INFO")
                         st.session_state.username = username
                         st.session_state.user = user_obj
                         st.session_state.page = user

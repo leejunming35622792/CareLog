@@ -29,6 +29,7 @@ class AdminUser(User):
         ]
 
         if username in all_usernames:
+            utils.log_event(f"Failed to register {role}: Username in used", "ERROR")
             return False, "Username already in used", None
 
         # Get next ID for the role
@@ -42,6 +43,7 @@ class AdminUser(User):
             utils.log_event(f"Admin created new {role} account {username} ({next_id})", "INFO")
             return True, f"{role.capitalize()} '{username}' created successfully with ID {next_id}", new_user
         else:
+            utils.log_event(f"Failed to create new {role} account", "ERROR")
             return False, message, None
 
     def remove_user(self, role, user_id):
@@ -65,8 +67,8 @@ class AdminUser(User):
         # Remove user
         user_list.remove(user_to_remove)
         sc.save()
-        utils.log_event(f"Admin removed {role} '{user_to_remove.user_id}' ({user_id})", "INFO")
 
+        utils.log_event(f"Admin removed {role} '{user_to_remove.user_id}' ({user_id})", "INFO")
         return True, f"{role.capitalize()} '{user_to_remove.user_id}' removed successfully."
 
     def get_appointment(self, username, manager):

@@ -1,5 +1,8 @@
 import streamlit as st
-from helper_manager.record_manager import search_record
+from helper_manager.record_manager import (
+    search_record,
+    print_record
+)
 
 def record(manager):
     # Variable
@@ -36,10 +39,10 @@ def record(manager):
         if not p_record_id:
             st.warning("No records found!")
 
-        if view_button:
-            # --- Display selected record ---
-            current_record = search_record(patient.p_id, record_id)
+        # Get current record first
+        current_record = search_record(patient.p_id, record_id)
 
+        if view_button:
             # --- Display as a dashboard ---
             st.markdown(f"### Record: {current_record['Record ID']} (Date: {current_record['Date'][:10]})")
 
@@ -67,7 +70,9 @@ def record(manager):
 
         if download_button:
             record_searched = search_record(patient.p_id, record_id)
-            # print_record()
+            success, msg, file_dir = print_record(manager, username, current_record)
+            st.session_state.success_msg = msg
+            st.rerun()
 
         with st.expander("ℹ️ Learn more about Confidence Score and Prediction Result"):
             st.write("""

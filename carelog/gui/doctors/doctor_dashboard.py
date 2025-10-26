@@ -58,7 +58,7 @@ def dashboard(manager, username):
                         st.error("Invalid Patient ID format")
                         return
                 else:
-                    success, msg, info = search_patient_by_name(query)
+                    success, msg, info = search_patient_by_name("doctor", username, query)
 
                 if success:
                     st.success(msg)
@@ -67,8 +67,8 @@ def dashboard(manager, username):
                         for patient in info:
                             with st.container():
                                 st.markdown(f"<h1 style='font-size:200%'>🧍{patient['name']} (ID: {patient['patient_id']})</h1>", unsafe_allow_html=True)
-                                st.markdown(f"<span style='font-size:200%'>💌 </span><span style='font-size:100%'>{patient['email']}</span>", unsafe_allow_html=True)
-                                st.markdown(f"<span style='font-size:200%'>📞 </span><span style='font-size:100%'>{patient['contact']}</span>", unsafe_allow_html=True)
+                                st.markdown(f"<span style='font-size:200%'>💌 </span><span style='font-size:150%'>{patient['email']}</span>", unsafe_allow_html=True)
+                                st.markdown(f"<span style='font-size:200%'>📞 </span><span style='font-size:150%'>{patient['contact']}</span>", unsafe_allow_html=True)
                                 st.markdown("_____")
                     else:
                         st.json(info)
@@ -144,7 +144,7 @@ def dashboard(manager, username):
 
     # Get appointments
     appt_manager = AppointmentManager(manager)
-    success, msg, appt_list = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=True, status=None, doctor_id=current_doctor.d_id, appt_id=None)
+    success, msg, appt_list = appt_manager.list(manager, "doctor", username, scope="own", upcoming_only=False, status=None, doctor_id=current_doctor.d_id, appt_id=None)
 
     if success and appt_list:
         month_appts = [
@@ -177,10 +177,20 @@ def dashboard(manager, username):
                         align-items:center; 
                         padding:15px 30px; 
                         font-size:200%">
+                            <div style="font-weight:bold;">Date:</div>
+                            <div>{appt['date']}</div>
+                        </div>
+
+                        <div style="
+                        display:flex; 
+                        justify-content: space-between; 
+                        align-items:center; 
+                        padding:15px 30px; 
+                        font-size:200%">
                             <div style="font-weight:bold;">Time:</div>
                             <div>{appt['time']}</div>
-
                         </div>
+
                         <div style="display:flex; 
                         justify-content: space-between; 
                         align-items:center; 
@@ -193,6 +203,6 @@ def dashboard(manager, username):
                         unsafe_allow_html=True
                     )
                 with col3:
-                    st.text_area("Remark", appt["remark"], key=f"remark_disp_{appt["appt_id"]}", disabled=True, height='stretch')
+                    st.text_area("Remark", appt["remark"], disabled=True, height='stretch')
     else:
         st.info("No upcoming appointments")

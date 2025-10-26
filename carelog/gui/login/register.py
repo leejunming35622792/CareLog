@@ -32,6 +32,8 @@ def register(manager):
                     username = st.text_input("Username:")
                     password = st.text_input("Password:", type="password")
 
+                    confirm_pw = st.text_input("Confirm Password:", type="password", help="Password confirmation")
+
                     submit = st.form_submit_button("Register")
 
                     if submit:
@@ -55,6 +57,8 @@ def register(manager):
                         # Password Validation
                         if not password:
                             errors.append("Password cannot be empty")
+                        elif password != confirm_pw:
+                            errors.append("Password not match")
                         else:
                             if len(password) < 8:
                                 errors.append("Password must be at least 8 characters")

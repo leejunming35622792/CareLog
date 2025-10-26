@@ -8,8 +8,6 @@ def chat_box():
 
     MAX_MESSAGES = 20  # Limit messages to last 20
 
-
-
     # --- Chat input form ---
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input("Ask a health-related question:")
@@ -334,10 +332,11 @@ def chat_box():
             if len(st.session_state.messages) > MAX_MESSAGES:
                 st.session_state.messages = st.session_state.messages[-MAX_MESSAGES:]
 
-            # --- Display chat messages in a scrollable container ---
-            chat_container = st.container()
-            for idx, (role, text) in enumerate(st.session_state.messages):
-                if role == "user":
-                    message(text, is_user=True, avatar_style="thumbs", key=f"user_msg_{idx}")
-                else:
-                    message(text, avatar_style="bottts", key=f"bot_msg_{idx}")
+    # --- Display chat messages in a scrollable container ---
+    chat_container = st.container()
+    for idx, (role, text) in enumerate(st.session_state.messages):
+        if role == "user":
+            message(text, is_user=True, avatar_style="thumbs", key=f"user_msg_{idx}")
+        else:
+            message(text, avatar_style="bottts", key=f"bot_msg_{idx}")
+    return None

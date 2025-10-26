@@ -17,6 +17,7 @@ class NurseUser(User):
         sc = ScheduleManager()
         found, msg, patient = sc.find_patient_by_id(patient_id)
         if not found:
+            utils.log_event(f"Failed to create record for {patient_id}: Patient not found", "ERROR")
             return False, msg, None
         
         record_id = f"PR{sc.next_record_id:04d}"
@@ -37,10 +38,12 @@ class NurseUser(User):
         sc = ScheduleManager()
         found, msg, patient = sc.find_patient_by_id(patient_id)
         if not found:
+            utils.log_event(f"Failed to view {patient_id}'s record: Patient not found", "ERROR")
             return False, msg, None
         
         records = [r for r in sc.records if r.p_id == patient_id]
         if not records:
+            utils.log_event(f"No record found for patient {patient_id}", "ERROR")
             return False, f"No records found for patient {patient_id}", None
         
         record = hm.view_patient_records_nurse(records)
@@ -53,12 +56,14 @@ class NurseUser(User):
         sc = ScheduleManager()
         record = next((r for r in sc.records if r.pr_record_id == record_id), None)
         if not record:
+            utils.log_event(f"Failed to update record: Record not found", "ERROR")
             return False, "Record not found", None
         update = hm.update_patient_record_nurse(sc, record_id, conditions, medications, remark)
         if update:
             sc.save()
             utils.log_event(f"Nurse updated record {record_id}", "INFO")
             return True, "Record updated successfully", record_id
+        utils.log_event(f"Failed to update record", "ERROR")
         return False, "Record update failed", record_id
 
     def delete_patient_record(self, record_id):

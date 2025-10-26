@@ -39,7 +39,7 @@ def get_detail(role, username, password, user_id):
 
         col7, col8 = st.columns(2)
         with col7:
-            birthday = st.date_input("Enter Birthday: ")
+            birthday = st.date_input("Enter Birthday: ", min_value='1920-01-01', max_value='today')
         with col8:
             current_datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             date_joined = st.text_input("Date Joined:", value=current_datetime, disabled=True)
@@ -58,8 +58,7 @@ def get_detail(role, username, password, user_id):
             with st.spinner("Processing..."):
                 time.sleep(1.5)
                 
-                role = role.lower()     
-                birthday = birthday.isoformat() 
+                role = role.lower()
 
                 if role == "patient": 
                     success, message, user_obj = user.create_user(manager, role, user_id, input_username, input_password, name, birthday, gender, address, email, contact_num, date_joined, None, None, None)

@@ -44,24 +44,6 @@ def view_users():
     ]
     return users
 
-def is_hashed(pw: str) -> bool:
-    if not isinstance(pw, str):
-        return False
-    return pw.startswith("$2a$") or pw.startswith("$2b$") or pw.startswith("$2y$")
-
-def hash_password(password: str) -> str:
-    if not password:
-        return ""
-    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
-
-def check_password(plain: str, hashed: str) -> bool:
-    if not plain or not hashed or not is_hashed(hashed):
-        return False
-    try:
-        return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
-    except Exception:
-        return False
-
 def BackupSystem():
     """Backup Database"""
     source_file = "data/msms.json"

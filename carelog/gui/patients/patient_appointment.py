@@ -59,7 +59,7 @@ def appointment(manager):
                     # Status & remarks in another row
                     col3, col4 = st.columns([1,2])
                     with col3:
-                        appt_status = st.selectbox("Status", ["Pending"], disabled=True)
+                        appt_status = st.selectbox("Status", ["Scheduled"], disabled=True)
                     with col4:
                         appt_remark = st.text_area("Remarks", placeholder="Add any notes...", key="")
 
@@ -145,9 +145,9 @@ def appointment(manager):
                         with disp5:
                             st.metric("Appointment Time", appt["time"])
                         with disp6:
-                            appt_status = appt["status"]
+                            appt_status = appt["status"].title()
                             risk_color = {
-                                "Booked": "green",
+                                "Scheduled": "green",
                                 "Pending": "blue",
                                 "Rescheduled": "yellow",
                                 "Cancelled": "red"
@@ -202,7 +202,7 @@ def appointment(manager):
                             st.markdown(f"""
                             ### Status: :blue[{appt.status}]
                             """)
-                        if appt.status == "Booked":
+                        if appt.status in ["Booked", "Scheduled"] :
                             st.markdown(f"""
                             ### Status: :green[{appt.status}]
                             """)
@@ -270,7 +270,7 @@ def appointment(manager):
                         st.session_state.edit = ""  # reset
                         st.rerun()
 
-    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+    if "success_msg" in st.session_state and st.session_state.success_msg != "" and st.session_state.success_msg != "[]" and st.session_state.success_msg != []:
         st.success(st.session_state.success_msg)
+        time.sleep(1.5)
         st.session_state.success_msg = ""
-        st.balloons()

@@ -1,5 +1,6 @@
 import streamlit as st
 from app.schedule import ScheduleManager
+from helper_manager.auth_manager import AuthManager
 
 st.set_page_config(page_title="CareLog", layout="wide")
 
@@ -20,10 +21,14 @@ def login_page():
     if "success_msg" not in st.session_state:
         st.session_state.success_msg = ""
 
+    if "pw_migrated" not in st.session_state:
+        AuthManager(st.session_state.manager).migrate_passwords()
+        st.session_state.pw_migrated = True
+
     # --- Default Display ---
     if st.session_state.get("page") == "login":
         st.sidebar.title("Navigation")
-        option = st.sidebar.selectbox("", ["Log In", "Create Account", "About Us"])
+        option = st.sidebar.selectbox("Menu", ["Log In", "Create Account", "About Us"])
 
         if option == "Log In":
             st.session_state.username = ""

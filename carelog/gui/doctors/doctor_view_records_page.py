@@ -23,12 +23,12 @@ def patient_records_page(manager, username):
     current_doctor = next((d for d in manager.doctors if d.username == username), None)
 
     # Page design
-    st.header("Patient Records Management 📋")
+    st.header("Patient Management 🏥")
 
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Add Records", "Update Record", "View Patient Details", "View Patient Records", "Delete Record"])
 
     with tab1:
-        st.header("Add Record 📃")
+        st.subheader("Add Record 📃")
         patient_disp = {f"{p.p_id} - {p.name}": p.p_id for p in manager.patients}
 
         if not patient_disp:
@@ -39,8 +39,9 @@ def patient_records_page(manager, username):
             col1, col2 = st.columns(2)
             with col1:
                 pid = st.selectbox("Patient ID", patient_disp.keys(), key="assign_pid")
+                
             with col2:
-                d_id = st.text_input("Doctor ID", current_doctor.d_id)
+                d_id = st.text_input("Doctor ID", current_doctor.d_id, disabled=True)
 
             col1, col2 = st.columns(2)
             with col1:
@@ -57,9 +58,9 @@ def patient_records_page(manager, username):
                 pred = ["Low risk", "Moderate risk", "High risk"]
                 pred_result = st.selectbox("Prediction Result", pred)
             with col4:
-                confidence_score = st.slider("Confidence Score", min_value=0, max_value=1)
+                confidence_score = st.slider("Confidence Score", min_value=0.00, max_value=1.00, step=0.05)
             
-            instructions = st.text_area("Remark (optional)")
+            instructions = st.text_area("Remark (optional)", value="Before/ After Meal: \nDaily Dose: ")
 
             submit_assign = st.form_submit_button("Create Record")
 
@@ -78,7 +79,7 @@ def patient_records_page(manager, username):
                     st.error("Medications cannot be empty")
                 else:
                     ok, msg, rec_id = assign_medications(
-                        patient_id=pid,
+                        patient_id=patient_disp[pid],
                         doctor_id=d_id,
                         conditions= conditions,
                         medications=meds_str,
@@ -96,7 +97,7 @@ def patient_records_page(manager, username):
                         st.error(msg)
 
     with tab2:
-        st.header("Update Record 🖊️📃")
+        st.subheader("Update Record 🖊️📃")
 
         records_disp = {f"{r.pr_record_id}": r for r in manager.records if r.d_id == current_doctor.d_id}
 
@@ -106,81 +107,99 @@ def patient_records_page(manager, username):
             
         record_id_edit = st.selectbox("Select Record ID", options=records_disp.keys(), key="edit_rec_id")
 
-        current_record = records_disp[record_id_edit]
+        load_button = st.button("Load Record 🔃")
 
-        with st.form("update-record"):
-            col1, col2 = st.columns(2)
-            with col1:
-                st.text_input("Patient ID", current_record.p_id, disabled=True)
-            with col2:
-                st.text_input("Doctor ID", current_record. d_id, disabled=True)
-            
-            st.markdown("#### Conditions")
-            st.caption("Enter one per line. Use 'Name:Severity' (e.g., Hypertension:Moderate). If no severity, just write the name.")
-            cond_text = st.text_area("Conditions", value=current_record.pr_conditions, key="edit_rec_conditions", height=120)
+        if load_button:
+            current_record = records_disp[record_id_edit]
+            st.session_state["loaded_record_id"] = record_id_edit
 
-            st.write("")
+        # Session state
+        if "loaded_record_id" in st.session_state:
+            current_record = records_disp[st.session_state["loaded_record_id"]]
 
-            st.markdown("#### Medications")
-            st.caption("Comma-separated list, e.g., Metformin, Lisinopril")
-            meds_text = st.text_input("Medications", value=current_record.pr_medications, key="edit_rec_medications")
-
-            col_a, col_b = st.columns(2)
-            with col_a:
-                pred_result = st.text_input("Prediction Result", key="edit_rec_prediction")
-            with col_b:
-                conf_score = st.slider("Confidence Score", min_value=0.0, step=0.01, max_value=1.0)
-
-            billings_val = st.number_input("Billings", min_value=0.0, step=0.01, key="edit_rec_billings")
-
-            def _parse_conditions(text: str):
-                text = (text or "").strip()
-                if not text:
-                    return None
-                result = {}
-                for line in text.splitlines():
-                    line = line.strip()
-                    if not line:
-                        continue
-                    if ":" in line:
-                        name, sev = line.split(":", 1)
-                        result[name.strip()] = sev.strip()
-                    else:
-                        result[line] = ""
-                return result
-
-            def _parse_meds(text: str):
-                text = (text or "").strip()
-                if not text:
-                    return None
-                items = [m.strip() for m in text.split(",") if m.strip()]
-                return items if items else None
-            
-            update_button = st.form_submit_button("Update Record ✏️", key="edit_rec_btn")
-
-            if update_button:
-                if not record_id_edit:
-                    st.warning("Please select a Record ID")
+            with st.form("update-record"):
+                st.markdown("#### Record Information")
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.text_input("Patient ID", current_record.p_id, disabled=True)
+                with col2:
+                    st.text_input("Doctor ID", current_record. d_id, disabled=True)
                 
-                else:
-                    conds = _parse_conditions(cond_text)
-                    meds = _parse_meds(meds_text)   
-                    billings = billings_val if billings_val is not None else None
-                    pred = pred_result if (pred_result or pred_result == "") else None
-                    conf = conf_score if conf_score is not None else None
+                st.divider()
+                st.markdown("#### Conditions")
+                st.caption("Enter one per line. Use 'Name:Severity' (e.g., Hypertension:Moderate). If no severity, just write the name.")
+                cond_text = st.text_area("", value=current_record.pr_conditions, key="edit_rec_conditions", height=120, label_visibility="hidden")
 
-                    success, msg = update_patient_record_doctor(
-                        current_record.pr_record_id,
-                        conditions=conds,
-                        medications=meds,
-                        billings=billings,
-                        prediction_result=pred,
-                        confidence_score=conf,
-                    )
-                    if success:
-                        st.success(f"{msg}")
+                st.divider()
+                st.markdown("#### Medications")
+                st.caption("Comma-separated list, e.g., Metformin, Lisinopril")
+                meds_text = st.text_input("", value=", ".join(current_record.pr_medications) if isinstance(current_record.pr_medications, list) else str(current_record.pr_medications), key="edit_rec_medications", label_visibility="hidden")
+
+                st.divider()
+                st.markdown("#### Others")
+                col_a, col_b = st.columns(2)
+                with col_a:
+                    pred = ["Low risk", "Moderate risk", "High risk"]
+                    previous_pred_result = current_record.pr_prediction_result
+                    pred_result = st.selectbox("Prediction Result", pred, index=pred.index(previous_pred_result) if previous_pred_result in pred else 0)
+                with col_b:
+                    conf_score = st.slider("Confidence Score", min_value=0.0, step=0.01, max_value=1.0, value=current_record.pr_confidence_score)
+
+                remark = st.text_area("Remark", value=current_record.pr_remark)
+
+                billings_val = st.number_input("Billings", min_value=0.0, step=25.00, key="edit_rec_billings")
+
+                def _parse_conditions(text: str):
+                    text = (text or "").strip()
+                    if not text:
+                        return None
+                    result = {}
+                    for line in text.splitlines():
+                        line = line.strip()
+                        if not line:
+                            continue
+                        if ":" in line:
+                            name, sev = line.split(":", 1)
+                            result[name.strip()] = sev.strip()
+                        else:
+                            result[line] = ""
+                    return result
+
+                def _parse_meds(text: str):
+                    text = (text or "").strip()
+                    if not text:
+                        return None
+                    items = [m.strip() for m in text.split(",") if m.strip()]
+                    return items if items else None
+                
+                update_button = st.form_submit_button("Update Record ✏️", key="edit_rec_btn")
+
+                if update_button:
+                    if not record_id_edit:
+                        st.warning("Please select a Record ID")
+                    
                     else:
-                        st.error(f"{msg}")
+                        conds = _parse_conditions(cond_text)
+                        meds = _parse_meds(meds_text)   
+                        billings = billings_val if billings_val is not None else None
+                        pred = pred_result if (pred_result or pred_result == "") else None
+                        conf = conf_score if conf_score is not None else None
+
+                        success, msg = update_patient_record_doctor(
+                            current_record.pr_record_id,
+                            conditions=conds,
+                            medications=meds,
+                            billings=billings,
+                            prediction_result=pred,
+                            confidence_score=conf,
+                        )
+
+                        if success:
+                            manager.save()
+                            st.session_state.success_msg = msg
+                            st.rerun()
+                        else:
+                            st.error(f"{msg}")
 
     with tab3:
         st.header("View Patient Details 😷")
@@ -203,8 +222,6 @@ def patient_records_page(manager, username):
                             with col2:
                                 st.write(f"**Patient ID:** {info.get('patient_id', 'N/A')}")
                                 st.write(f"**Date of Birth:** {info.get('date_of_birth', 'N/A')}")
-
-
                             st.divider()
         else:
             def _search_by_name_cb():
@@ -215,7 +232,7 @@ def patient_records_page(manager, username):
                     st.session_state['search_success'] = False
                     return
 
-                success, msg, results = search_patient_by_name(name)
+                success, msg, results = search_patient_by_name("doctor", username, name)
                 st.session_state['search_results'] = results or []
                 st.session_state['search_msg'] = msg
                 st.session_state['search_success'] = bool(success)
@@ -224,6 +241,7 @@ def patient_records_page(manager, username):
 
             if st.button("🔍 Search", key="search_by_name_btn"):
                 _search_by_name_cb()
+            st.divider()
             success = st.session_state.get('search_success', False)
             msg = st.session_state.get('search_msg', '')
             results = st.session_state.get('search_results', [])
@@ -232,6 +250,7 @@ def patient_records_page(manager, username):
                 pass
             else:
                 if success:
+                    st.markdown("### Showing patients")
                     if msg:
                         st.success(msg)
                     if results:
