@@ -28,6 +28,7 @@ class AuthManager:
         except Exception as e:
             utils.log_event(f"Autentication error: {e}", "ERROR")
             return False, f"Authentication error: {e}", None
+        
     # creates a new user account with the specified role and details
     def create_account(self, manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         # Create object
@@ -50,6 +51,7 @@ class AuthManager:
         self.system.add_user(role, user_obj)
         return True, f"{role.capitalize()} account created successfully!", user_obj
     # creates the appropriate user object based on the role
+
     def _user(self, manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
         """Create correct role object"""
         role = role.lower()
@@ -70,12 +72,14 @@ class AuthManager:
             return AdminUser(user_id, username, password, name, bday, gender, address, email, contact_num, date_joined)
         else:
             raise ValueError(f"Invalid role type: {role}")
+        
     # retrieves the next available user ID for the specified role
     def _get_next_id(self, role):
         """Ask system for the next available user ID"""
         role = role.lower()
         return getattr(self.system, f"next_{role}_id")
     # validates the format and domain of the provided email address
+
     def check_email_validation(self, email):
         if not email:
             return False, "Email cannot be empty", None
@@ -107,7 +111,8 @@ class AuthManager:
             utils.log_event(f"Invalid contact number", "ERROR")
             return False, f"Contact number is invalid - please include '+60' and '-'", None
         return True, "Contact number is valid", contact_num
-   # migrates any plaintext passwords to bcrypt hashes for all user roles     
+    
+    # migrates any plaintext passwords to bcrypt hashes for all user roles     
     def migrate_passwords(self):
         from helper_manager.password_utils import need_hash, hash_password
         roles = ["patient", "doctor", "nurse", "receptionist", "admin"]

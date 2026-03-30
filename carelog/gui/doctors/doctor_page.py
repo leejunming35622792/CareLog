@@ -4,12 +4,13 @@ import pandas as pd
 from gui.doctors import doctor_remark_page
 from gui.doctors import doctor_medication_page
 from gui.doctors.doctor_dashboard import dashboard
-from gui.doctors.doctor_profile import profile_page
+from gui.doctors.doctor_profile import doctor_profile
 from gui.doctors.doctor_view_records_page import patient_records_page
 from gui.doctors.doctor_appt_page import appointments_page
 from gui.doctors.doctor_shift_page import shift_page
 from gui.doctors.doctor_remark_page import remarks_page
 from gui.doctors.doctor_medication_page import medication_page
+
 # able to search and select profiles to view 
 def search_and_select_profile_ui(manager):
     role_map = {
@@ -38,6 +39,7 @@ def search_and_select_profile_ui(manager):
     if not matches:
         st.warning(f"No {role} found matching '{name_query}'.")
         return False, None, None
+    
     # display results
     rows, idx = [], {}
     for o in matches:
@@ -71,7 +73,8 @@ def search_and_select_profile_ui(manager):
             return True, selected, role
 
     return False, None, None
-#main doctor page
+
+# main doctor page
 def doctor_page(_Manager):
     manager = st.session_state.manager
     username = st.session_state.username
@@ -92,7 +95,7 @@ def doctor_page(_Manager):
     if option == "Dashboard":
         dashboard(manager, username)
     elif option == "Profile":
-        profile_page(manager, username)
+        doctor_profile(manager)
     elif option == "Patient":
         patient_records_page(manager, username)
     elif option == "Appointments":

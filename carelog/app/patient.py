@@ -2,13 +2,12 @@ from app.user import User
 
 class PatientUser(User):
     def __init__(self, p_id, username, password, name, bday, gender, address, email, contact_num, date_joined, p_record, p_remark):
-#assign unique ID for patients
         self.p_id = p_id
         super().__init__(username, password, name, bday, gender, address, email, contact_num, date_joined)
         self.p_record = p_record or []
         self.p_remark = p_remark
 
-#represents a single medical record entry for a patient
+# Represents a single medical record entry for a patient
 class PatientRecord():
     def __init__(self, pr_record_id, p_id, d_id, pr_timestamp, pr_conditions, pr_medications, pr_billings, pr_prediction_result, pr_confidence_score, pr_remark):
         self.pr_record_id = pr_record_id
@@ -21,7 +20,8 @@ class PatientRecord():
         self.pr_prediction_result = pr_prediction_result
         self.pr_confidence_score = pr_confidence_score
         self.pr_remark = pr_remark
-#represents an appointment between a patient and doctor
+
+# Represents an appointment between a patient and doctor
 class PatientAppointment():
     def __init__(self, appt_id, p_id, d_id, appt_date, appt_time, appt_status, appt_remark):
         self.appt_id = appt_id

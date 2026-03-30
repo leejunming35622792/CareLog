@@ -33,7 +33,9 @@ def patient_page(manager):
     st.sidebar.divider()
     option = st.sidebar.radio("Select", tabs)
     st.session_state.option = option
-    st.sidebar.button("🚪 Logout", on_click=logout, use_container_width=True)
+    st.sidebar.button(
+        "🚪 Logout", on_click=logout, use_container_width=True
+    )
     # content of the page
     if option == "Dashboard":
         dashboard(manager, username)
@@ -47,6 +49,7 @@ def patient_page(manager):
     # end of Page
     st.divider()
     st.markdown("<h6 style='text-align:center'>CareLog</h6>", unsafe_allow_html=True)
+    
 # logout function
 def logout():
     st.session_state.page = "login"

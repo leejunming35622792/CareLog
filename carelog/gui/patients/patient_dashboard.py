@@ -1,7 +1,7 @@
 import streamlit as st
 import datetime
 from helper_manager.profile_manager import find_age
-from gui.patients.chat_box import chat_box
+from gui.patients.chat_box import chatbox
 
 def dashboard(manager, username):
     # get current patient based on the username
@@ -43,7 +43,10 @@ def dashboard(manager, username):
 
     st.divider()
 
-    #chatbox
-    st.header("CareBot 💬")
-    st.write("")
-    chat_box()
+    # Chatbox
+    col1, col2 = st.columns(2)
+    with col1:
+        st.header("CareBot 💬")
+    with col2:
+        mode = st.selectbox("AI Mode", ["Supportive", "Strict Medical", "Friendly"])
+    chatbox(manager, mode)

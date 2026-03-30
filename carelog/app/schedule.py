@@ -10,7 +10,8 @@ from app.admin import AdminUser
 from app.shift_schedule import Shift
 from app.remark import PatientRemark
 import app.utils as utils
-#manages scheduling and data persistence for a medical system, handling users, records, appointments, shifts and remarks
+
+# Manages scheduling and data persistence for a medical system, handling users, records, appointments, shifts and remarks
 class ScheduleManager():
     #initializes the manager with a data file path and loads existing data
     def __init__(self, data_path="data/msms.json"):
@@ -37,6 +38,7 @@ class ScheduleManager():
 
         # Load existing data
         self._load_data()
+        
 # loads data from JSON file into the system, initializing objects for patients, doctors, nurses, etc
     def _load_data(self):
         try:

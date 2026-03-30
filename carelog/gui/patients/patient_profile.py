@@ -6,15 +6,17 @@ import bcrypt
 from helper_manager.password_utils import (is_hashed, check_password)
 from app.user import User
 from helper_manager.profile_manager import find_age
-# the profile page for patients
+from helper_manager.unchanged import unchanged_to_none
+
 def profile(Manager):
     # Variables
     manager = st.session_state.manager
     username = st.session_state.username
 
-    # page design
+    # Page design
     st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
-    # the form for the updatig profile
+
+    # User profile
     with st.form("profile-form"):
         # Find patient by username
         patient = next((p for p in manager.patients if p.username == username), None)
@@ -22,7 +24,7 @@ def profile(Manager):
             st.error("Unexpected Error!")
             return
         
-        # page design
+        # Page design
         if patient.gender == "Male":
             disp = "Your Profile 👨"
         elif patient.gender == "Female":
@@ -37,15 +39,17 @@ def profile(Manager):
         col1, col2 = st.columns(2)
         with col1:
             new_username = st.text_input("Username", value=f"@{patient.username}", disabled=True)
-            new_password = st.text_input("Password", value=patient.password, type="password")
+            # new_password = st.text_input("Password", value=patient.password, type="password", disabled=True)
             new_name = st.text_input("Name", value=patient.name).title()
-
-            new_gender = st.selectbox("Gender", ["Male", "Female", "Other"], 
-                                          index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
+            new_gender = st.selectbox(
+                "Gender", 
+                ["Male", "Female", "Other"], 
+                index=["Male", "Female", "Other"].index(patient.gender) if patient.gender in ["Male", "Female", "Other"] else 2)
+            
             col3, col4 = st.columns(2)
             with col3:
                 patient_bday = datetime.datetime.fromisoformat(patient.bday)
-                new_bday = st.date_input("Birthday", value=patient_bday)
+                new_bday = st.date_input("Date of Birth", value=patient_bday, min_value="1900-01-01")
             with col4:
                 # find age
                 age = find_age(patient.bday)
@@ -74,21 +78,21 @@ def profile(Manager):
                 errors.append("Username has been taken!")
 
             # password validation
-            if patient.password != new_password:
-                if len(new_password) < 8:
-                    errors.append("Password must be at least 8 characters!")
-                if not any(c.isupper() for c in new_password):
-                    errors.append("Password must contain at least 1 uppercase letter.")
+            # if patient.password != new_password:
+            #     if len(new_password) < 8:
+            #         errors.append("Password must be at least 8 characters!")
+            #     if not any(c.isupper() for c in new_password):
+            #         errors.append("Password must contain at least 1 uppercase letter.")
 
-            # name validation
+            # Name validation
             if not new_name.strip():
                 errors.append("Name cannot be empty!")
 
-            # email validation (very basic check)
+            # Email validation (very basic check)
             if "@" not in new_email or "." not in new_email:
                 errors.append("Invalid email address.")
 
-            # contact Number Validation
+            # Contact number validation
             contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
             if not re.match(contact_num_format, new_contact_num):
                 errors.append("Contact number is invalid - please include '+60' and '-'")
@@ -97,12 +101,29 @@ def profile(Manager):
                 for e in errors:
                     st.error(e)
             else:
-                new_name = new_name.title()
-                new_bday = new_bday.isoformat()
-                result, msg = User.update_profile(manager, patient.p_id, "patient", username, new_password, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None)
-                with st.spinner("Saving changes..."):
-                    time.sleep(1)
+                new_name = unchanged_to_none(new_name, patient.name)
+                new_bday = unchanged_to_none(new_bday.isoformat(), patient.bday)
+                new_gender = unchanged_to_none(new_gender, patient.gender)
+                new_address = unchanged_to_none(new_address, patient.address)
+                new_email = unchanged_to_none(new_email, patient.email)
+                new_contact_num = unchanged_to_none(new_contact_num, patient.contact_num)
+                new_remark = unchanged_to_none(new_remark, patient.p_remark)
+
+                result, msg, updated_field = User.update_profile(manager, patient.p_id, "patient", username, None, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, new_remark, None, None)
+
                 if result:
-                    manager.save()
-                    st.session_state.success_msg = msg
-                    st.rerun()
+                    if len(updated_field) == 0:
+                        success_msg = f"No changes made!"
+                        st.success(success_msg)
+                    else:
+                        with st.spinner("Saving changes..."):
+                            if len(updated_field) == 1:
+                                success_msg = f"{", ".join(updated_field)} is successfully updated!".capitalize()
+                            else:
+                                success_msg = f"{", ".join(updated_field)} are successfully updated!".capitalize()
+                            st.success(success_msg)
+                            time.sleep(3)
+
+                            manager.save()
+                            st.session_state.success_msg = msg
+                            st.rerun()

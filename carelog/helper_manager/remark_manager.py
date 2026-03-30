@@ -34,6 +34,7 @@ def add_patient_remark(patient_id :int , doctor_username: str, remark_type: str,
     manager._save_data()
     utils.log_event(f"Remark for {remark_id} added successfully", "INFO")
     return True, "Remark added successfully", remark_id
+
 #adds a new patient remark by a nurse
 def add_patient_remark_nurse(patient_id, nurse_username, remark_type, content):
     """Add remark to patient (Nurse perspective)"""

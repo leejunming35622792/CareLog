@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from datetime import datetime, timedelta
 
 # remark manager backend functions
@@ -13,6 +14,9 @@ from helper_manager.remark_manager import (
 # start of the remark page for doctors
 def remarks_page(manager, username):
     """Doctor-facing page to view/add/edit patient remarks."""
+    curr_username = st.session_state.username
+    curr_id = next((d.d_id for d in manager.doctors if d.username == curr_username), None)
+
     st.title("Patient Remarks 💭")
 
     tab1, tab2, tab3, tab4 = st.tabs([
@@ -21,10 +25,12 @@ def remarks_page(manager, username):
         "Edit",
         "Delete",
     ])
+
     # view patient's reamrks
     with tab1:
         st.subheader("View Patient Remarks")
         patient_ids = [getattr(p, "p_id", "") for p in getattr(manager, "patients", [])]
+
         pid = st.selectbox("Patient ID", options=([""] + patient_ids))
         rtype = st.selectbox(
             "Filter by Type (optional)",
@@ -44,7 +50,7 @@ def remarks_page(manager, username):
                         label = f"{it.get('remark_type','').upper()} — {datetime.fromisoformat(it.get('timestamp',''))}"
                         with st.expander(label):
                             st.write(f"Doctor: {it.get('doctor_name','Unknown')}")
-                            st.write(it.get("content", ""))
+                            st.write("Remark: \n", it.get("content", ""))
                             st.caption(f"Last Modified: {datetime.fromisoformat(it.get('last_modified',''))}")
                 else:
                     st.info(msg or "No remarks found")
@@ -66,21 +72,28 @@ def remarks_page(manager, username):
                             st.write(it.get("content", ""))
                 else:
                     st.info(msg or f"No remarks in last {days} days")
+    
     # add remarks for patients
     with tab2:
-        st.subheader("Add Remark")
-        pid_add = st.selectbox("Patient ID", options=([""] + patient_ids), key="pid_add")
-        rtype_add = st.selectbox("Remark Type", ["Mood", "Pain_level", "Dietary", "General", "Observation"])
-        content = st.text_area("Content", height=120)
-        if st.button("Add Remark"):
-            if not pid_add or not content.strip():
-                st.error("Please select a patient and enter content")
-            else:
-                ok, msg, rid = add_patient_remark(pid_add, username, rtype_add, content.strip())
-                if ok:
-                    st.success(f"{msg} (ID: {rid})")
+        with st.form('add-remark', clear_on_submit=True):
+            st.subheader("Add Remark")
+            pid_add = st.selectbox("Patient ID", options=([""] + patient_ids), key="pid_add")
+            rtype_add = st.selectbox("Remark Type", ["Mood", "Pain_level", "Dietary", "General", "Observation"])
+            content = st.text_area("Content", height=120)
+            submit_remark = st.form_submit_button("Add Remark")
+
+            if submit_remark:
+                if not pid_add or not content.strip():
+                    st.error("Please select a patient and enter content")
                 else:
-                    st.error(msg)
+                    ok, msg, rid = add_patient_remark(pid_add, username, rtype_add, content.strip())
+                    if ok:
+                        with st.spinner("Saving remark..."):
+                            time.sleep(2)
+                        st.success(f"{msg} (ID: {rid})")
+                    else:
+                        st.error(msg)
+
     # edit existing remarks 
     with tab3:
         st.subheader("Edit Remark (only your own)")
@@ -95,13 +108,13 @@ def remarks_page(manager, username):
                     st.success(msg)
                 else:
                     st.error(msg)
+    
     # delete existing remarks 
     with tab4:
         st.markdown("### Delete Remark")
         st.warning(f"⚠️ You are about to **cancel** the following remark and this action cannot be undone.")
-        
         all_patient = {p.p_id:p.name for p in manager.patients}
-        remark_disp = {f"{r.remark_id} - {all_patient[r.patient_id]}": r.remark_id for r in manager.remarks}
+        remark_disp = {f"{r.remark_id} - {all_patient[r.patient_id]}": r.remark_id for r in manager.remarks if r.doctor_id == curr_id}
 
         if not remark_disp:
             st.warning("⚠️ No remark found")
