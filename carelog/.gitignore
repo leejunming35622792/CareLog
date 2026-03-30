@@ -1,4 +1,4 @@
-__pycache__/
+carelog\app\__pycache__\
 venv/
 data/
 *.streamlit
