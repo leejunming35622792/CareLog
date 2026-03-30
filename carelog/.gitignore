@@ -3,5 +3,5 @@ carelog/app/__pycache__/
 venv/
 data/
 tests/
-*.streamlit
+
 *.pyc
