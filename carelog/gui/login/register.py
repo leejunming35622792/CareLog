@@ -20,6 +20,8 @@ def register(manager):
         st.title("CareLog")
         col1, col2 = st.columns(2)
         with col1:
+            if "register_phase" not in st.session_state:
+                st.session_state.register_phase = "basic"
             # basic info form 
             if st.session_state.register_phase == "basic":
                 with st.form("register-form"):
@@ -51,21 +53,20 @@ def register(manager):
                         ] for u in group]
                                 
                         if username in all_usernames:
-                            errors.append("Username already in used")
+                            return False, "Username already in used", None
                         
-                        # validate password
+                        #validate password
                         if not password:
                             errors.append("Password cannot be empty")
-                        elif confirm_pw:
+                        elif password != confirm_pw:
+                            errors.append("Password not match")
+                        else:
                             if len(password) < 8:
                                 errors.append("Password must be at least 8 characters")
                             if not any(c.isupper() for c in password):
                                 errors.append("Password must contain at least one uppercase letter")
                             if not any(c.isdigit() for c in password):
                                 errors.append("Password must contain at least one number")
-                        elif password != confirm_pw:
-                            errors.append("Password not match")
-                        
                             
                         if errors:
                             for e in errors:

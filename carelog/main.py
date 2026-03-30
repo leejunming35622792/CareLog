@@ -9,10 +9,8 @@ def main():
     if "logging_initialized" not in st.session_state:
         # Setup logging once
         setup_logging("data/audit.log")
-
         # Test and output logging
         log_event("System startup complete", "INFO")
-        
         st.session_state.logging_initialized = True
 
     login_page()

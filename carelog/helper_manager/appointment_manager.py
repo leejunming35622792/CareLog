@@ -6,7 +6,7 @@ from app.patient import PatientAppointment
 # Roles we recognise
 ROLES = {"patient", "doctor", "nurse", "receptionist", "admin"}
 
-VALID_STATUSES = {"confirmed", "booked", "rescheduled", "cancelled", "completed", "no-show", "pending"}
+VALID_STATUSES = {"scheduled", "booked", "rescheduled", "cancelled", "completed", "no-show", "pending"}
 
 class AppointmentManager:
     """
@@ -82,7 +82,7 @@ class AppointmentManager:
         self.sc.save()
 
         utils.log_event(f"[{actor_role}] @{actor_username} created appointment {appt_id} (P={patient_id}, D={doctor_id})", "INFO")
-        return True, f"Appointment {appt_id} successfully booked on {date}", new_appt
+        return True, f"Appointment {appt_id} created.", new_appt
 
     def update(self, manager, actor_role, actor_username, appt_id, *, date=None, time=None, doctor_id=None, status=None, remark=None):
         """
@@ -131,15 +131,15 @@ class AppointmentManager:
                 return False, "Doctors cannot edit appointment schedule or remark.", None
             if status is None:
                 return False, "Only status updates are allowed for doctors.", None
-            if status.lower() not in {"completed", "confirmed", "rescheduled"}:
-                return False, "Doctors may set status only to 'Confirm', 'Complete' or 'Cancel'.", None
+            if status.lower() not in {"completed", "no-show"}:
+                return False, "Doctors may set status only to 'completed' or 'no-show'.", None
 
         elif actor_role == "nurse":
             if any(v is not None for v in (date, time, doctor_id, remark)):
                 return False, "Doctors cannot edit appointment schedule or remark.", None
             if status is None:
                 return False, "Only status updates are allowed for nurses.", None
-            if status is not None and status.lower() not in {"rescheduled", "cancelled", "completed", "no-show"}:
+            if status is not None and status.lower() not in {"scheduled", "cancelled", "completed", "no-show"}:
                 return False, "Out of Nurse's work range.", None
 
         # Apply updates

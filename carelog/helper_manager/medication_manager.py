@@ -4,8 +4,7 @@ from app.schedule import ScheduleManager
 from app.patient import PatientRecord
 
 manager = ScheduleManager()
-
-# Saves data using the manager's save method, handling both save data and save attributes
+#saves data using the manager's save method, handling both save data and save attributes
 def _persist():
 	try:
 		if hasattr(manager, "_save_data"):
@@ -15,7 +14,7 @@ def _persist():
 	except Exception:
 		pass
 
-# Converts input to a list of non-empty strings, handling None, lists, or comma-seperated strings
+#converts input to a list of non-empty strings, handling None, lists, or comma-seperated strings
 def _to_list(value):
 	if value is None:
 		return []
@@ -28,7 +27,7 @@ def _to_list(value):
 		return [p.strip() for p in s.split(",") if p.strip()]
 	return [s]
 
-# Generates the next patient record ID in the format PRxxxx based on existing records
+#generates the next patient record ID in the format PRxxxx based on existing records
 def _next_pr_id():
 	max_n = 0
 	for r in getattr(manager, "records", []):
@@ -42,7 +41,7 @@ def _next_pr_id():
 				continue
 	return f"PR{max_n + 1:04d}"
 
-# Retrieves the latest patient record for a given patient ID, sorted by timestamp
+#retrieves the latest patient record for a given patient ID, sorted by timestamp
 def _latest_record(patient_id):
 	pid = str(patient_id)
 	records = [r for r in getattr(manager, "records", []) if str(getattr(r, "p_id", "")) == pid]
@@ -55,7 +54,61 @@ def _latest_record(patient_id):
 			return ts
 	return sorted(records, key=lambda r: _parse(getattr(r, "pr_timestamp", "")), reverse=True)[0]
 
-# Replaces medications in a specific patient record
+#assigns or updates medications for a patient, creating a new record or appending an existing one
+def assign_medications(patient_id, doctor_id, conditions, medications, doctor_username, pr_prediction_result, pr_confidence_score, instructions="", new_record=False):
+	meds = _to_list(medications)
+	if not meds:
+		return False, "No medications provided", None
+
+	patient = next((p for p in manager.patients if str(p.p_id) == str(patient_id)), None)
+	if patient is None:
+		return False, "Patient Not Found", None
+
+	if new_record:
+		if not doctor_username:
+			return False, "doctor_username is required to create a new record", None
+		doctor = next((d for d in manager.doctors if d.username == doctor_username), None)
+		if doctor is None:
+			return False, "Doctor Not Found", None
+
+		pr_id = _next_pr_id()
+		ts = datetime.datetime.utcnow().isoformat(timespec="seconds")
+		remark = f"Prescribed by {getattr(doctor, 'name', doctor_username)} ({doctor_username})"
+		if instructions:
+			remark += f"\n\nNote: \n{instructions}"
+
+		rec = PatientRecord(
+			pr_record_id=pr_id,
+			p_id=patient.p_id,
+			d_id=doctor_id,
+			pr_timestamp=ts,
+			pr_conditions=conditions,
+			pr_medications=meds,
+			pr_billings=0.0,
+			pr_prediction_result=pr_prediction_result,
+			pr_confidence_score=pr_confidence_score,
+			pr_remark=remark,
+		)
+		manager.records.append(rec)
+		_persist()
+		return True, "Prescription recorded", pr_id
+
+	
+	latest = _latest_record(patient_id)
+	if latest is None:
+		if doctor_username:
+			return assign_medications(patient_id, meds, doctor_username, instructions, new_record=True)
+		return False, "No existing record; provide doctor_username or set new_record=True", None
+
+	current = _to_list(getattr(latest, "pr_medications", None))
+	for m in meds:
+		if m not in current:
+			current.append(m)
+	latest.pr_medications = current
+	_persist()
+	return True, "Medications updated", latest.pr_record_id
+
+#replaces medications in a specific patient record
 def edit_medications(record_id, medications):
 	rec = next((r for r in manager.records if getattr(r, "pr_record_id", None) == record_id), None)
 	if rec is None:
@@ -64,7 +117,7 @@ def edit_medications(record_id, medications):
 	_persist()
 	return True, "Replaced Medication"
 
-# Removes a specific medication from a patient record
+#removes a specific medication from a patient record
 def remove_medication(record_id, medication):
 	rec = next((r for r in manager.records if getattr(r, "pr_record_id", None) == record_id), None)
 	if rec is None:
@@ -76,13 +129,13 @@ def remove_medication(record_id, medication):
 	_persist()
 	return True, ("Medication removed" if len(new_list) != len(current) else "Medication not found")
 
-# Retrieves medications for a patient, either per record or as a unique list
+#retrieves medications for a patient, either per record or as a unique list
 def list_medications(patient_id, per_record=False):
 	pid = str(patient_id)
 	patient = next((p for p in manager.patients if str(p.p_id) == pid), None)
 	if patient is None:
 		return False, "Patient Not Found", []
-	# retrieve medications
+	#retrieve medications
 	if per_record:
 		rows = []
 		for r in manager.records:

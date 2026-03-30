@@ -63,15 +63,14 @@ def appointments_page(manager, username):
                         status_color = {
                             "Pending": "🟡", "Confirmed": "🟢", "Completed": "🔵", "Cancelled": "🔴", 
                         }
-                        current_status = appt.get('status').title()
-                        st.write(f"{status_color.get(current_status, '⚪')} {appt.get('status','—').title()}")
+                        st.write(f"{status_color.get(appt.get('status'), '⚪')} {appt.get('status','—')}")
                     if appt.get("remark"):
                         st.caption(f"Note: {appt['remark']}")
                     
                     #quick action buttons 
                     col1, col2, col3 = st.columns([1, 1, 2])
-                    with col2:
-                        if st.button("Completed ✅", key=f"complete_{appt['appt_id']}"):
+                    with col1:
+                        if st.button("Complete✅", key=f"complete_{appt['appt_id']}"):
                             success, message, _ = appt_manager.update_appointment_doctor(
                                 manager,
                                 username,
@@ -86,31 +85,15 @@ def appointments_page(manager, username):
                                 st.rerun()
                             else:
                                 st.error(message)
-                    with col3:
-                        if st.button("Rescheduled ❌", key=f"cancel_{appt['appt_id']}"): 
+                    with col2:
+                        if st.button("Cancel❌", key=f"cancel_{appt['appt_id']}"): 
                             success, message, _ = appt_manager.update_appointment_doctor(
                                 manager,
                                 username,
                                 appt_id=appt['appt_id'],
                                 date=None,
                                 time=None,
-                                status="rescheduled",
-                                remark=None
-                            )
-                            if success:
-                                st.success(message)
-                                st.rerun()
-                            else:
-                                st.error(message)
-                    with col1:
-                        if st.button("Confirm 🔃", key=f"confirm_{appt['appt_id']}"):
-                            success, message, _ = appt_manager.update_appointment_doctor(
-                                manager,
-                                username,
-                                appt_id=appt['appt_id'],
-                                date=None,
-                                time=None,
-                                status="confirmed",
+                                status="cancelled",
                                 remark=None
                             )
                             if success:
@@ -119,7 +102,6 @@ def appointments_page(manager, username):
                             else:
                                 st.error(message)
                     st.divider()
-
         else:
             st.info("No appointments match the selected filters")
 

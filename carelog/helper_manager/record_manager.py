@@ -1,8 +1,6 @@
 import os
 import datetime
 import app.utils as utils
-from app.patient import PatientRecord
-
 #attempts to persist data using various possible save methods from ScheduleManager
 def _persist():
     """Best-effort persistence without assuming exact method name/placement."""
@@ -19,162 +17,6 @@ def _persist():
         if obj and hasattr(obj, method):
             getattr(obj, method)()
             return
-
-# Converts input to a list of non-empty strings, handling None, lists, or comma-seperated strings
-def _to_list(value):
-	if value is None:
-		return []
-	if isinstance(value, list):
-		return [str(x).strip() for x in value if str(x).strip()]
-	s = str(value).strip()
-	if not s:
-		return []
-	if "," in s:
-		return [p.strip() for p in s.split(",") if p.strip()]
-	return [s]
-
-# Generates the next patient record ID in the format PRxxxx based on existing records
-def _next_pr_id(manager):
-    max_n = 0
-
-    for r in getattr(manager, "records", []):
-        rid = getattr(r, "pr_record_id", "")
-        if isinstance(rid, str) and rid.startswith("PR"):
-            try:
-                n = int(rid[2:])
-                if n > max_n:
-                    max_n = n
-            except Exception:
-                continue
-    return f"PR{max_n + 1:04d}"
-
-# Retrieves the latest patient record for a given patient ID, sorted by timestamp
-def _latest_record(patient_id): 
-    from app.schedule import ScheduleManager
-    manager = ScheduleManager()
-    pid = str(patient_id)
-    records = [r for r in getattr(manager, "records", []) if str(getattr(r, "p_id", "")) == pid]
-    if not records:
-        return None
-    def _parse(ts):
-        try:
-            return datetime.datetime.fromisoformat(ts)
-        except Exception:
-            return ts
-    return sorted(records, key=lambda r: _parse(getattr(r, "pr_timestamp", "")), reverse=True)[0]
-
-# Assigns or updates medications for a patient, creating a new record or appending an existing one
-def add_record_doctor(manager, patient_id, doctor_id, conditions, medications, doctor_username, pr_prediction_result, pr_confidence_score, instructions="", new_record=False):
-    meds = _to_list(medications)
-    if not meds:
-        return False, "No medications provided", None
-
-    patient = next((p for p in manager.patients if str(p.p_id) == str(patient_id)), None)
-    if patient is None:
-        return False, "Patient Not Found", None
-
-    if new_record:
-        if not doctor_username:
-            return False, "doctor_username is required to create a new record", None
-        doctor = next((d for d in manager.doctors if d.username == doctor_username), None)
-        if doctor is None:
-            return False, "Doctor Not Found", None
-
-        pr_id = _next_pr_id(manager)
-        ts = datetime.datetime.utcnow().isoformat(timespec="seconds")
-        remark = f"Prescribed by {getattr(doctor, 'name', doctor_username)} ({doctor_username})"
-        if instructions:
-            remark += f"\n\nNote: \n{instructions}"
-
-        rec = PatientRecord(
-            pr_record_id=pr_id,
-            p_id=patient.p_id,
-            d_id=doctor_id,
-            pr_timestamp=ts,
-            pr_conditions=conditions,
-            pr_medications=meds,
-            pr_billings=0.0,
-            pr_prediction_result=pr_prediction_result,
-            pr_confidence_score=pr_confidence_score,
-            pr_remark=remark,
-        )
-        manager.records.append(rec)
-        _persist()
-        return True, "Prescription recorded", pr_id
-
-
-    latest = _latest_record(patient_id)
-    if latest is None:
-        if doctor_username:
-            return add_record_doctor(patient_id, meds, doctor_username, instructions, new_record=True)
-        return False, "No existing record; provide doctor_username or set new_record=True", None
-
-    current = _to_list(getattr(latest, "pr_medications", None))
-    for m in meds:
-        if m not in current:
-            current.append(m)
-    latest.pr_medications = current
-    _persist()
-    return True, "Medications updated", latest.pr_record_id
-
-# Updates a patient record for a doctor with specified fields
-def update_patient_record_doctor(manager, record_id, conditions=None, medications=None, billings=None, 
-prediction_result=None, confidence_score=None):
-    record = next((r for r in manager.records if r.pr_record_id == record_id), None)
-    if not record:
-        return False, "Record not found"
-
-    if conditions is not None:
-        record.pr_conditions = conditions
-    if medications is not None:
-        record.pr_medications = medications
-    if billings is not None:
-        try:
-            record.pr_billings = float(billings)
-        except (TypeError, ValueError):
-            return False, "Invalid billings value; must be a number"
-    if prediction_result is not None:
-        record.pr_prediction_result = prediction_result
-    if confidence_score is not None:
-        try:
-            record.pr_confidence_score = float(confidence_score)
-        except (TypeError, ValueError):
-            return False, "Invalid confidence score; must be a number"
-
-    try:
-        manager.save()
-    except Exception:
-        _persist()
-    return True, "Record updated successfully"
-
-
-#retrieves all records for a patient, formatted for doctor viewing
-def view_patient_records_doctor(patient_id):
-    "View all records for a patient"
-
-    from app.schedule import ScheduleManager
-    manager = ScheduleManager()
-
-    patient=manager.find_patient_by_id(patient_id)
-    if not patient:
-        return False,"Patient Not Found", None
-    records = [r for r in manager.records if str(r.p_id) == str(patient_id)]
-
-    if not records :
-        return False, f"No records found for patient {patient_id}", None 
-    
-    results = [
-        {
-            "record_id": r.pr_record_id,
-            "timestamp": r.pr_timestamp,
-            "conditions": r.pr_conditions,
-            "medications": r.pr_medications,
-            "remark": r.pr_remark
-        } for r in records
-    ]
-        
-    return True, f"Found {len(results)} record(s)", results
-
 #searches for a patient record by patient ID and record ID, returning a formatted dictionary
 def search_record(p_id, record_id):
     """
@@ -200,7 +42,6 @@ def search_record(p_id, record_id):
                 "Remark": getattr(record, "pr_remark", ""),
             }
     return {}
-
 #creates a new patient record for a nurse with the provided details
 def create_patient_record_nurse(record_id, patient_id, timestamp, conditions, medications, remark):
     from app.patient import PatientRecord
@@ -217,7 +58,32 @@ def create_patient_record_nurse(record_id, patient_id, timestamp, conditions, me
         pr_remark=remark
     )
     return new_record
+#retrieves all records for a patient, formatted for doctor viewing
+def view_patient_records_doctor(patient_id):
+    "View all records for a patient"
 
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+
+    patient=manager.find_patient_by_id(patient_id)
+    if not patient:
+        return False,"Patient Not Found", None
+    records=[r for r in manager.records if r.p_id == patient_id]
+
+    if not records :
+        return False, f"No records found for patient {patient_id}", None 
+    
+    results = [
+        {
+            "record_id": r.pr_record_id,
+            "timestamp": r.pr_timestamp,
+            "conditions": r.pr_conditions,
+            "medications": r.pr_medications,
+            "remark": r.pr_remark
+        } for r in records
+    ]
+        
+    return True, f"Found {len(results)} record(s)", results
 #formats a list of patient records for nurse viewing
 def view_patient_records_nurse(records):
     results = [{
@@ -229,7 +95,6 @@ def view_patient_records_nurse(records):
         } for r in records]
     
     return results
-
 # updates a patient record for a doctor with specified fields, including validation
 def update_record_doctor(p_id, record_id, **kwargs):
    
@@ -279,7 +144,6 @@ def update_record_doctor(p_id, record_id, **kwargs):
             _persist()
             return True
     return False
-
 #updates a patient record for a nurse with specified fields
 def update_patient_record_nurse(record_id, conditions=None, medications=None, remark=None):
     from app.schedule import ScheduleManager
@@ -291,7 +155,6 @@ def update_patient_record_nurse(record_id, conditions=None, medications=None, re
     if remark is not None:
         manager.record.pr_remark = remark
     return True
-
 #deletes a patient record by ID, logging the action
 def delete_patient_record_doctor(record_id):
     """Delete patient record"""
@@ -308,6 +171,36 @@ def delete_patient_record_doctor(record_id):
     
     utils.log_event(f"Nurse deleted record {record_id}", "INFO")
     return True, "Record deleted successfully", record_id
+#Updates a patient record for a doctor with specified fields
+def update_patient_record_doctor(record_id, conditions=None, medications=None, billings=None, prediction_result=None, confidence_score=None):
+    from app.schedule import ScheduleManager
+    manager = ScheduleManager()
+    record = next((r for r in manager.records if r.pr_record_id == record_id), None)
+    if not record:
+        return False, "Record not found"
+
+    if conditions is not None:
+        record.pr_conditions = conditions
+    if medications is not None:
+        record.pr_medications = medications
+    if billings is not None:
+        try:
+            record.pr_billings = float(billings)
+        except (TypeError, ValueError):
+            return False, "Invalid billings value; must be a number"
+    if prediction_result is not None:
+        record.pr_prediction_result = prediction_result
+    if confidence_score is not None:
+        try:
+            record.pr_confidence_score = float(confidence_score)
+        except (TypeError, ValueError):
+            return False, "Invalid confidence score; must be a number"
+
+    try:
+        manager.save()
+    except Exception:
+        _persist()
+    return True, "Record updated successfully"
 
 def update_record_receptionist(manager, pr_id, amount):
     current_record = next((r for r in manager.records if r.pr_record_id == pr_id), None)
@@ -317,9 +210,8 @@ def update_record_receptionist(manager, pr_id, amount):
         current_record.pr_billings = amount
         manager.save()
         return f"Appointment {pr_id} successfully updated with billings RM{amount}"
-
-# exports a patient record to a formatted text file
-def print_record(manager, current_doctor, record):
+#wxports a patient record to a formatted text file
+def print_record(manager, user, record):
     from helper_manager.profile_manager import find_age
 
     folder_path = "record_report"
@@ -327,8 +219,7 @@ def print_record(manager, current_doctor, record):
     file_dir = os.path.join(folder_path, f"{record.pr_record_id}.txt")
 
     patient = next((p for p in manager.patients if p.p_id == record.p_id), None)
-    # doctor = next((d for d in manager.doctors if d.d_id == record.d_id), None)
-    doctor = current_doctor
+    doctor = next((d for d in manager.doctors if d.d_id == record.d_id), None)
 
     with open(file_dir, 'w', encoding="utf-8") as f:
         f.write("+" + "=" * 70 + "+\n")
@@ -352,8 +243,8 @@ def print_record(manager, current_doctor, record):
         f.write("| {:25} {:<43}|\n".format("Prediction Result", record.pr_prediction_result))
         f.write("| {:25} {:<43}|\n".format("Confidence Score", f"{record.pr_confidence_score:.2%}"))
         f.write("+" + "=" * 70 + "+\n")
-        f.write("| {:25} {:<43}|\n".format("Remark", record.pr_remark))
+        f.write("| {:25} {:<43}|\n".format("Remark", record.remark))
         f.write("+" + "=" * 70 + "+\n")
 
-    utils.log_event(f"[{current_doctor.role}] {current_doctor.username} exported record {record.pr_record_id}", "INFO")
+    utils.log_event(f"[{actor_role}] {actor_username} exported record {record.pr_record_id}", "INFO")
     return True, "Record exported successfully.", file_dir

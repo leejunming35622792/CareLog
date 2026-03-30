@@ -31,7 +31,6 @@ class User:
             return f"A{manager.next_admin_id:04d}"
         else:
             raise ValueError(f"Invalid role: {role}")
-        
     # Register new user
     @staticmethod
     def create_user(manager, role, user_id, username, password, name, bday, gender, address, email, contact_num, date_joined, speciality, department, with_doctor):
@@ -56,7 +55,6 @@ class User:
             if not value.strip():
                 errors.append(f"{field} cannot be empty")
         
-        # Check error
         if errors:
             return False, errors, None
             
@@ -137,24 +135,17 @@ class User:
             if user is None:
                 return None, f"No {role} found with ID {user_id}"
 
-            updated_field = []
-
             # Update fields
             if password: 
                 user.password = password
-                updated_field.append("Password")
             if name: 
                 user.name = name
-                updated_field.append("Name")
             if bday: 
                 user.bday = bday
-                updated_field.append("Birthday")
             if gender: 
                 user.gender = gender
-                updated_field.append("Gender")
             if address: 
                 user.address = address
-                updated_field.append("Address")
 
             if email:
                 from helper_manager.auth_manager import AuthManager
@@ -162,25 +153,20 @@ class User:
                 success, message, _ = auth.check_email_validation(email)
                 if success:
                     user.email = email
-                    updated_field.append("Email")
 
             if contact_num: 
                 user.contact_num = contact_num
-                updated_field.append("Contact number")
             if remark: 
-                user.p_remark = remark
-                updated_field.append("Remark")
+                user.remark = remark
 
             # Extra fields for doctors
             if role == "doctor":
                 if speciality: 
                     user.speciality = speciality
-                    updated_field.append("Speciality")
                 if department: 
                     user.department = department
-                    updated_field.append("Department")
 
             manager.save()
             utils.log_event(f"{role.capitalize()} '{user.username}' (ID: {user_id}) profile updated", "INFO")
 
-            return user, f"{role.capitalize()}'s profile updated successfully", updated_field
+            return user, f"{role.capitalize()}'s profile updated successfully"

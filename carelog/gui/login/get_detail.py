@@ -16,19 +16,17 @@ def get_detail(role, username, password, user_id):
         st.subheader("Account Information")
         st.info("You are almost there! 😉")
 
-        # account credentials
         col1, col2 = st.columns(2)
         with col1:
             input_username = st.text_input("Username: ", placeholder=f"@{username}", value=username)
         with col2:
-            input_password = st.text_input("Password:", value=password, type="password")
-
+            input_password = st.text_input("Password", value=password, type="password")
         # personal information section
         st.divider()
         st.subheader("Personal Information")
         col3, col4 = st.columns(2)
         with col3:
-            name = st.text_input("Enter Name: ").title()
+            name = st.text_input("Enter Name: ")
         with col4:
             gender = st.selectbox("Select Gender: ", ["Male", "Female", "Other"])
 
@@ -36,7 +34,7 @@ def get_detail(role, username, password, user_id):
         with col5:
             address = st.text_area("Enter Home Address: ")
         with col6:
-            email = st.text_input("Enter Email Address:", placeholder="abc@email.com")
+            email = st.text_input("Enter Email Address:")
             contact_num = st.text_input("Enter Contact Number: ", placeholder="+6012-3456789")
 
         col7, col8 = st.columns(2)
@@ -47,16 +45,15 @@ def get_detail(role, username, password, user_id):
             date_joined = st.text_input("Date Joined:", value=current_datetime, disabled=True)
 
         if role in ["Doctor", "Nurse"]:
-            speciality = st.text_input("Enter Speciality: ").title()
-            department = st.text_input("Enter Department: ").title()
+            speciality = st.text_input("Enter Speciality: ")
+            department = st.text_input("Enter Department: ")
             if role == "Nurse":
                 doctor_disp = {f"{d.d_id} - {d.name}": d.d_id for d in manager.doctors}
                 with_doctor_input = st.selectbox("With Doctor: ", doctor_disp.keys())
                 with_doctor = doctor_disp[with_doctor_input]
 
         continue_button = st.form_submit_button("Continue")
-
-        # Process the form submission
+        # process the form submission
         if continue_button:
             with st.spinner("Processing..."):
                 time.sleep(1.5)

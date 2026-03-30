@@ -2,22 +2,26 @@ import datetime
 import streamlit as st
 from helper_manager.profile_manager import (view_doctor_details)
 from helper_manager.profile_manager import (view_patient_details_by_nurse, search_patient_by_name)
+
+# Appointment manager
 from helper_manager.appointment_manager import AppointmentManager
 
 # DASHBOARD
 def dashboard(manager, username):
-    # main variables
+    """Main dashboard showing overview and quick stats"""
+    #main variables
     manager = st.session_state.manager
     username = st.session_state.username
     current_doctor = next((d for d in manager.doctors if d.username == st.session_state.username))
 
     # page design 
     st.markdown("<h1 style='text-align: center;'>Welcome to CareLog!</h1>", unsafe_allow_html=True)
+    st.balloons()
     st.image("img/dashboard.png")
     st.divider()
     st.header("Dashboard Overview 🎗️")
 
-    # details of the doctor profile 
+    #details of the doctor profile 
     success, message, profile = view_doctor_details(username)
 
     if profile:
@@ -62,9 +66,9 @@ def dashboard(manager, username):
                     if isinstance(info, list):
                         for patient in info:
                             with st.container():
-                                st.markdown(f"<h1 style='font-size:150%'>🧍{patient['name']} (ID: {patient['patient_id']})</h1>", unsafe_allow_html=True)
-                                st.markdown(f"<span style='font-size:150%'>💌 </span><span style='font-size:100%'>{patient['email']}</span>", unsafe_allow_html=True)
-                                st.markdown(f"<span style='font-size:150%'>📞 </span><span style='font-size:100%'>{patient['contact']}</span>", unsafe_allow_html=True)
+                                st.markdown(f"<h1 style='font-size:200%'>🧍{patient['name']} (ID: {patient['patient_id']})</h1>", unsafe_allow_html=True)
+                                st.markdown(f"<span style='font-size:200%'>💌 </span><span style='font-size:150%'>{patient['email']}</span>", unsafe_allow_html=True)
+                                st.markdown(f"<span style='font-size:200%'>📞 </span><span style='font-size:150%'>{patient['contact']}</span>", unsafe_allow_html=True)
                                 st.markdown("_____")
                     else:
                         st.json(info)
@@ -73,7 +77,7 @@ def dashboard(manager, username):
     
     st.divider()
 
-    #view today's upcoming appointments
+   #view today's upcoming appointments
     today = datetime.datetime.now().strftime("%Y-%m-%d")
     st.header(f"Today's Appointments ({today}) 📄")
     st.write("")

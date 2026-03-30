@@ -31,7 +31,7 @@ def appointment(manager):
             if not doctor_id:
                 st.warning("No doctors found!")
             else:
-                with st.form("appt_form", clear_on_submit=True):
+                with st.form("appt_form"):
                     # Page Design
                     st.markdown(f"<h1 style='text-align: center; font-size: 200%'>Book a New Appointment 🗓️</h1>", unsafe_allow_html=True)
                     st.markdown(f"<h1 style='text-align: center; font-size: 100%; text-decoration: None'>Please provide the details below to schedule your hospital visit.</h1>", unsafe_allow_html=True)
@@ -82,12 +82,11 @@ def appointment(manager):
                             appt_time = appt_time.isoformat()
                             success, msg, appt = appt_manager.create("patient", username, p_id, d_id, appt_date, appt_time, appt_remark)
                             with st.spinner("Submitting request..."):
-                                st.success(msg)
-                                time.sleep(4)
+                                time.sleep(1)
                             st.session_state.success_msg = msg
                             manager.save()
                             st.rerun()
-
+         
     with tab2:
         #display appointment details
         appt_id = {f"Appointment {appt.appt_id} - {doctor_list[appt.doctor]}":appt.appt_id for appt in manager.appointments if str(appt.patient) == str(patient.p_id)}
@@ -170,7 +169,6 @@ def appointment(manager):
                         st.rerun()
                     else:
                         st.warning(result)
-    
     # the tab that edits the appointment of the self user patient 
     with tab3:
         # page Design

@@ -3,7 +3,6 @@ from app.schedule import ScheduleManager
 import app.utils as utils
 
 manager = ScheduleManager()
-
 # finds age given birthdate in the given ISO format 
 def find_age(bday):
     # Get current year
@@ -14,7 +13,6 @@ def find_age(bday):
     age = today - birth_year.year
     # Return age
     return age
-
 # views doctor details by username
 def view_doctor_details(username):
         doctor = next((d for d in manager.doctors if d.username == username), None)
@@ -39,7 +37,6 @@ def view_doctor_details(username):
         }
         utils.log_event(f"Successfully retrieved profile", "INFO")
         return True, "Profile Successfully Retrieved", profile
-
 # views patient details by doctor
 def view_patient_details_by_doctor(patient_id: int):
     # be tolerant of caller passing int or string IDs (compare as strings)
@@ -100,7 +97,6 @@ def view_patient_details_by_doctor(patient_id: int):
     }
     utils.log_event(f"Successfuly retrieved details", "INFO")
     return True, "Patient details retrieved successfully", info
-
 # views nurse details by username and password
 def view_nurse_details(username, password):
         nurse = next((n for n in manager.nurses if n.username == username), None)
@@ -126,7 +122,6 @@ def view_nurse_details(username, password):
         }
         utils.log_event(f"Successfully retrieved profile", "INFO")
         return True, "Profile successfully retrieved", profile
-
 # views patient details by nurse
 def view_patient_details_by_nurse(patient_id):
     """View patient details including records and remarks"""
@@ -214,9 +209,7 @@ def view_patient_details_by_nurse(patient_id):
 #             print(f"{k}: {v}")
 
 #         return True, selected
-
 # searches patients by (partial) name and include their records & remarks
-
 def search_patient_by_name(role, username, name):
     """Search patients by (partial) name and include their records & remarks."""
     if not name or not name.strip():

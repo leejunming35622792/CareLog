@@ -2,29 +2,93 @@
     "patients": [
         {
             "p_id": "P0001",
-            "username": "jm",
-            "password": "$2b$12$7aDQ6C69HTEJzEmaWshA1.Kx4mBz95vArxmGtO56CPdAkVN/PJoja",
-            "name": "Jun Mingg",
-            "bday": "2000-02-16",
+            "username": "pass",
+            "password": "$2b$12$MOiPURSkaDLA7efTbojJluIKgelrtpdYNWHdgEw/6Ur.DGImRJdK2",
+            "name": "John Doe",
+            "bday": "2016-10-21",
             "gender": "Male",
-            "address": "123, Road 123, Street 123, 12345, Us",
-            "email": "myleejm23@gmail.com",
+            "address": "123 Street Ab",
+            "email": "john@example.com",
             "contact_num": "+6012-3456789",
-            "date_joined": "2026-02-18 21:39:52",
-            "p_record": [],
-            "p_remark": "hi"
+            "date_joined": "2025-01-01T09:00:00",
+            "p_record": [
+                "PR0001",
+                "PR0002",
+                "PR0003"
+            ],
+            "p_remark": "female doctors"
         },
         {
             "p_id": "P0002",
-            "username": "kx",
-            "password": "$2b$12$mc1u.n373W9c7k2Tr9rnT.GkU3MgWj1NfyJiz/eeTFfITwj8xsIXu",
-            "name": "Kx",
-            "bday": "2006-12-12",
+            "username": "alice123",
+            "password": "$2b$12$99N.05qGRtLrxoAVNEguJu5hCnLqGC8K6IrH/jBMKmkRk1b99c3aW",
+            "name": "Alice Tan",
+            "bday": "2016-10-21",
             "gender": "Female",
-            "address": "usj 21",
-            "email": "kx@gmail.com",
+            "address": "456 Road B",
+            "email": "alice@example.com",
+            "contact_num": "0198765432",
+            "date_joined": "2025-02-01T11:00:00",
+            "p_record": [
+                "PR0004"
+            ],
+            "p_remark": ""
+        },
+        {
+            "p_id": "P0003",
+            "username": "mikelee",
+            "password": "$2b$12$Zh16vwfVnCJKdBWbB/uyreEMStoO7pDfYJpevLrDObSJnUz1NMyu.",
+            "name": "Mike Lee",
+            "bday": "2016-10-21",
+            "gender": "Male",
+            "address": "789 Road C",
+            "email": "mike@example.com",
+            "contact_num": "0165558888",
+            "date_joined": "2025-03-01T10:30:00",
+            "p_record": [
+                "PR0005"
+            ],
+            "p_remark": ""
+        },
+        {
+            "p_id": "P0004",
+            "username": "sarasiva",
+            "password": "$2b$12$yIBor2/91qRKPsxs..5znOe/kPRi6S7GKnv95txHJlWAQ59aD21iq",
+            "name": "Sara Siva",
+            "bday": "2016-10-21",
+            "gender": "Female",
+            "address": "321 Road D",
+            "email": "sara@example.com",
+            "contact_num": "0184449999",
+            "date_joined": "2025-04-01T12:15:00",
+            "p_record": [],
+            "p_remark": ""
+        },
+        {
+            "p_id": "P0005",
+            "username": "Patient101",
+            "password": "$2b$12$sDZQYbsCShNES3xWmdUx7.kMHdh9SilgMQydKVmd.tF6WPB9GM8mS",
+            "name": "",
+            "bday": "2006-10-21",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-05 21:13:08",
+            "p_record": [],
+            "p_remark": ""
+        },
+        {
+            "p_id": "P0007",
+            "username": "alex",
+            "password": "$2b$12$zqbQen1rNRxYS5Km1XiQ0uwGC8jCEabAVN/Hm9aY97DGEzFm7D/bi",
+            "name": "alex",
+            "bday": "2016-10-21",
+            "gender": "Male",
+            "address": "the grand ss13",
+            "email": "asdasdasd@gmail.com",
             "contact_num": "+6012-3456789",
-            "date_joined": "2026-02-22 21:48:33",
+            "date_joined": "2025-10-20 09:58:04",
             "p_record": [],
             "p_remark": ""
         }
@@ -32,117 +96,455 @@
     "doctors": [
         {
             "d_id": "D0001",
-            "username": "doc1",
-            "password": "$2b$12$MUdsnm8.BT.Gvf7Dlfp8Yuy3RV7SM7Kb7yhr6h8.UdftbwRVu1dea",
-            "name": "Doctor 1",
-            "bday": "1988-04-14",
+            "username": "doc",
+            "password": "$2b$12$Ry5iR6Cxf3D73o.OfaajHetcqpJ/VRCWlL8353kKHqMjOsBy.Hj1a",
+            "name": "Dr.Smith",
+            "bday": "1980-01-01",
             "gender": "Male",
-            "address": "Address",
-            "email": "doc1@email.com",
-            "contact_num": "+6012-3456789",
-            "date_joined": "2026-02-22 18:34:46",
-            "speciality": "heart",
-            "department": "heart"
+            "address": "789 Avenue C",
+            "email": "smith@example.com",
+            "contact_num": "0112233445",
+            "date_joined": "2025-01-05T09:30:00",
+            "speciality": "Cardiology",
+            "department": "Heart"
+        },
+        {
+            "d_id": "D0002",
+            "username": "drjane",
+            "password": "$2b$12$5bIiW278FDlnihnnknql0OnkmQ2szqPyyAgNExdkyaISqPUd/1Wu6",
+            "name": "Dr. Jane Lim",
+            "bday": "1987-01-01",
+            "gender": "Female",
+            "address": "11 Medical Lane",
+            "email": "jane@example.com",
+            "contact_num": "0145566778",
+            "date_joined": "2025-02-15T10:00:00",
+            "speciality": "Neurology",
+            "department": "Brain"
+        },
+        {
+            "d_id": "D0003",
+            "username": "drkumar",
+            "password": "$2b$12$RmBvDZh9JthiSBgcMRbYQejN2T8QQAJX5zvKs5XQIDaZ2k1Mn8NKW",
+            "name": "Dr. Kumar",
+            "bday": "1983-01-01",
+            "gender": "Male",
+            "address": "55 Hospital Ave",
+            "email": "kumar@example.com",
+            "contact_num": "0176677888",
+            "date_joined": "2025-03-01T11:30:00",
+            "speciality": "Orthopedics",
+            "department": "Bones"
+        },
+        {
+            "d_id": "D0004",
+            "username": "drchoi",
+            "password": "$2b$12$sJ8zyIVwYU6bFuEfG2p9tu94otnatjeLWz/6WbtVvQZW5whYc26Xm",
+            "name": "Dr. Choi",
+            "bday": "1989-01-01",
+            "gender": "Male",
+            "address": "77 Clinic Rd",
+            "email": "choi@example.com",
+            "contact_num": "0152233445",
+            "date_joined": "2025-03-20T09:00:00",
+            "speciality": "Dermatology",
+            "department": "Skin"
+        },
+        {
+            "d_id": "D0005",
+            "username": "@Rryanhew",
+            "password": "$2b$12$ho.6qDP5/bDIsGzPDfklmOz9ZWLxgfsXnvN6bI0CcEEw0fQeYyXoC",
+            "name": "Ryan Hew Ka Shing ",
+            "bday": "1998-01-01",
+            "gender": "Male",
+            "address": "52, Jalan USJ 3a/7",
+            "email": "hewryan75@gmail.com",
+            "contact_num": "60102220368",
+            "date_joined": "2025-10-19 23:00:44",
+            "speciality": "Heart",
+            "department": "Cardiology"
         }
     ],
-    "nurses": [],
-    "receptionists": [],
-    "admins": [],
-    "records": [
+    "nurses": [
         {
-            "pr_record_id": "PR0001",
-            "p_id": "P0001",
-            "d_id": "D0001",
-            "pr_timestamp": "2026-02-22T11:48:19",
-            "pr_conditions": {
-                "fever": ""
-            },
-            "pr_medications": [
-                "paracetamol",
-                "peniclin"
-            ],
-            "pr_billings": 50.0,
-            "pr_prediction_result": "Moderate risk",
-            "pr_confidence_score": 0.65,
-            "pr_remark": "Prescribed by Doctor 1 (doc1)\n\nNote: \nBefore/ After Meal: After\nDaily Dose: 3 times per day"
+            "n_id": "N0001",
+            "username": "nurse",
+            "password": "$2b$12$YZ.NzqIHXwJUT1mG4hNvlOumM7SOJa1r6KwSCpfnG0sir8XUELpwu",
+            "name": "Nurse Kelly",
+            "bday": "1995-01-01",
+            "gender": "Female",
+            "address": "22 Nursing Street",
+            "email": "kelly@example.com",
+            "contact_num": "0161122334",
+            "date_joined": "2025-01-10T08:00:00",
+            "speciality": "General",
+            "department": "Ward 1",
+            "with_doctor": "D0001"
         },
+        {
+            "n_id": "N0002",
+            "username": "nursetom",
+            "password": "$2b$12$0XOGIBNtXSbE7NRjzgKOKupWLk33H..yvB5jmXwQLUtgbRa4xyuMm",
+            "name": "Nurse Tom",
+            "bday": "1992-01-01",
+            "gender": "Male",
+            "address": "33 Care Lane",
+            "email": "tom@example.com",
+            "contact_num": "0189988776",
+            "date_joined": "2025-03-01T07:45:00",
+            "speciality": "Pediatrics",
+            "department": "Children",
+            "with_doctor": "D0002"
+        },
+        {
+            "n_id": "N0003",
+            "username": "nurseaisha",
+            "password": "$2b$12$zw/roRjsPQq/Z7U8oCke/ukTDu0giF7R6osb4UN3/9PExaxHTBBYy",
+            "name": "Nurse Aisha",
+            "bday": "1996-01-01",
+            "gender": "Female",
+            "address": "88 Healing St",
+            "email": "aisha@example.com",
+            "contact_num": "0132223344",
+            "date_joined": "2025-03-15T08:30:00",
+            "speciality": "Surgical",
+            "department": "Surgery",
+            "with_doctor": "D0003"
+        },
+        {
+            "n_id": "N0004",
+            "username": "nurselee",
+            "password": "$2b$12$uMpTMMEH.cbHgWwRYIAAnedPc6bCwjdNQXmjRtk4S/im35maiygRy",
+            "name": "Nurse Lee",
+            "bday": "1990-01-01",
+            "gender": "Male",
+            "address": "99 Recovery Rd",
+            "email": "lee@example.com",
+            "contact_num": "0178899223",
+            "date_joined": "2025-04-01T09:15:00",
+            "speciality": "Dermatology",
+            "department": "Skin",
+            "with_doctor": "D0004"
+        },
+        {
+            "n_id": "N0005",
+            "username": "Nurse101",
+            "password": "$2b$12$rkDCWTWsI2VeG9dn/XGG.eDoqdAdDYYhdAvI093ji0XDSEgbwKV7K",
+            "name": "",
+            "bday": "",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-05 21:03:46",
+            "speciality": "",
+            "department": "",
+            "with_doctor": ""
+        },
+        {
+            "n_id": "N0006",
+            "username": "Nurse102",
+            "password": "$2b$12$zY8t/X.wmiASz1G1jCLaq.lvOWF3tfHCKD8UvsS8h.olYQk/mXAXy",
+            "name": "",
+            "bday": "",
+            "gender": "",
+            "address": "",
+            "email": "",
+            "contact_num": "",
+            "date_joined": "2025-10-05 21:11:13",
+            "speciality": "",
+            "department": "",
+            "with_doctor": ""
+        }
+    ],
+    "receptionists": [
+        {
+            "r_id": "R0001",
+            "username": "rec",
+            "password": "$2b$12$HKoHg2iZc4oJRpbd/lzL1eRWquxdZFiettGAHkAk4xk5BOcMNd5yy",
+            "name": "Reception Anna",
+            "bday": "1993-01-01",
+            "gender": "Female",
+            "address": "55 Front Desk Road",
+            "email": "anna@example.com",
+            "contact_num": "0176677889",
+            "date_joined": "2025-01-02T09:15:00"
+        },
+        {
+            "r_id": "R0002",
+            "username": "recjohn",
+            "password": "$2b$12$ky8dJre.zDG7/qLCBr1hQu9W7V15ogc0ngExrEctDM7Y82XYAs22S",
+            "name": "Reception John",
+            "bday": "1996-01-01",
+            "gender": "Male",
+            "address": "66 Lobby Street",
+            "email": "recjohn@example.com",
+            "contact_num": "0132233445",
+            "date_joined": "2025-02-20T09:45:00"
+        },
+        {
+            "r_id": "R0003",
+            "username": "recmei",
+            "password": "$2b$12$gVomeMyZ8oJvyCGvp/pVQuf/P6XfOgc.qcHV4h9c9cCQU4lJ8RntC",
+            "name": "Reception Mei",
+            "bday": "1998-01-01",
+            "gender": "Female",
+            "address": "77 Welcome Rd",
+            "email": "recmei@example.com",
+            "contact_num": "0199991234",
+            "date_joined": "2025-03-10T10:15:00"
+        },
+        {
+            "r_id": "R0004",
+            "username": "recdavid",
+            "password": "$2b$12$pHki9uA1sBTwdtqsqBDDBOaAYDE0Jdle6SOc9kxKLPDuBbAhXbObm",
+            "name": "Reception David",
+            "bday": "1991-01-01",
+            "gender": "Male",
+            "address": "44 Desk Lane",
+            "email": "recdavid@example.com",
+            "contact_num": "0123456781",
+            "date_joined": "2025-03-25T09:30:00"
+        }
+    ],
+    "admins": [
+        {
+            "a_id": "A0001",
+            "username": "admin",
+            "password": "$2b$12$Z4UxTNHOsVdQc0EiSxLM4uo03YznvWxISCKCSI634DCo5KSESQCaC",
+            "name": "Super Admin",
+            "bday": "1984-01-01",
+            "gender": "Male",
+            "address": "HQ Building",
+            "email": "admin@example.com",
+            "contact_num": "0101111111",
+            "date_joined": "2025-01-01T08:00:00"
+        },
+        {
+            "a_id": "A0002",
+            "username": "admin2",
+            "password": "$2b$12$5PM3dpqp9iVJhiuK1JH9GeXZrtFJQzCxSx3gxT089o4CrvjuBd7YK",
+            "name": "Backup Admin",
+            "bday": "1988-01-01",
+            "gender": "Female",
+            "address": "HQ2 Building",
+            "email": "admin2@example.com",
+            "contact_num": "0102222222",
+            "date_joined": "2025-02-10T09:00:00"
+        }
+    ],
+    "records": [
         {
             "pr_record_id": "PR0002",
             "p_id": "P0001",
             "d_id": "D0001",
-            "pr_timestamp": "2026-02-22T12:41:51",
-            "pr_conditions": {
-                "headache": ""
-            },
-            "pr_medications": [
-                "ibuprofen"
-            ],
-            "pr_billings": 75.0,
+            "pr_timestamp": "2025-04-12T10:00:00",
+            "pr_conditions": "Fractured arm",
+            "pr_medications": "Painkillers",
+            "pr_billings": 250.0,
             "pr_prediction_result": "Moderate risk",
             "pr_confidence_score": 0.85,
-            "pr_remark": "Prescribed by Doctor 1 (doc1)\n\nNote: \nBefore/ After Meal: \nDaily Dose: "
+            "pr_remark": "Bone checkup"
         },
         {
             "pr_record_id": "PR0003",
             "p_id": "P0001",
-            "d_id": "D0001",
-            "pr_timestamp": "2026-02-22T12:42:35",
-            "pr_conditions": "headache",
-            "pr_medications": [
-                "ibuprofen"
-            ],
-            "pr_billings": 0.0,
-            "pr_prediction_result": "Moderate risk",
-            "pr_confidence_score": 0.85,
-            "pr_remark": "Prescribed by Doctor 1 (doc1)\n\nNote: \nBefore/ After Meal: \nDaily Dose: "
+            "d_id": "D0002",
+            "pr_timestamp": "2025-04-15T09:30:00",
+            "pr_conditions": "Allergic reaction",
+            "pr_medications": "Antihistamines",
+            "pr_billings": 120.0,
+            "pr_prediction_result": "High risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Seasonal allergy"
         },
         {
             "pr_record_id": "PR0004",
             "p_id": "P0002",
             "d_id": "D0001",
-            "pr_timestamp": "2026-02-22T15:05:16",
-            "pr_conditions": "flu",
-            "pr_medications": [
-                "Antiflu"
-            ],
-            "pr_billings": 0.0,
-            "pr_prediction_result": "High risk",
-            "pr_confidence_score": 0.5,
-            "pr_remark": "Prescribed by Doctor 1 (doc1)\n\nNote: \nBefore/ After Meal: after\nDaily Dose: 3 per day"
+            "pr_timestamp": "2025-04-10T11:30:00",
+            "pr_conditions": "Migraine",
+            "pr_medications": "Painkillers",
+            "pr_billings": 150.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.88,
+            "pr_remark": "Follow-up visit"
         },
         {
             "pr_record_id": "PR0005",
             "p_id": "P0002",
             "d_id": "D0001",
-            "pr_timestamp": "2026-02-22T15:05:47",
-            "pr_conditions": "cough",
+            "pr_timestamp": "2025-05-05T10:00:00",
+            "pr_conditions": "Cold",
             "pr_medications": [
-                "Anticough"
+                "Cough syrup",
+                "Molly"
             ],
-            "pr_billings": 0.0,
+            "pr_billings": 80.0,
             "pr_prediction_result": "Low risk",
-            "pr_confidence_score": 0.25,
-            "pr_remark": "Prescribed by Doctor 1 (doc1)\n\nNote: \nBefore/ After Meal: after\nDaily Dose: 3 per day"
+            "pr_confidence_score": 0.92,
+            "pr_remark": "Seasonal cold"
+        },
+        {
+            "pr_record_id": "PR0006",
+            "p_id": "P0003",
+            "d_id": "D0003",
+            "pr_timestamp": "2025-05-01T14:00:00",
+            "pr_conditions": "Skin rash",
+            "pr_medications": "Topical cream",
+            "pr_billings": 130.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.92,
+            "pr_remark": "Dermatology consult"
+        },
+        {
+            "pr_record_id": "PR0007",
+            "p_id": "P0003",
+            "d_id": "D0001",
+            "pr_timestamp": "2025-06-10T09:30:00",
+            "pr_conditions": "Sprained ankle",
+            "pr_medications": "Painkillers",
+            "pr_billings": 200.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.87,
+            "pr_remark": "Orthopedic consult"
+        },
+        {
+            "pr_record_id": "PR0008",
+            "p_id": "P0004",
+            "d_id": "D0001",
+            "pr_timestamp": "2025-07-01T10:15:00",
+            "pr_conditions": "Flu",
+            "pr_medications": "Antivirals",
+            "pr_billings": 100.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Seasonal flu"
+        },
+        {
+            "pr_record_id": "PR0009",
+            "p_id": "P0004",
+            "d_id": "D0001",
+            "pr_timestamp": "2025-08-05T09:00:00",
+            "pr_conditions": "Allergy",
+            "pr_medications": "Antihistamines",
+            "pr_billings": 110.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.88,
+            "pr_remark": "Pollen allergy"
+        },
+        {
+            "pr_record_id": "PR0010",
+            "p_id": "P0005",
+            "d_id": "D0002",
+            "pr_timestamp": "2025-09-01T11:00:00",
+            "pr_conditions": "Cough",
+            "pr_medications": "Cough syrup",
+            "pr_billings": 70.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Mild cough"
+        },
+        {
+            "pr_record_id": "PR0011",
+            "p_id": "P0005",
+            "d_id": "D0003",
+            "pr_timestamp": "2025-09-15T10:30:00",
+            "pr_conditions": "Fever",
+            "pr_medications": "Paracetamol",
+            "pr_billings": 80.0,
+            "pr_prediction_result": "Moderate risk",
+            "pr_confidence_score": 0.87,
+            "pr_remark": "Checkup for fever"
+        },
+        {
+            "pr_record_id": "PR0012",
+            "p_id": "P0007",
+            "d_id": "D0003",
+            "pr_timestamp": "2025-10-10T09:30:00",
+            "pr_conditions": "Headache",
+            "pr_medications": "Painkillers",
+            "pr_billings": 90.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.91,
+            "pr_remark": "Routine headache"
+        },
+        {
+            "pr_record_id": "PR0013",
+            "p_id": "P0007",
+            "d_id": "D0002",
+            "pr_timestamp": "2025-10-15T14:00:00",
+            "pr_conditions": "Stomachache",
+            "pr_medications": "Antacids",
+            "pr_billings": 100.0,
+            "pr_prediction_result": "Low risk",
+            "pr_confidence_score": 0.9,
+            "pr_remark": "Mild discomfort"
         }
     ],
     "appointments": [
         {
-            "appt_id": "APPT0001",
-            "p_id": "P0002",
-            "d_id": "D0001",
-            "date": "2026-02-27",
-            "time": "11:00:00",
-            "status": "confirmed",
-            "remark": "body check up"
-        },
-        {
             "appt_id": "APPT0002",
             "p_id": "P0002",
+            "d_id": "D0002",
+            "date": "2025-10-21",
+            "time": "11:30:00",
+            "status": "Booked",
+            "remark": "Follow-up"
+        },
+        {
+            "appt_id": "APPT0004",
+            "p_id": "P0003",
+            "d_id": "D0004",
+            "date": "2026-05-01",
+            "time": "14:00:00",
+            "status": "Pending",
+            "remark": "Skin consultation"
+        },
+        {
+            "appt_id": "AAPT0009",
+            "p_id": "P0001",
             "d_id": "D0001",
-            "date": "2026-03-26",
-            "time": "13:00:00",
-            "status": "rescheduled",
-            "remark": "monthly body checkup"
+            "date": "2025-10-25",
+            "time": "00:42:00",
+            "status": "Pending",
+            "remark": ""
+        },
+        {
+            "appt_id": "AAPT0010",
+            "p_id": "P0001",
+            "d_id": "D0003",
+            "date": "2025-10-25",
+            "time": "00:42:00",
+            "status": "cancelled",
+            "remark": ""
+        },
+        {
+            "appt_id": "AAPT0011",
+            "p_id": "P0001",
+            "d_id": "D0005",
+            "date": "2025-10-25",
+            "time": "00:42:00",
+            "status": "Pending",
+            "remark": ""
+        },
+        {
+            "appt_id": "A0012",
+            "p_id": "P0001",
+            "d_id": "D0001",
+            "date": "2025-10-26",
+            "time": "13:17:00",
+            "status": "scheduled",
+            "remark": ""
+        },
+        {
+            "appt_id": "A0013",
+            "p_id": "P0001",
+            "d_id": "D0001",
+            "date": "2025-10-26",
+            "time": "13:59:00",
+            "status": "scheduled",
+            "remark": ""
         }
     ],
     "shifts": [],
@@ -151,40 +553,40 @@
             "remark_id": "RM0001",
             "patient_id": "P0001",
             "doctor_id": "D0001",
-            "timestamp": "2026-03-02 20:48:23",
-            "remark_type": "mood",
-            "content": "patient's mood is unstable",
-            "last_modified": "2026-03-02 20:48:23",
+            "timestamp": "2025-01-12T11:00:00",
+            "remark_type": "Note",
+            "content": "Patient advised to reduce sugar intake",
+            "last_modified": "2025-01-12T11:00:00",
             "is_active": true
         },
         {
             "remark_id": "RM0002",
             "patient_id": "P0001",
-            "doctor_id": "D0001",
-            "timestamp": "2026-03-02 20:52:27",
-            "remark_type": "mood",
-            "content": "patients mood is unstable",
-            "last_modified": "2026-03-02 20:52:27",
+            "doctor_id": "D0003",
+            "timestamp": "2025-04-12T10:30:00",
+            "remark_type": "Diagnosis",
+            "content": "Possible bone weakness",
+            "last_modified": "2025-04-12T10:30:00",
             "is_active": true
         },
         {
             "remark_id": "RM0003",
             "patient_id": "P0001",
             "doctor_id": "D0001",
-            "timestamp": "2026-03-02 20:53:37",
-            "remark_type": "pain_level",
-            "content": "patient feels abdominal pain",
-            "last_modified": "2026-03-02 22:55:29",
-            "is_active": false
+            "timestamp": "2025-10-22 17:26:20",
+            "remark_type": "general",
+            "content": "gotten fatter",
+            "last_modified": "2025-10-22 17:26:20",
+            "is_active": true
         }
     ],
-    "next_patient_id": 3,
-    "next_doctor_id": 2,
-    "next_nurse_id": 1,
-    "next_receptionist_id": 1,
-    "next_admin_id": 1,
-    "next_record_id": 1,
-    "next_appt_id": 3,
-    "next_shift_id": 1,
+    "next_patient_id": 8,
+    "next_doctor_id": 6,
+    "next_nurse_id": 7,
+    "next_receptionist_id": 5,
+    "next_admin_id": 3,
+    "next_record_id": 6,
+    "next_appt_id": 14,
+    "next_shift_id": 5,
     "next_remark_id": 4
 }

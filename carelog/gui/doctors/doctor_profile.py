@@ -1,123 +1,103 @@
 import streamlit as st
-import time
-import datetime
-import re
-import bcrypt
-from helper_manager.password_utils import (is_hashed, check_password)
-from app.user import User
-from helper_manager.profile_manager import find_age
-from helper_manager.unchanged import unchanged_to_none
 
-def doctor_profile(Manager):
+# details manager functions
+from helper_manager.profile_manager import view_doctor_details
+
+def update_doctor_details(manager, *, username,
+                          new_password=None, new_name=None, new_gender=None,
+                          new_address=None, new_email=None, new_contact_num=None,
+                          new_department=None, new_speciality=None):
+    """Update a doctor's fields by username and persist to JSON."""
+    doc = next((d for d in manager.doctors if getattr(d, "username", None) == username), None)
+    if not doc:
+        return False
+    if new_password:    doc.password    = new_password
+    if new_name:        doc.name        = new_name
+    if new_gender:      doc.gender      = new_gender
+    if new_address:     doc.address     = new_address
+    if new_email:       doc.email       = new_email
+    if new_contact_num: doc.contact_num = new_contact_num
+    if new_department:  doc.department  = new_department
+    if new_speciality:  doc.speciality  = new_speciality
+    if hasattr(manager, "save"): manager.save()
+    return True
+# main doctor profile page section
+def profile_page(manager, username):
+    """View and update doctor profile"""
+
     # Variables
-    manager = st.session_state.manager
-    username = st.session_state.username
+    success, message, profile = view_doctor_details(username)
+    current_doctor = next((d for d in manager.doctors if d.username == username), None)
+    
+    if not current_doctor:
+        st.warning("⚠️ Unexpected error - Please try again")
+        st.stop()
 
-    # Page design
-    st.markdown("<h1 style='text-align: center; font-size: 300%'>--- CareLog ---</h1>", unsafe_allow_html=True)
+    if not profile:
+        st.error(message)
+        return
+ 
+    #page design for the doctor's profile
+    if profile.get("gender") == "Male":
+        disp = "Your Profile 👨‍⚕️"
+    elif profile.get("gender") == "Female":
+        disp = "Your Profile 👩‍⚕️"
+    else:
+        disp = "Your Profile"
+    st.markdown(f"<h1 style='text-align: center; font-size: 200%'>{disp}</h1>", unsafe_allow_html=True)
+    st.divider()
 
-    # User profile
-    with st.form("profile-form"):
-        # Find doctor by username
-        doctor = next((d for d in manager.doctors if d.username == username), None)
-        if not doctor:
-            st.error("Unexpected Error!")
-            return
-        
-        # Page design
-        if doctor.gender == "Male":
-            disp = "Your Profile 👨"
-        elif doctor.gender == "Female":
-            disp = "Your Profile 👧"
-        else:
-            disp = "Your Profile 👥"
-        st.markdown(f"<h1 style='text-align: center; font-size: 200%'>{disp}</h1>", unsafe_allow_html=True)
+    st.header("Current Profile Information")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.text_input("Name", value=current_doctor.name or "", disabled=True)
+        st.text_input("Email", value=current_doctor.email or "", disabled=True)
+        st.text_input("Gender", value=current_doctor.gender, disabled=True)
+        st.text_input("Date of Birth", value=current_doctor.bday, disabled=True)
+    with col2:
+        st.text_input("Contact Number", value=current_doctor.contact_num or "", disabled=True)
+        st.text_area("Address", value=current_doctor.address or "", disabled=True)
+        st.text_input("Department", value=current_doctor.department or "", disabled=True)
+        st.text_input("Speciality", value=current_doctor.speciality or "", disabled=True)
 
-        st.info("💡 Your existing details are shown below. To update your profile, simply edit any information you wish to change and click **'Save Changes'**.")
+    st.divider()
+    st.header("Update Profile")
+    #update form for doctor profile
+    with st.form("update_profile_form"):
+        c1, c2 = st.columns(2)
+        with c1:
+            new_name = st.text_input("New Name")
+            new_email = st.text_input("New Email")
+            new_gender = st.selectbox("New Gender", ["Male", "Female", "Other"])
+            new_password = st.text_input("New Password", type="password")
+        with c2:
+            new_contact = st.text_input("New Contact Number")
+            new_address = st.text_area("New Address")
+            new_department = st.text_input("New Department")
+            new_speciality = st.text_input("New Speciality")
 
-        # layout with columns
-        col1, col2 = st.columns(2)
-        with col1:
-            new_username = st.text_input("Username", value=f"@{doctor.username}", disabled=True)
-            # new_password = st.text_input("Password", value=doctor.password, type="password", disabled=True)
-            new_name = st.text_input("Name", value=doctor.name).title()
-            new_gender = st.selectbox(
-                "Gender", 
-                ["Male", "Female", "Other"], 
-                index=["Male", "Female", "Other"].index(doctor.gender) if doctor.gender in ["Male", "Female", "Other"] else 2)
-            
-            col3, col4 = st.columns(2)
-            with col3:
-                doctor_bday = datetime.datetime.fromisoformat(doctor.bday)
-                new_bday = st.date_input("Date of Birth", value=doctor_bday, min_value="1900-01-01")
-            with col4:
-                age = find_age(doctor.bday)
-                new_age = st.text_input("Age", value=str(age), disabled=True)
+        submitted = st.form_submit_button("Update Profile")
 
-        with col2:
-            new_address = st.text_area("Address", value=doctor.address).title()
-            new_email = st.text_input("Email", value=doctor.email)
-            new_contact_num = st.text_input("Contact Number", value=doctor.contact_num, help="+6012-3456789")
-            new_date_joined = st.text_input("Date Joined", value=doctor.date_joined, disabled=True)
-
-        new_speciality = st.text_input("Speciality", value=doctor.speciality).capitalize()
-        new_department = st.text_input("Department", value=doctor.department).capitalize()
-
-        # Save button
-        button = st.form_submit_button("Save Changes")
-
-        if button:
-            errors = []
-
-            # Username validation
-            all_usernames = [d.username for d in manager.doctors if d.username != doctor.username]
-            if not new_username:
-                errors.append("Username cannot be empty!")
-            elif new_username in all_usernames:
-                errors.append("Username has been taken!")
-
-            # Name validation
-            if not new_name.strip():
-                errors.append("Name cannot be empty!")
-
-            # Email validation (very basic check)
-            if "@" not in new_email or "." not in new_email:
-                errors.append("Invalid email address.")
-
-            # Contact number validation
-            contact_num_format = r"^\+601[0-9]-?[0-9]{7,8}$"
-            if not re.match(contact_num_format, new_contact_num):
-                errors.append("Contact number is invalid - please include '+60' and '-'")
-
-            if errors:
-                for e in errors:
-                    st.error(e)
+        if submitted:
+            ok = update_doctor_details(
+                manager=manager,
+                username=username,
+                new_password=new_password or None,
+                new_name=new_name.title() or None,
+                new_gender=new_gender or None,
+                new_address=new_address or None,
+                new_email=new_email or None,
+                new_contact_num=new_contact or None,
+                new_department=new_department or None,
+                new_speciality=new_speciality or None,
+            )
+            if ok:
+                st.session_state.success_msg = "✅ Profile updated successfully!"
+                manager.save()
+                st.rerun()
             else:
-                new_name = unchanged_to_none(new_name, doctor.name)
-                new_bday = unchanged_to_none(new_bday.isoformat(), doctor.bday)
-                new_gender = unchanged_to_none(new_gender, doctor.gender)
-                new_address = unchanged_to_none(new_address, doctor.address)
-                new_email = unchanged_to_none(new_email, doctor.email)
-                new_contact_num = unchanged_to_none(new_contact_num, doctor.contact_num)
-                new_speciality = unchanged_to_none(new_speciality, doctor.speciality)
-                new_department = unchanged_to_none(new_department, doctor.department)
+                st.error("Failed to update profile")
 
-                result, msg, updated_field = User.update_profile(manager, doctor.d_id, "doctor", username, None, new_name, new_bday, new_gender, new_address, new_email, new_contact_num, None, new_department, new_speciality)
-
-                if result:
-                    if len(updated_field) == 0:
-                        success_msg = f"No changes made!"
-                        st.success(success_msg)
-                    else:
-                        with st.spinner("Saving changes..."):
-                            if len(updated_field) == 1:
-                                success_msg = f"{", ".join(updated_field)} is successfully updated!".capitalize()
-                            else:
-                                success_msg = f"{", ".join(updated_field)} are successfully updated!".capitalize()
-                            st.success(success_msg)
-                            time.sleep(3)
-
-                            manager.save()
-                            st.session_state.success_msg = msg
-                            st.rerun()
-
+    if "success_msg" in st.session_state and st.session_state.success_msg != "":
+        st.success(st.session_state.success_msg)
+        st.session_state.success_msg = ""

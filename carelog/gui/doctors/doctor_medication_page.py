@@ -1,13 +1,10 @@
 import streamlit as st
 from helper_manager.medication_manager import (
+	assign_medications,
 	edit_medications,
 	remove_medication,
 	list_medications
 )
-from helper_manager.record_manager import (
-	add_record_doctor
-)
-
 # starting of the medication page
 def medication_page(manager, username):
 	st.header("Medications")
@@ -39,7 +36,7 @@ def medication_page(manager, username):
 				elif not meds_str.strip():
 					st.error("Please enter at least one medication")
 				else:
-					ok, msg, rec_id = add_record_doctor(
+					ok, msg, rec_id = assign_medications(
 						patient_id=pid,
 						medications=meds_str,
 						doctor_username=username,
@@ -50,7 +47,6 @@ def medication_page(manager, username):
 						st.success(f"{msg}. Record ID: {rec_id}")
 					else:
 						st.error(msg)
-	
 	# edit medications on existing record
 	with tab2:
 		st.subheader("Edit Record Medications")
@@ -72,7 +68,6 @@ def medication_page(manager, username):
 						st.success(msg)
 					else:
 						st.error(msg)
-	
 	# remove one medication from record
 	with tab3:
 		st.subheader("Remove One Medication From Record")
@@ -90,7 +85,6 @@ def medication_page(manager, username):
 						st.success(msg)
 					else:
 						st.error(msg)
-	
 	# list medications for a patient 
 	with tab4:
 		st.subheader("List Medications")

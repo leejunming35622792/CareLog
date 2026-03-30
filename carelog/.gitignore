@@ -1,7 +1,10 @@
+<<<<<<< HEAD
 carelog/app/__pycache__/
 */__pycache__/
 venv/
 data/
 tests/
-*.streamlit
 *.pyc
+=======
+__pycache__/
+>>>>>>> parent of 6fe679a (Initial Commit)
